@@ -719,3 +719,130 @@ legend {
   }
   .js .reveal { opacity: 1; transform: none; }
 }
+
+/* ===========================================================================
+   Deal tracker (handoff plan, interactive)
+   =========================================================================== */
+
+.deal__progress {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-3);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+}
+.deal__progress strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.deal__bar {
+  height: 6px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: var(--s-5);
+}
+.deal__bar span {
+  display: block;
+  height: 100%;
+  background: var(--good);
+  transition: width 240ms ease;
+}
+
+.deal__row {
+  border: 1px solid var(--rule);
+  border-left-width: 3px;
+  border-radius: var(--radius-lg);
+  padding: var(--s-4) var(--s-5);
+  background: var(--surface-raised);
+}
+.deal__row + .deal__row { margin-top: var(--s-3); }
+.deal__row[data-state="done"] { border-left-color: var(--good); }
+.deal__row[data-state="in_progress"] { border-left-color: var(--warn); }
+.deal__row[data-state="blocked"] { border-left-color: var(--low); }
+.deal__row[data-state="pending"] { border-left-color: var(--rule); }
+
+.deal__top {
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.deal__label { font-family: var(--font-ui); font-size: var(--step--1); font-weight: 600; min-width: 0; }
+.deal__index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.deal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+.deal__field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.deal__field > span { font-family: var(--font-ui); font-size: 0.7rem; color: var(--ink-faint); }
+.deal__field input {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  padding: 0.4em 0.55em;
+}
+.deal__field--wide { grid-column: 1 / -1; }
+
+.deal__sign {
+  display: flex;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+}
+.deal__sign label {
+  display: flex;
+  gap: var(--s-2);
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.deal__sign input { flex-shrink: 0; }
+
+.deal__status {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.deal__status--done { color: var(--good); }
+.deal__status--blocked { color: var(--low); }
+.deal__status--in_progress { color: var(--warn); }
+.deal__status--pending { color: var(--ink-faint); }
+
+.deal__hint {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--warn);
+  margin-top: var(--s-3);
+}
+.deal__complete {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--good);
+  font-weight: 600;
+  margin-top: var(--s-3);
+}
+
+.deal__actions {
+  display: flex;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--s-5);
+}

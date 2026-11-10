@@ -27,6 +27,14 @@ Then open <http://localhost:4174/index.html>.
 **Do not use `npx serve`.** Its clean-URL redirect strips the query string, which
 breaks `listing.html?id=...`. `http-server` serves the files as-is.
 
+## Test
+
+```
+node tests/tracker.test.mjs
+```
+
+22 assertions on the handoff tracker state logic. No dependencies, no test runner.
+
 ## Pages
 
 | File | What it is |
@@ -37,6 +45,7 @@ breaks `listing.html?id=...`. `http-server` serves the files as-is.
 | `sell.html` | Create-listing form. Live preview, indicative range, validation, disclosure flags |
 | `how-it-works.html` | The six stages, what verification checks, the NDA gate, pricing, regions |
 | `handoff.html` | The twelve milestones and how they adapt per successor type |
+| `deal.html` | Interactive handoff tracker for one listing. Status, owner, due date, evidence note and two-sided sign-off, stored in `localStorage` |
 
 ## Files
 
@@ -45,6 +54,7 @@ breaks `listing.html?id=...`. `http-server` serves the files as-is.
 | `styles.css` | All styling. Tokens at `:root`, no literal colours or fonts past that block |
 | `data/listings.js` | Sample listings, regions, successor types, disclosure flags, handoff template, sample buyers, readiness scoring |
 | `data/format.js` | Currency, compact money, date, and HTML-escape helpers |
+| `data/tracker.js` | Handoff tracker state logic — pure functions, no DOM. The rules for status, sign-off and counts |
 
 ## The differentiators (what makes this not another classifieds site)
 

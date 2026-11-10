@@ -98,8 +98,16 @@ import * as store from './data/store.js';
 
 const id = new URLSearchParams(location.search).get('id');
 const l = store.findListing(id) || LISTINGS[0];
-const KEY = `exit-ready:deal:${l.id}`;
 const root = document.getElementById('deal-root');
+
+/* Which side of this deal you are operating as. */
+const VIEW_ROLE = (() => {
+  try { return localStorage.getItem('exit-ready-role') || 'buyer'; } catch (e) { return 'buyer'; }
+})();
+const ME = VIEW_ROLE === 'owner' ? 'seller' : 'buyer';
+const ROLE_LABEL = { seller: 'Seller', buyer: 'Buyer', joint: 'Both sides' };
+const canMove = (owner) => owner === 'joint' || owner === ME;
+const isSellerSide = ME === 'seller';
 
 document.title = `${l.name} — handoff tracker — Exit-Ready`;
 
@@ -144,9 +152,12 @@ function render() {
     <h1 style="font-size: var(--step-4); letter-spacing:-0.025em; margin-bottom: var(--s-3)">
       Handoff tracker
     </h1>
-    <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5); max-width: 62ch">
-      ${esc(l.name)} · ${esc(l.city)}, ${esc(l.area)}. Twelve milestones, each signed off by both
-      sides before it counts as done. Changes are stored in this browser only.
+    <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-2); max-width: 62ch">
+      ${esc(l.name)} · ${esc(l.city)}, ${esc(l.area)}.
+    </p>
+    <p style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5)">
+      <span class="tag tag--${isSellerSide ? 'good' : 'warn'}">You are operating as ${esc(ROLE_LABEL[ME].toLowerCase())}</span>
+      <span class="muted"> — you can only move milestones assigned to your side, or to both.</span>
     </p>
 
     <div class="deal__progress">
@@ -218,8 +229,8 @@ function render() {
       </div>
 
       <div class="deal__sign">
-        <label><input type="checkbox" data-role="seller" ${s.seller ? 'checked' : ''}> Seller signed off</label>
-        <label><input type="checkbox" data-role="buyer" ${s.buyer ? 'checked' : ''}> Buyer signed off</label>
+        <label><input type="checkbox" data-role="seller" ${s.seller ? 'checked' : ''} ${isSellerSide ? '' : 'disabled'}> Seller signed off${isSellerSide ? '' : ' (seller)'}</label>
+        <label><input type="checkbox" data-role="buyer" ${s.buyer ? 'checked' : ''} ${isSellerSide ? 'disabled' : ''}> Buyer signed off${isSellerSide ? ' (buyer)' : ''}</label>
         <span class="deal__status deal__status--${s.status}" data-role="status-label">${STATE_LABEL[s.status]}</span>
         <span class="deal__status" data-role="completed" style="color: var(--ink-faint); font-weight:400">
           ${s.completed_at ? `Completed ${esc(s.completed_at)}` : ''}
@@ -263,6 +274,11 @@ function bindRow(row) {
 
   function changeStatus(next) {
     const cur = s();
+    if (!canMove(cur.owner)) {
+      showHint(`Only ${ROLE_LABEL[cur.owner].toLowerCase()} can move this milestone.`);
+      statusSelect.value = cur.status;
+      return;
+    }
     const result = applyStatus(state, l, mId, next, formatTimestamp(new Date()));
     if (result.error === 'signoff_required') {
       showHint('Both sides must sign off before a milestone can be marked done.');

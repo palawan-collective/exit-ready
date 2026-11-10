@@ -202,6 +202,9 @@ export function allListings() { return [...userListings(), ...SAMPLE_LISTINGS]; 
 export function findListing(id) { return allListings().find((l) => l.id === id) || null; }
 export function isUserListing(id) { return userListings().some((l) => l.id === id); }
 
+/** True when the listing was created in this browser. Used to decide which side you are. */
+export function isOwnerOf(id) { return isUserListing(id); }
+
 export function addListing(listing) {
   const s = load();
   s.listings = [...(s.listings || []), listing];
@@ -259,6 +262,15 @@ export async function setVerification(role, value) {
 /* ---------- deals ---------- */
 
 export function getDeal(listingId) { return (load().deals || {})[listingId] || null; }
+
+/** Raw view of every deal, keyed by listing id. For bulk operations. */
+export function allDealsRaw() { return load().deals || {}; }
+
+export function replaceDeals(deals) {
+  const s = load();
+  s.deals = deals;
+  save();
+}
 
 export function allDeals() {
   const out = [];

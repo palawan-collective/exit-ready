@@ -300,7 +300,15 @@ function renderOwner() {
     render();
   }));
   root.querySelectorAll('[data-unpublish]').forEach((b) => b.addEventListener('click', () => {
-    store.updateListing(b.dataset.unpublish, { status: 'draft' });
+    const id = b.dataset.unpublish;
+    // Unpublishing closes any open deal on that listing: nothing may be transacted on a draft.
+    const deals = store.allDealsRaw();
+    const deal = deals[id];
+    if (deal && ['sent', 'active'].includes(deal.offer?.status)) {
+      deal.offer = { ...deal.offer, status: 'cancelled', cancelledAt: new Date().toISOString() };
+      store.replaceDeals(deals);
+    }
+    store.updateListing(id, { status: 'draft' });
     render();
   }));
   root.querySelectorAll('[data-duplicate]').forEach((b) => b.addEventListener('click', () => {
@@ -315,7 +323,7 @@ function renderOwner() {
   }));
   root.querySelectorAll('[data-accept]').forEach((b) => b.addEventListener('click', () => {
     const deal = store.getDeal(b.dataset.accept) || {};
-    deal.offer = { ...(deal.offer || {}), status: 'accepted', at: new Date().toISOString() };
+    deal.offer = { ...(deal.offer || {}), status: 'active', decidedAt: new Date().toISOString() };
     store.setDeal(b.dataset.accept, deal);
     render();
   }));
@@ -362,6 +370,23 @@ function renderBuyer() {
     : null;
   const liveListings = store.allListings().filter((l) => (l.status || 'live') === 'live');
   const recs = criteria ? recommendedForBuyer(liveListings, criteria, 6) : [];
+
+  /* Buyer-side activity: what changed since this browser last looked. */
+  const seenAtBuyer = store.alertsSeenAt();
+  const buyerActivity = store.allDeals().flatMap(({ listing: l, deal }) => {
+    const items = [];
+    const o = deal.offer || {};
+    if (['active', 'declined', 'cancelled'].includes(o.status) && o.decidedAt && o.decidedAt > (seenAtBuyer || 0)) {
+      const text = o.status === 'active' ? 'Your offer was accepted'
+        : o.status === 'declined' ? 'Your offer was declined'
+          : 'The offer was cancelled — the listing came down';
+      items.push(`<strong>${text}</strong> on ${esc(l.name)}`);
+    }
+    if ((deal.thread || []).some((m) => m.from === 'owner' && m.at && m.at > (seenAtBuyer || 0))) {
+      items.push(`<a href="messages.html?id=${encodeURIComponent(l.id)}">New message from the owner</a> about ${esc(l.name)}`);
+    }
+    return items;
+  });
 
   const score = v ? readinessScore(v) : 0;
   const band = readinessBand(score);
@@ -437,6 +462,16 @@ function renderBuyer() {
       <h2 style="font-size: var(--step-2)">Recommended for you</h2>
       <p>${criteria ? 'Ranked against the criteria in your verification.' : 'Verify to get listings matched to your region, budget and successor type.'}</p>
     </div>
+    ${buyerActivity.length ? `
+      <div class="notice notice--info" style="margin-top: var(--s-4)">
+        <h3>${buyerActivity.length} update${buyerActivity.length === 1 ? '' : 's'} since your last visit</h3>
+        <ul style="margin-top: var(--s-2); padding-left: 1.1em">
+          ${buyerActivity.map((a) => `<li style="margin-bottom: var(--s-1)">${a}</li>`).join('')}
+        </ul>
+        <p style="margin-top: var(--s-3)">
+          <button class="btn btn--ghost" id="alerts-seen" type="button">Mark all as seen</button>
+        </p>
+      </div>` : ''}
     <div class="grid">
       ${recs.length ? recs.map(({ listing: l, score: s }) => {
         const r = REGIONS.find((x) => x.code === l.region);

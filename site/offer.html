@@ -143,7 +143,7 @@ function render(listing) {
 
         ${existing ? existingState(existing, listing, r) : ''}
 
-        ${existing?.offer?.status === 'sent' ? '' : `
+        ${existing && existing.offer && ['sent', 'active'].includes(existing.offer.status) ? '' : `
         <form id="offer-form" class="stack" novalidate>
           <fieldset>
             <legend>Step 1 — Standard non-disclosure agreement</legend>
@@ -246,6 +246,15 @@ function render(listing) {
   `;
 
   const form = document.getElementById('offer-form');
+  const withdraw = document.getElementById('withdraw');
+  if (withdraw) {
+    withdraw.addEventListener('click', () => {
+      const deal = store.getDeal(listing.id) || { listingId: listing.id };
+      deal.offer = { ...(deal.offer || {}), status: 'withdrawn', at: new Date().toISOString() };
+      store.setDeal(listing.id, deal);
+      render();
+    });
+  }
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -305,20 +314,36 @@ function render(listing) {
 function existingState(deal, listing, r) {
   const o = deal.offer;
   if (!o) return '';
-  const tone = o.status === 'accepted' ? 'good' : o.status === 'declined' ? 'low' : 'warn';
-  const label = o.status === 'accepted' ? 'Accepted' : o.status === 'declined' ? 'Declined' : 'Offer sent';
+  const STATES = {
+    sent: { tone: 'warn', label: 'Offer sent — awaiting the seller' },
+    active: { tone: 'good', label: 'Accepted — deal in progress' },
+    declined: { tone: 'low', label: 'Declined' },
+    withdrawn: { tone: 'low', label: 'Withdrawn by you' },
+  };
+  const st = STATES[o.status] || STATES.sent;
+  const canWithdraw = o.status === 'sent' && !store.isOwnerOf(listing.id);
   return `
     <div class="notice notice--info">
       <h3>There is already an offer on this listing</h3>
       <table class="deftable" style="margin-top:var(--s-3)">
         <tbody>
-          <tr><th scope="row">Status</th><td><span class="tag tag--${tone}">${label}</span></td></tr>
+          <tr><th scope="row">Status</th><td><span class="tag tag--${st.tone}">${st.label}</span></td></tr>
           <tr><th scope="row">Amount</th><td>${fullMoney(o.amount, r.symbol)}</td></tr>
           <tr><th scope="row">Deposit</th><td>${fullMoney(o.deposit || 0, r.symbol)}</td></tr>
           <tr><th scope="row">Funding</th><td>${esc(o.funding || '—')}</td></tr>
+          <tr><th scope="row">Timeline</th><td>${esc(o.timeline || '—')}</td></tr>
           <tr><th scope="row">NDA</th><td>${deal.nda?.signed ? 'Signed by ' + esc(deal.nda.signer) + ', ' + esc((deal.nda.at || '').slice(0, 10)) : 'Not signed'}</td></tr>
         </tbody>
       </table>
+      ${o.status === 'active' ? `
+        <p style="margin-top:var(--s-3); display:flex; gap:var(--s-2); flex-wrap:wrap">
+          <a class="btn btn--primary" href="deal.html?id=${encodeURIComponent(listing.id)}">Open the handoff tracker</a>
+          <a class="btn btn--ghost" href="loi.html?id=${encodeURIComponent(listing.id)}">Generate the letter of intent</a>
+        </p>` : ''}
+      ${canWithdraw ? `
+        <p style="margin-top:var(--s-3)">
+          <button class="btn btn--ghost" id="withdraw" type="button">Withdraw this offer</button>
+        </p>` : ''}
     </div>`;
 }
 </script>

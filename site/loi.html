@@ -124,7 +124,7 @@ if (!listing) {
       <p><a href="browse.html">Browse all businesses</a>.</p>
     </div>`;
 } else {
-  render();
+  store.ready().then(render).catch(render);
 }
 
 function render() {

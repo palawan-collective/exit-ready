@@ -249,7 +249,7 @@ document.getElementById('f-reset-2').addEventListener('click', () => {
   filters.reset(); setTimeout(render, 0);
 });
 
-render();
+store.ready().then(render).catch(render);
 </script>
 </body>
 </html>

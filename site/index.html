@@ -252,11 +252,13 @@ if (counts) {
     + top(byCity, 3).map(([k, v]) => tile(v, k)).join('');
 }
 
+store.ready().then(() => {
 // One restrained reveal
 const obs = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
 }, { rootMargin: '0px 0px -10% 0px' });
 document.querySelectorAll('.reveal').forEach(n => obs.observe(n));
+});
 </script>
 </body>
 </html>

@@ -307,7 +307,7 @@ function bindRow(row) {
   }
 }
 
-render();
+store.ready().then(render).catch(render);
 </script>
 </body>
 </html>

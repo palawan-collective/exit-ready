@@ -330,8 +330,7 @@ if (saveBtn) {
 const ndaLock = document.getElementById('nda-lock');
 const ndaOpen = document.getElementById('nda-open');
 const ndaSign = document.getElementById('nda-sign');
-const ndaNote = document.getElementById('nda-note');
-if (ndaLock && ndaOpen) {
+const ndaNote = document.getElementById('nda-note');if (ndaLock && ndaOpen) {
   const applyNda = () => {
     const deal = store.getDeal(l.id);
     if (deal?.nda?.signed) {

@@ -526,7 +526,7 @@ function render() {
   if (u.role === 'buyer') { renderBuyer(); } else { renderOwner(); }
 }
 
-render();
+store.ready().then(render).catch(() => render());
 </script>
 </body>
 </html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — Exit-Ready</title>
+<meta name="description" content="Sign in or create an account. Buyers verify and track deals; sellers list and match to verified buyers.">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a class="wordmark" href="index.html">Exit<span>·</span>Ready</a>
+    <nav class="masthead__nav" aria-label="Primary">
+      <a href="browse.html">Browse businesses</a>
+      <a href="sell.html">Sell yours</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a class="btn btn--primary" href="sell.html">Start a listing</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section section--plain">
+    <div class="container">
+      <div class="sec-head">
+        <h2 id="heading">Sign in</h2>
+        <p id="lede">One account for both sides. You can switch between buying and selling at any time.</p>
+      </div>
+
+      <div class="detail">
+        <div>
+          <form id="signin-form" class="stack" novalidate>
+            <fieldset>
+              <legend>Your details</legend>
+              <div class="form-grid form-grid--2">
+                <div class="field span-2">
+                  <label for="email">Email</label>
+                  <input type="text" id="email" name="email" autocomplete="email" placeholder="you@example.com">
+                  <span class="field__error" data-for="email" hidden>Enter your email.</span>
+                </div>
+                <div class="field span-2">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" name="password" autocomplete="current-password" placeholder="At least 8 characters">
+                  <span class="field__error" data-for="password" hidden>Enter a password of at least 8 characters.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <div id="mode-only" hidden>
+              <fieldset>
+                <legend>How will you use it?</legend>
+                <label class="check"><input type="radio" name="role" value="buyer" checked>
+                  <span><strong>I'm looking to buy a business</strong><br>
+                  <span class="muted">Browse, get verified, and make offers.</span></span></label>
+                <label class="check"><input type="radio" name="role" value="owner">
+                  <span><strong>I'm selling my business</strong><br>
+                  <span class="muted">Create listings and match with verified buyers.</span></span></label>
+              </fieldset>
+              <fieldset>
+                <legend>Your name <span class="muted">(shown to the other side)</span></legend>
+                <div class="field">
+                  <label for="display_name">Display name</label>
+                  <input type="text" id="display_name" name="display_name" placeholder="e.g. Ramon Cruz">
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="hero__actions">
+              <button class="btn btn--primary" type="submit" id="submit-btn">Sign in</button>
+              <button class="btn btn--ghost" type="button" id="toggle-mode">Create an account</button>
+            </div>
+            <div id="auth-status" class="notice notice--info" hidden role="status" aria-live="polite"></div>
+          </form>
+        </div>
+
+        <aside class="detail__aside">
+          <div class="panel">
+            <h2>What an account gives you</h2>
+            <table class="deftable">
+              <tbody>
+                <tr><th scope="row">Buyers</th><td>A readiness score sellers can see, saved listings, offers, and tracked deals</td></tr>
+                <tr><th scope="row">Sellers</th><td>Listings, matched verified buyers, an exit pack, and a deal record per buyer</td></tr>
+                <tr><th scope="row">Both</th><td>Messages, the handoff tracker, and a generated letter of intent</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <h2>State</h2>
+            <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)" id="remote-state">
+              Checking the connection…
+            </p>
+            <p style="margin: var(--s-4) 0 0" id="signedin-actions" hidden>
+              <a class="btn btn--ghost btn--block" href="dashboard.html">Go to your dashboard</a>
+            </p>
+            <p style="margin: var(--s-3) 0 0" id="signout-wrap" hidden>
+              <button class="btn btn--ghost btn--block" type="button" id="signout">Sign out</button>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3>Exit-Ready</h3>
+        <p style="max-width: 30ch">A marketplace for retiring owners and the successors who take over.</p>
+      </div>
+      <div>
+        <h3>Sellers</h3>
+        <ul>
+          <li><a href="sell.html">Start a listing</a></li>
+          <li><a href="handoff.html">Handoff plan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Buyers</h3>
+        <ul>
+          <li><a href="browse.html">Browse businesses</a></li>
+          <li><a href="verify.html">Get verified</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>
+        Exit-Ready is a marketplace and tooling provider. We are not a business broker, we do not
+        provide valuations, and nothing here is financial, legal or tax advice. Regulated services
+        are provided by licensed third parties.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import * as store from './data/store.js';
+import * as db from './data/db.js';
+import { REMOTE_ENABLED } from './data/config.js';
+import { esc } from './data/format.js';
+
+const form = document.getElementById('signin-form');
+const status = document.getElementById('auth-status');
+const heading = document.getElementById('heading');
+const lede = document.getElementById('lede');
+const toggle = document.getElementById('toggle-mode');
+const modeOnly = document.getElementById('mode-only');
+const submitBtn = document.getElementById('submit-btn');
+const remoteState = document.getElementById('remote-state');
+
+let mode = 'signin';
+
+store.ready().then(paintState);
+
+function paintState() {
+  const s = store.currentSession();
+  if (s) {
+    remoteState.innerHTML = `Signed in as <strong>${esc(s.email)}</strong> (${esc(s.profile?.role || 'buyer')}).`;
+    document.getElementById('signedin-actions').hidden = false;
+    document.getElementById('signout-wrap').hidden = false;
+    heading.textContent = 'You are signed in';
+    lede.textContent = 'Your dashboard is where listings, matches and deals live.';
+    form.hidden = true;
+  } else if (!REMOTE_ENABLED || !db.isRemote()) {
+    remoteState.innerHTML = 'Supabase is not configured. Sign-in is unavailable and everything stays in this browser.';
+    form.hidden = true;
+  } else {
+    remoteState.textContent = 'Connected. Accounts are live and data is shared.';
+  }
+}
+
+document.getElementById('signout').addEventListener('click', async () => {
+  await db.signOut();
+  location.reload();
+});
+
+function setMode(next) {
+  mode = next;
+  const signup = next === 'signup';
+  modeOnly.hidden = !signup;
+  heading.textContent = signup ? 'Create your account' : 'Sign in';
+  submitBtn.textContent = signup ? 'Create account' : 'Sign in';
+  toggle.textContent = signup ? 'I already have an account' : 'Create an account';
+  document.getElementById('password').autocomplete = signup ? 'new-password' : 'current-password';
+  lede.textContent = signup
+    ? 'One account for both sides. You can switch between buying and selling at any time.'
+    : 'One account for both sides. You can switch between buying and selling at any time.';
+}
+
+toggle.addEventListener('click', () => setMode(mode === 'signin' ? 'signup' : 'signin'));
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  const errors = {};
+  if (!email || !email.includes('@')) errors.email = 'Enter a valid email address.';
+  if (password.length < 8) errors.password = 'Use at least 8 characters.';
+  form.querySelectorAll('.field__error').forEach((el) => { el.hidden = true; });
+  for (const [name, msg] of Object.entries(errors)) {
+    const el = form.querySelector(`.field__error[data-for="${name}"]`);
+    if (el) { el.textContent = msg; el.hidden = false; }
+  }
+  if (Object.keys(errors).length) return;
+
+  submitBtn.disabled = true;
+  status.hidden = false;
+  status.className = 'notice notice--info';
+  status.innerHTML = '<h3>Working…</h3>';
+
+  try {
+    if (mode === 'signup') {
+      const role = form.querySelector('input[name="role"]:checked')?.value || 'buyer';
+      const displayName = document.getElementById('display_name').value.trim();
+      await db.signUp(email, password, { role, displayName });
+      // Supabase may require email confirmation before a session exists.
+      const session = await db.currentSession();
+      if (session) {
+        status.innerHTML = '<h3>Account created</h3><p>Taking you to your dashboard.</p>';
+        location.href = 'dashboard.html';
+      } else {
+        status.innerHTML = '<h3>Check your email</h3><p>Confirm your address to finish signing up.</p>';
+      }
+    } else {
+      await db.signInWithPassword(email, password);
+      status.innerHTML = '<h3>Signed in</h3><p>Taking you to your dashboard.</p>';
+      location.href = 'dashboard.html';
+    }
+  } catch (err) {
+    status.className = 'notice notice--warn';
+    status.innerHTML = `<h3>Could not ${mode === 'signup' ? 'create the account' : 'sign you in'}</h3>
+      <p class="tnum" style="font-family: var(--font-ui); font-size: 0.75rem">${esc(String(err.message || err))}</p>`;
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

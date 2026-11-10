@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Browse businesses for sale — Exit-Ready</title>
+<meta name="description" content="Browse businesses for sale in the US, UK and Philippines. Filter by region, industry, price and successor type.">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a class="wordmark" href="index.html">Exit<span>·</span>Ready</a>
+    <nav class="masthead__nav" aria-label="Primary">
+      <a href="browse.html" aria-current="page">Browse businesses</a>
+      <a href="sell.html">Sell yours</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="handoff.html">Handoff plan</a>
+      <a class="btn btn--primary" href="sell.html">Start a listing</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section section--plain" style="padding-bottom: 0">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Businesses for sale</h2>
+        <p>Listings across the United States, United Kingdom and Philippines. Sample data for format testing.</p>
+      </div>
+
+      <form class="filters" id="filters" role="search" aria-label="Filter listings">
+        <div class="field">
+          <label for="f-region">Region</label>
+          <select id="f-region" name="region">
+            <option value="">All regions</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-industry">Industry</label>
+          <select id="f-industry" name="industry">
+            <option value="">All industries</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-successor">Successor type</label>
+          <select id="f-successor" name="successor">
+            <option value="">Any successor</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-max">Max asking price</label>
+          <select id="f-max" name="max">
+            <option value="">No limit</option>
+            <option value="100000">Up to 100k</option>
+            <option value="250000">Up to 250k</option>
+            <option value="500000">Up to 500k</option>
+            <option value="1000000">Up to 1M</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-sort">Sort</label>
+          <select id="f-sort" name="sort">
+            <option value="recent">Recently listed</option>
+            <option value="price-asc">Price, low to high</option>
+            <option value="price-desc">Price, high to low</option>
+            <option value="revenue">Highest revenue</option>
+          </select>
+        </div>
+        <div class="field">
+          <button class="btn btn--ghost" type="reset" id="f-reset">Clear</button>
+        </div>
+      </form>
+
+      <p class="muted" id="result-count" role="status" aria-live="polite"
+         style="font-family: var(--font-ui); font-size: var(--step--1); padding-bottom: var(--s-4)"></p>
+    </div>
+  </section>
+
+  <section class="section section--plain" style="padding-top: 0">
+    <div class="container">
+      <div id="listing-grid" class="grid"></div>
+      <div id="no-results" class="empty" hidden>
+        <p style="margin: 0 0 var(--s-3)">No listings match those filters.</p>
+        <button class="btn btn--ghost" type="button" id="f-reset-2">Clear all filters</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3>Exit-Ready</h3>
+        <p style="max-width: 30ch">A marketplace for retiring owners and the successors who take over.</p>
+      </div>
+      <div>
+        <h3>Sellers</h3>
+        <ul>
+          <li><a href="sell.html">Start a listing</a></li>
+          <li><a href="handoff.html">Handoff plan</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Buyers</h3>
+        <ul>
+          <li><a href="browse.html">Browse businesses</a></li>
+          <li><a href="browse.html?successor=employee">Employee buyouts</a></li>
+          <li><a href="browse.html?successor=first_time">First-time buyers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Regions</h3>
+        <ul>
+          <li><a href="browse.html?region=US">United States</a></li>
+          <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=PH">Philippines</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>
+        <strong>This site is a working prototype.</strong> All listings shown are sample data
+        created for layout and flow testing. They are not real businesses and the figures are
+        not real financials. Replace before any public use.
+      </p>
+      <p>
+        Exit-Ready is a marketplace and tooling provider. We are not a business broker,
+        we do not provide valuations, and nothing here is financial, legal or tax advice.
+        All stated figures are owner-reported and unaudited unless explicitly marked otherwise.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { LISTINGS, REGIONS, SUCCESSOR_TYPES, DISCLOSURE_FLAGS } from './data/listings.js';
+import { shorten, esc } from './data/format.js';
+
+const params = new URLSearchParams(location.search);
+const filters = document.getElementById('filters');
+const fRegion = document.getElementById('f-region');
+const fIndustry = document.getElementById('f-industry');
+const fSuccessor = document.getElementById('f-successor');
+const fMax = document.getElementById('f-max');
+const fSort = document.getElementById('f-sort');
+const grid = document.getElementById('listing-grid');
+const count = document.getElementById('result-count');
+const noResults = document.getElementById('no-results');
+
+// Populate selects
+REGIONS.forEach(r => fRegion.add(new Option(r.label, r.code)));
+[...new Set(LISTINGS.map(l => l.industry))].sort()
+  .forEach(i => fIndustry.add(new Option(i, i)));
+SUCCESSOR_TYPES.filter(s => s.id !== 'any')
+  .forEach(s => fSuccessor.add(new Option(s.label, s.id)));
+
+// Apply URL params
+if (params.get('region')) fRegion.value = params.get('region');
+if (params.get('industry')) fIndustry.value = params.get('industry');
+if (params.get('successor')) fSuccessor.value = params.get('successor');
+if (params.get('max')) fMax.value = params.get('max');
+
+function render() {
+  const region = fRegion.value;
+  const industry = fIndustry.value;
+  const successor = fSuccessor.value;
+  const max = fMax.value ? Number(fMax.value) : null;
+  const sort = fSort.value;
+
+  let rows = LISTINGS.filter(l => {
+    if (region && l.region !== region) return false;
+    if (industry && l.industry !== industry) return false;
+    if (successor && !l.successor_types_wanted.includes(successor)
+        && !l.successor_types_wanted.includes('any')) return false;
+    if (max !== null) {
+      // Currencies are not comparable, so the price filter only applies when a
+      // single region is selected. With no region chosen, we compare against the
+      // region's own band by converting nothing and skipping the filter, and we
+      // say so in the result line rather than returning a misleading list.
+      if (!region) return true;
+      if (l.asking_price > max) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'price-asc')  rows = rows.slice().sort((a,b) => a.asking_price - b.asking_price);
+  if (sort === 'price-desc') rows = rows.slice().sort((a,b) => b.asking_price - a.asking_price);
+  if (sort === 'revenue')    rows = rows.slice().sort((a,b) => b.gross_revenue - a.gross_revenue);
+
+  let msg = rows.length + (rows.length === 1 ? ' listing' : ' listings')
+    + (region || industry || successor || max ? ' matching your filters' : '');
+  if (max !== null && !region) {
+    msg += '. Price filtering needs a region, because listings are priced in three currencies';
+  }
+  count.textContent = msg;
+
+  if (rows.length === 0) {
+    grid.innerHTML = '';
+    noResults.hidden = false;
+    return;
+  }
+  noResults.hidden = true;
+
+  grid.innerHTML = rows.map(l => {
+    const r = REGIONS.find(x => x.code === l.region);
+    const flags = l.disclosure_flags
+      .filter(id => !DISCLOSURE_FLAGS.find(f => f.id === id)?.always)
+      .slice(0, 2)
+      .map(id => {
+        const f = DISCLOSURE_FLAGS.find(x => x.id === id);
+        return f ? `<span class="tag">${esc(f.label)}</span>` : '';
+      }).join('');
+
+    return `
+    <a class="card" href="listing.html?id=${l.id}">
+      <div class="card__meta">${esc(r.label)} · ${esc(l.city)} · ${esc(l.industry)}</div>
+      <div class="card__name">${esc(l.name)}</div>
+      <div class="card__tagline">${esc(l.tagline)}</div>
+      ${flags ? `<div class="tags">${flags}</div>` : ''}
+      <dl class="card__figures">
+        <div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div>
+        <div class="figure"><dt>Revenue</dt><dd>${shorten(l.gross_revenue, r.symbol)}</dd></div>
+        <div class="figure"><dt>Cash flow</dt><dd>${shorten(l.cash_flow_sde, r.symbol)}</dd></div>
+      </dl>
+    </a>`;
+  }).join('');
+}
+
+filters.addEventListener('input', render);
+filters.addEventListener('submit', e => e.preventDefault());
+filters.addEventListener('reset', () => setTimeout(render, 0));
+document.getElementById('f-reset-2').addEventListener('click', () => {
+  filters.reset(); setTimeout(render, 0);
+});
+
+render();
+</script>
+</body>
+</html>

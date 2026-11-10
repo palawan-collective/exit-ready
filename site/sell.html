@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sell your business — Exit-Ready</title>
+<meta name="description" content="List your business for sale. Declare the disclosure flags, get an indicative range, and set up a tracked handoff plan.">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a class="wordmark" href="index.html">Exit<span>·</span>Ready</a>
+    <nav class="masthead__nav" aria-label="Primary">
+      <a href="browse.html">Browse businesses</a>
+      <a href="sell.html" aria-current="page">Sell yours</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="handoff.html">Handoff plan</a>
+      <a class="btn btn--primary" href="#listing-form">Start a listing</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section section--plain">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Sell your business</h2>
+        <p>
+          Ten minutes now saves months later. The more you declare up front,
+          the fewer deals collapse at the offer stage.
+        </p>
+      </div>
+
+      <div class="detail">
+        <form id="listing-form" class="stack" novalidate>
+
+          <!-- ============ BASICS ============ -->
+          <fieldset>
+            <legend>The basics</legend>
+            <div class="form-grid form-grid--2">
+              <div class="field span-2">
+                <label for="business_name">Business name</label>
+                <input type="text" id="business_name" name="business_name" required
+                       placeholder="e.g. Seaside Café and Bakery">
+                <span class="field__error" data-for="business_name" hidden>Enter a business name.</span>
+              </div>
+
+              <div class="field">
+                <label for="country">Country</label>
+                <select id="country" name="country" required>
+                  <option value="US">United States</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="PH">Philippines</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="industry">Industry</label>
+                <select id="industry" name="industry" required>
+                  <option value="">Select an industry</option>
+                  <option>Food &amp; Beverage</option>
+                  <option>Personal Services</option>
+                  <option>Trades &amp; Services</option>
+                  <option>Healthcare</option>
+                  <option>Retail</option>
+                  <option>eCommerce</option>
+                  <option>Professional Services</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="city">City or town</label>
+                <input type="text" id="city" name="city" required placeholder="e.g. San Vicente">
+              </div>
+
+              <div class="field">
+                <label for="established">Year established</label>
+                <input type="number" id="established" name="established" min="1900" max="2026"
+                       placeholder="e.g. 2017">
+              </div>
+
+              <div class="field span-2">
+                <label for="reason">Reason for selling</label>
+                <select id="reason" name="reason" required>
+                  <option value="">Select a reason</option>
+                  <option>Owner retiring</option>
+                  <option>Health reasons</option>
+                  <option>Relocating</option>
+                  <option>Pursuing another venture</option>
+                  <option>Partnership dissolution</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ============ FINANCIALS ============ -->
+          <fieldset>
+            <legend>Financials</legend>
+            <p class="field__hint" style="margin-bottom: var(--s-4)">
+              Owner-reported and unaudited. Buyers see this only after signing the NDA.
+            </p>
+            <div class="form-grid form-grid--2">
+              <div class="field">
+                <label for="asking_price">Asking price <span id="cur-label">(USD)</span></label>
+                <input type="number" id="asking_price" name="asking_price" min="0" required placeholder="144000">
+              </div>
+              <div class="field">
+                <label for="gross_revenue">Gross revenue, annual</label>
+                <input type="number" id="gross_revenue" name="gross_revenue" min="0" required placeholder="360000">
+              </div>
+              <div class="field">
+                <label for="cash_flow">Cash flow (SDE), annual</label>
+                <input type="number" id="cash_flow" name="cash_flow" min="0" required placeholder="108000">
+                <span class="field__hint">Seller's discretionary earnings.</span>
+              </div>
+              <div class="field">
+                <label for="ebitda">EBITDA <span class="muted">(optional)</span></label>
+                <input type="number" id="ebitda" name="ebitda" min="0" placeholder="Leave blank if not disclosed">
+              </div>
+              <div class="field">
+                <label for="inventory">Inventory value</label>
+                <input type="number" id="inventory" name="inventory" min="0" placeholder="5000">
+              </div>
+              <div class="field">
+                <label for="inventory_included">Is inventory included in the asking price?</label>
+                <select id="inventory_included" name="inventory_included" required>
+                  <option value="">Select one</option>
+                  <option value="yes">Yes, included</option>
+                  <option value="no">No, charged separately</option>
+                  <option value="na">No inventory</option>
+                </select>
+                <span class="field__hint">A frequent cause of late-stage disputes. Be explicit.</span>
+              </div>
+            </div>
+
+            <!-- Indicative range -->
+            <div id="range-out" class="notice notice--info" style="margin-top: var(--s-5)" hidden>
+              <h3>Indicative range</h3>
+              <p id="range-text" class="tnum"></p>
+              <p class="muted" style="font-size: 0.75rem">
+                A multiple applied to your stated cash flow, for orientation only.
+                This is not a valuation and not advice. Commission a licensed valuer before
+                you commit to a price.
+              </p>
+            </div>
+          </fieldset>
+
+          <!-- ============ OPERATIONS ============ -->
+          <fieldset>
+            <legend>Operations</legend>
+            <div class="form-grid form-grid--3">
+              <div class="field">
+                <label for="employees">Number of employees</label>
+                <input type="number" id="employees" name="employees" min="0" placeholder="7">
+              </div>
+              <div class="field">
+                <label for="employee_type">Employment type</label>
+                <select id="employee_type" name="employee_type">
+                  <option value="">Select one</option>
+                  <option>Full-time</option>
+                  <option>Part-time</option>
+                  <option>Mixed</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="real_estate">Premises</label>
+                <select id="real_estate" name="real_estate">
+                  <option value="">Select one</option>
+                  <option>Leased</option>
+                  <option>Owned</option>
+                  <option>Home based</option>
+                  <option>None</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="monthly_rent">Monthly rent</label>
+                <input type="number" id="monthly_rent" name="monthly_rent" min="0" placeholder="45000">
+              </div>
+              <div class="field">
+                <label for="lease_expiration">Lease expiry</label>
+                <input type="text" id="lease_expiration" name="lease_expiration" placeholder="YYYY-MM-DD">
+              </div>
+              <div class="field">
+                <label for="monthly_payroll">Monthly payroll</label>
+                <input type="number" id="monthly_payroll" name="monthly_payroll" min="0" placeholder="98000">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ============ SUCCESSOR ============ -->
+          <fieldset>
+            <legend>Who should take over</legend>
+            <p class="field__hint" style="margin-bottom: var(--s-3)">
+              This shapes the deal structure and the handoff template.
+            </p>
+            <label class="check"><input type="checkbox" name="successor" value="employee">
+              <span><strong>Employee buyout</strong><br>
+              <span class="muted">Your team takes it on. Usually staged payments and a longer training period.</span></span></label>
+            <label class="check"><input type="checkbox" name="successor" value="local_operator">
+              <span><strong>Local operator</strong><br>
+              <span class="muted">Someone already in your trade, nearby. Faster diligence.</span></span></label>
+            <label class="check"><input type="checkbox" name="successor" value="first_time">
+              <span><strong>First-time buyer</strong><br>
+              <span class="muted">Leaving employment to buy. Needs financing support and transition time.</span></span></label>
+            <label class="check"><input type="checkbox" name="successor" value="any">
+              <span><strong>Open to any verified successor</strong><br>
+              <span class="muted">Show the listing to every verified buyer.</span></span></label>
+            <span class="field__error" data-for="successor" hidden>Choose at least one successor type.</span>
+          </fieldset>
+
+          <!-- ============ DISCLOSURE FLAGS ============ -->
+          <fieldset>
+            <legend>Disclosure flags</legend>
+            <p class="field__hint" style="margin-bottom: var(--s-3)">
+              Tick everything that applies. These are shown on your public listing with a
+              timestamp. Declaring them costs you nothing now and prevents a collapsed deal later.
+            </p>
+
+            <label class="check check--locked">
+              <input type="checkbox" checked disabled>
+              <span><strong>Financials are unaudited</strong><br>
+              <span class="muted">Always shown. Figures are owner-reported until verification.</span></span>
+            </label>
+
+            <label class="check"><input type="checkbox" name="flag" value="inventory_excluded">
+              <span>Inventory is not included in the asking price</span></label>
+            <label class="check"><input type="checkbox" name="flag" value="lease_transfer_required">
+              <span>Lease transfer requires landlord consent</span></label>
+            <label class="check"><input type="checkbox" name="flag" value="owner_is_key_person">
+              <span>The business depends on me personally
+              <span class="muted">— my relationships, my hands-on skill, or my licence</span></span></label>
+            <label class="check"><input type="checkbox" name="flag" value="staff_retention_risk">
+              <span>Staff may leave after the sale</span></label>
+            <label class="check"><input type="checkbox" name="flag" value="licence_transfer_required">
+              <span>A licence or permit must be transferred to the buyer</span></label>
+            <label class="check"><input type="checkbox" name="flag" value="equipment_deferred_maintenance">
+              <span>Equipment needs deferred maintenance</span></label>
+            <label class="check"><input type="checkbox" name="flag" value="pending_litigation">
+              <span>There is pending litigation</span></label>
+          </fieldset>
+
+          <!-- ============ DEAL STRUCTURE ============ -->
+          <fieldset>
+            <legend>Deal structure</legend>
+            <label class="check"><input type="checkbox" name="seller_financing">
+              <span>I will consider seller financing</span></label>
+            <label class="check"><input type="checkbox" name="earn_out">
+              <span>I will consider an earn-out</span></label>
+            <label class="check"><input type="checkbox" name="financing_ready">
+              <span>This business is likely eligible for bank financing</span></label>
+          </fieldset>
+
+          <!-- ============ DESCRIPTION ============ -->
+          <fieldset>
+            <legend>Description</legend>
+            <div class="field">
+              <label for="description">Describe the business</label>
+              <textarea id="description" name="description"
+                        placeholder="What it does, who its customers are, why it works, what a new owner would inherit."></textarea>
+            </div>
+            <div class="field" style="margin-top: var(--s-4)">
+              <label for="highlights">Highlights, one per line</label>
+              <textarea id="highlights" name="highlights"
+                        placeholder="Seven staff, four with more than three years' tenure&#10;In-house bakery supplying two wholesale accounts"></textarea>
+            </div>
+          </fieldset>
+
+          <div class="notice notice--warn">
+            <h3>Before you publish</h3>
+            <p>
+              This prototype does not submit anywhere. On the live product, publishing
+              requires identity verification and a declaration that the information is accurate.
+              Knowingly false financial statements are a serious matter in every one of our regions.
+            </p>
+          </div>
+
+          <div class="hero__actions">
+            <button class="btn btn--primary" type="submit">Review and publish</button>
+            <button class="btn btn--ghost" type="reset">Clear the form</button>
+          </div>
+
+          <div id="form-status" class="notice notice--info" hidden role="status" aria-live="polite"></div>
+        </form>
+
+        <!-- ============ PREVIEW ASIDE ============ -->
+        <aside class="detail__aside">
+          <div class="panel">
+            <h2>Live preview</h2>
+            <div id="preview" class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
+              Start filling the form and your listing card appears here.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Your handoff plan</h2>
+            <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
+              Twelve milestones are created automatically. You agree the dates with your
+              buyer once an offer is accepted.
+            </p>
+            <ol class="track" id="handoff-preview"></ol>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3>Exit-Ready</h3>
+        <p style="max-width: 30ch">A marketplace for retiring owners and the successors who take over.</p>
+      </div>
+      <div>
+        <h3>Sellers</h3>
+        <ul>
+          <li><a href="sell.html">Start a listing</a></li>
+          <li><a href="handoff.html">Handoff plan</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Buyers</h3>
+        <ul>
+          <li><a href="browse.html">Browse businesses</a></li>
+          <li><a href="browse.html?successor=employee">Employee buyouts</a></li>
+          <li><a href="browse.html?successor=first_time">First-time buyers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Regions</h3>
+        <ul>
+          <li><a href="browse.html?region=US">United States</a></li>
+          <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=PH">Philippines</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>
+        <strong>This site is a working prototype.</strong> The form does not submit anywhere and
+        no data is stored. Figures you enter stay in your browser.
+      </p>
+      <p>
+        Exit-Ready is a marketplace and tooling provider. We are not a business broker,
+        we do not provide valuations, and nothing here is financial, legal or tax advice.
+        The indicative range shown is an orientation aid only. Commission a licensed valuer
+        before committing to a price.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { HANDOFF_TEMPLATE, REGIONS } from './data/listings.js';
+import { fullMoney, esc } from './data/format.js';
+
+const form = document.getElementById('listing-form');
+const status = document.getElementById('form-status');
+const preview = document.getElementById('preview');
+const curLabel = document.getElementById('cur-label');
+const rangeOut = document.getElementById('range-out');
+const rangeText = document.getElementById('range-text');
+
+/* Handoff preview */
+document.getElementById('handoff-preview').innerHTML = HANDOFF_TEMPLATE.map((m, i) => `
+  <li data-state="pending"><span class="track__label">${esc(m.label)}</span>
+  <span class="track__state">${i === 0 ? 'starts here' : 'pending'}</span></li>
+`).join('');
+
+/* Currency label follows country */
+const country = document.getElementById('country');
+function syncCurrency() {
+  const r = REGIONS.find(x => x.code === country.value);
+  curLabel.textContent = `(${r.currency})`;
+}
+country.addEventListener('change', syncCurrency);
+syncCurrency();
+
+/* Live preview */
+function updatePreview() {
+  const name = form.business_name.value.trim();
+  if (!name) {
+    preview.textContent = 'Start filling the form and your listing card appears here.';
+    return;
+  }
+  const r = REGIONS.find(x => x.code === form.country.value);
+  const price = form.asking_price.value ? fullMoney(form.asking_price.value, r.symbol) : '—';
+  const rev = form.gross_revenue.value ? fullMoney(form.gross_revenue.value, r.symbol) : '—';
+  const cf = form.cash_flow.value ? fullMoney(form.cash_flow.value, r.symbol) : '—';
+  const flags = [...form.querySelectorAll('input[name="flag"]:checked')].length;
+
+  preview.innerHTML = `
+    <div class="card" style="border:1px solid var(--rule); border-radius:var(--radius); padding:var(--s-4); background:var(--surface-raised)">
+      <div class="card__meta">${esc(r.label)}${form.city.value ? ' · ' + esc(form.city.value) : ''}${form.industry.value ? ' · ' + esc(form.industry.value) : ''}</div>
+      <div class="card__name" style="font-size:var(--step-1)">${esc(name)}</div>
+      <dl class="card__figures" style="margin-top:var(--s-3)">
+        <div class="figure"><dt>Asking</dt><dd>${price}</dd></div>
+        <div class="figure"><dt>Revenue</dt><dd>${rev}</dd></div>
+        <div class="figure"><dt>Cash flow</dt><dd>${cf}</dd></div>
+      </dl>
+      <p class="muted" style="font-size:0.75rem; margin:var(--s-3) 0 0">
+        ${flags} disclosure flag${flags === 1 ? '' : 's'} declared
+      </p>
+    </div>`;
+}
+
+/* Indicative range from SDE multiple */
+const MULTIPLES = { "Food & Beverage": [1.5, 2.5], "Personal Services": [1.2, 2.0],
+  "Trades & Services": [1.5, 2.5], "Healthcare": [2.0, 3.5], "Retail": [1.2, 2.2],
+  "eCommerce": [2.0, 3.5], "Professional Services": [2.0, 3.5], "Other": [1.5, 2.5] };
+
+function updateRange() {
+  const cf = Number(form.cash_flow.value);
+  const ind = form.industry.value;
+  if (!cf || !ind) { rangeOut.hidden = true; return; }
+  const [lo, hi] = MULTIPLES[ind] || MULTIPLES.Other;
+  const r = REGIONS.find(x => x.code === form.country.value);
+  rangeText.textContent =
+    `${fullMoney(Math.round(cf * lo), r.symbol)} to ${fullMoney(Math.round(cf * hi), r.symbol)}`
+    + `, based on ${lo}x to ${hi}x annual cash flow for ${ind.toLowerCase()}.`;
+  rangeOut.hidden = false;
+}
+
+form.addEventListener('input', () => { updatePreview(); updateRange(); });
+form.addEventListener('change', () => { updatePreview(); updateRange(); });
+form.addEventListener('reset', () => setTimeout(() => { updatePreview(); updateRange(); }, 0));
+
+/* Validation */
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let ok = true;
+
+  for (const el of form.querySelectorAll('[required]')) {
+    const err = form.querySelector(`.field__error[data-for="${el.id}"]`);
+    const bad = !el.value.trim();
+    if (err) err.hidden = !bad;
+    el.setAttribute('aria-invalid', bad ? 'true' : 'false');
+    if (bad) ok = false;
+  }
+
+  const succErr = form.querySelector('.field__error[data-for="successor"]');
+  const succCount = form.querySelectorAll('input[name="successor"]:checked').length;
+  if (succErr) succErr.hidden = succCount > 0;
+  if (succCount === 0) ok = false;
+
+  if (!ok) {
+    status.hidden = false;
+    status.className = 'notice notice--warn';
+    status.innerHTML = '<h3>Not ready to publish</h3><p>Check the fields marked above.</p>';
+    form.querySelector('[aria-invalid="true"]')?.focus();
+    return;
+  }
+
+  const flags = [...form.querySelectorAll('input[name="flag"]:checked')].map(i => i.value);
+  status.hidden = false;
+  status.className = 'notice notice--info';
+  status.innerHTML = `
+    <h3>Listing validated</h3>
+    <p>
+      <strong>${esc(form.business_name.value.trim())}</strong> is ready to publish with
+      ${flags.length + 1} disclosure flags declared, including the mandatory
+      unaudited-financials flag.
+    </p>
+    <p>
+      This prototype does not send data anywhere. On the live product, the next step is
+      identity verification, then your listing goes live and your handoff plan is created.
+    </p>`;
+  status.scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
+
+updatePreview();
+</script>
+</body>
+</html>

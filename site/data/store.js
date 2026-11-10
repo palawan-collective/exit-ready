@@ -104,6 +104,58 @@ export function setDeal(listingId, deal) {
   return deal;
 }
 
+/* ---------- message thread (buyer <-> owner, per listing) ---------- */
+
+export function threadFor(listingId) {
+  return (load().deals || {})[listingId]?.thread || [];
+}
+
+export function appendMessage(listingId, message) {
+  const deal = getDeal(listingId) || { listingId };
+  deal.thread = [...(deal.thread || []), {
+    from: message.from,
+    name: message.name,
+    text: message.text,
+    at: message.at || new Date().toISOString(),
+  }];
+  return setDeal(listingId, deal);
+}
+
+export function unreadFor(listingId, role) {
+  return threadFor(listingId).filter((m) => m.from !== role).length;
+}
+
+/* ---------- alerts (buyer) ---------- */
+
+export function alertsSeenAt() { return load().alertsSeenAt || null; }
+
+export function markAlertsSeen() {
+  const s = load();
+  s.alertsSeenAt = new Date().toISOString();
+  save();
+}
+
+/* ---------- listing lifecycle (owner) ---------- */
+
+export function deleteListing(id) {
+  const s = load();
+  s.listings = (s.listings || []).filter((l) => l.id !== id);
+  save();
+}
+
+export function duplicateListing(id) {
+  const source = findListing(id);
+  if (!source) return null;
+  const copy = {
+    ...source,
+    id: 'er-' + Date.now().toString(36),
+    name: `${source.name} (copy)`,
+    createdAt: new Date().toISOString(),
+    status: 'draft',
+  };
+  return addListing(copy);
+}
+
 /* ---------- saved listings (buyer) ---------- */
 
 export function savedIds() { return load().saved || []; }

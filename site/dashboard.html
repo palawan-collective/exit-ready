@@ -19,6 +19,7 @@
       <a href="sell.html">Sell yours</a>
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
+      <a href="pricing.html">Pricing</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
     </nav>
   </div>
@@ -43,7 +44,8 @@
         <h3>Sellers</h3>
         <ul>
           <li><a href="sell.html">Start a listing</a></li>
-          <li><a href="handoff.html">Handoff plan</a></li>
+          <li><a href="handoff.html">Handoff plan</a>
+      <a href="pricing.html">Pricing</a></li>
           <li><a href="how-it-works.html">How it works</a></li>
         </ul>
       </div>
@@ -235,16 +237,22 @@ function renderOwner() {
       <p>${listings.length ? 'Drafts become live once you are verified.' : 'Create your first listing — it takes about ten minutes.'}</p>
     </div>
     <div class="grid">
-      ${listings.length ? listings.map((l) => listingCard(l, {
-        actions: `
-          <a class="btn btn--ghost" href="listing.html?id=${encodeURIComponent(l.id)}">View</a>
-          <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(l.id)}">Handoff tracker</a>
-          ${(l.status || 'draft') !== 'live' && verified
-            ? `<button class="btn btn--primary" data-publish="${esc(l.id)}" type="button">Publish</button>`
-            : ''}
-          <button class="btn btn--ghost" data-pack="${esc(l.id)}" type="button">Exit pack</button>
-        `,
-      })).join('') : '<p class="muted">No listings yet.</p>'}
+      ${listings.length ? listings.map((l) => {
+        const unread = store.unreadFor(l.id, 'owner');
+        return listingCard(l, {
+          actions: `
+            <a class="btn btn--ghost" href="listing.html?id=${encodeURIComponent(l.id)}">View</a>
+            <a class="btn btn--ghost" href="messages.html?id=${encodeURIComponent(l.id)}">Messages${unread ? ` (${unread})` : ''}</a>
+            <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(l.id)}">Handoff tracker</a>
+            ${(l.status || 'draft') !== 'live'
+              ? (verified ? `<button class="btn btn--primary" data-publish="${esc(l.id)}" type="button">Publish</button>` : '')
+              : `<button class="btn btn--ghost" data-unpublish="${esc(l.id)}" type="button">Unpublish</button>`}
+            <button class="btn btn--ghost" data-pack="${esc(l.id)}" type="button">Exit pack</button>
+            <button class="btn btn--ghost" data-duplicate="${esc(l.id)}" type="button">Duplicate</button>
+            <button class="btn btn--ghost" data-delete="${esc(l.id)}" type="button">Delete</button>
+          `,
+        });
+      }).join('') : '<p class="muted">No listings yet.</p>'}
     </div>
     <div id="pack-out"></div>
 
@@ -301,9 +309,30 @@ function renderOwner() {
     store.clearUser();
     render();
   });
+  const alertsSeen = document.getElementById('alerts-seen');
+  if (alertsSeen) {
+    alertsSeen.addEventListener('click', () => {
+      store.markAlertsSeen();
+      render();
+    });
+  }
   root.querySelectorAll('[data-publish]').forEach((b) => b.addEventListener('click', () => {
     store.updateListing(b.dataset.publish, { status: 'live' });
     render();
+  }));
+  root.querySelectorAll('[data-unpublish]').forEach((b) => b.addEventListener('click', () => {
+    store.updateListing(b.dataset.unpublish, { status: 'draft' });
+    render();
+  }));
+  root.querySelectorAll('[data-duplicate]').forEach((b) => b.addEventListener('click', () => {
+    store.duplicateListing(b.dataset.duplicate);
+    render();
+  }));
+  root.querySelectorAll('[data-delete]').forEach((b) => b.addEventListener('click', () => {
+    if (confirm('Delete this listing? This cannot be undone.')) {
+      store.deleteListing(b.dataset.delete);
+      render();
+    }
   }));
   root.querySelectorAll('[data-accept]').forEach((b) => b.addEventListener('click', () => {
     const deal = store.getDeal(b.dataset.accept) || {};
@@ -358,6 +387,11 @@ function renderBuyer() {
   const score = v ? readinessScore(v) : 0;
   const band = readinessBand(score);
   const breakdown = readinessBreakdown(v || {});
+  const seenAt = store.alertsSeenAt();
+  const newMatches = criteria
+    ? recommendedForBuyer(liveListings, criteria, 6).filter((r) => r.listing.createdAt && r.listing.createdAt > (seenAt || 0))
+    : [];
+  const threadCount = store.allDeals().reduce((n, d) => n + (d.deal.thread || []).filter((m) => m.from === 'owner').length, 0);
 
   root.innerHTML = `
     <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
@@ -398,6 +432,27 @@ function renderBuyer() {
         </p>
         <p style="margin-top:var(--s-3)"><a class="btn btn--primary" href="verify.html">Start verification</a></p>`}
     </div>
+
+    ${newMatches.length ? `
+      <div class="notice notice--info" style="margin-top: var(--s-5)">
+        <h3>${newMatches.length} new match${newMatches.length === 1 ? '' : 'es'} since your last visit</h3>
+        <ul style="margin-top: var(--s-2); padding-left: 1.1em">
+          ${newMatches.map((r) => `
+            <li style="margin-bottom: var(--s-1)">
+              <a href="listing.html?id=${encodeURIComponent(r.listing.id)}">${esc(r.listing.name)}</a>
+              <span class="muted">— ${esc(r.listing.city)}, ${esc(r.listing.industry)}, ${r.score}% fit</span>
+            </li>`).join('')}
+        </ul>
+        <p style="margin-top: var(--s-3)">
+          <button class="btn btn--ghost" id="alerts-seen" type="button">Mark all as seen</button>
+        </p>
+      </div>` : ''}
+
+    ${threadCount > 0 ? `
+      <div class="notice notice--info" style="margin-top: var(--s-5)">
+        <h3>${threadCount} new message${threadCount === 1 ? '' : 's'} from owners</h3>
+        <p>Open a conversation from a listing page or your dashboard.</p>
+      </div>` : ''}
 
     <div class="sec-head" style="margin-top:var(--s-7)">
       <h2 style="font-size: var(--step-2)">Recommended for you</h2>
@@ -456,6 +511,13 @@ function renderBuyer() {
     store.clearUser();
     render();
   });
+  const alertsSeen = document.getElementById('alerts-seen');
+  if (alertsSeen) {
+    alertsSeen.addEventListener('click', () => {
+      store.markAlertsSeen();
+      render();
+    });
+  }
 }
 
 function render() {

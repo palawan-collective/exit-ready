@@ -1,0 +1,235 @@
+
+import { REGIONS, HANDOFF_TEMPLATE } from 'file:///C:/dev/exit-ready/site/data/listings.js';
+import { readinessScore, readinessBand } from 'file:///C:/dev/exit-ready/site/data/verification.js';
+import * as store from 'file:///C:/dev/exit-ready/site/data/store.js';
+import { fullMoney, esc } from 'file:///C:/dev/exit-ready/site/data/format.js';
+
+const id = new URLSearchParams(location.search).get('id');
+const listing = store.findListing(id);
+const root = document.getElementById('root');
+
+if (!listing) {
+  root.innerHTML = `
+    <div class="notice notice--warn">
+      <h3>Listing not found</h3>
+      <p>That listing does not exist. <a href="browse.html">Browse all businesses</a>.</p>
+    </div>`;
+} else {
+  render(listing);
+}
+
+function render(listing) {
+  const r = REGIONS.find((x) => x.code === listing.region);
+  const existing = store.getDeal(listing.id);
+  const v = store.getVerification('buyer');
+  const score = v ? readinessScore(v) : 0;
+  const band = readinessBand(score);
+
+  document.title = `Make an offer — ${listing.name} — Exit-Ready`;
+
+  root.innerHTML = `
+    <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
+      <a href="browse.html">Browse</a> <span class="muted">/</span>
+      <a href="listing.html?id=${encodeURIComponent(listing.id)}">${esc(listing.name)}</a>
+      <span class="muted">/</span> <span class="muted">Make an offer</span>
+    </p>
+
+    <h1 style="font-size: var(--step-4); letter-spacing:-0.025em; margin-bottom: var(--s-3)">Make an offer</h1>
+    <p class="muted" style="font-family:var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5); max-width: 62ch">
+      Two steps: accept the standard NDA, then record your terms. The owner sees the whole
+      record — not a message thread.
+    </p>
+
+    <div class="detail">
+      <div>
+        ${!v ? `
+          <div class="notice notice--warn">
+            <h3>You are not verified yet</h3>
+            <p>Owners see a readiness score before they respond. Verify first — it takes a minute.</p>
+            <p style="margin:var(--s-3) 0 0"><a class="btn btn--primary" href="verify.html">Get verified</a></p>
+          </div>` : `
+          <div class="notice notice--info">
+            <h3>Your readiness: ${score} / 100 — ${esc(band.label)}</h3>
+            <p>The owner can see this score before responding to your offer.</p>
+          </div>`}
+
+        ${existing ? existingState(existing, listing, r) : ''}
+
+        ${existing?.offer?.status === 'sent' ? '' : `
+        <form id="offer-form" class="stack" novalidate>
+          <fieldset>
+            <legend>Step 1 — Standard non-disclosure agreement</legend>
+            <p class="field__hint" style="margin-bottom: var(--s-3)">
+              You will keep confidential every non-public detail you receive about this business,
+              and you will use it only to evaluate this purchase. This is the gate that unlocks
+              financial detail.
+            </p>
+            <div class="field">
+              <label for="nda_name">Printed name (electronic signature)</label>
+              <input type="text" id="nda_name" name="nda_name" placeholder="Your full name">
+              <span class="field__error" data-for="nda_name" hidden>Enter your printed name.</span>
+            </div>
+            <label class="check">
+              <input type="checkbox" name="nda_agreed">
+              <span>I accept the standard NDA and agree to be bound by its terms.</span>
+            </label>
+            <span class="field__error" data-for="nda_agreed" hidden>You must accept the NDA.</span>
+          </fieldset>
+
+          <fieldset>
+            <legend>Step 2 — Your offer</legend>
+            <div class="form-grid form-grid--2">
+              <div class="field">
+                <label for="amount">Offer amount (${r.symbol})</label>
+                <input type="number" id="amount" name="amount" min="0"
+                       value="${listing.asking_price || ''}">
+              </div>
+              <div class="field">
+                <label for="deposit">Deposit (${r.symbol})</label>
+                <input type="number" id="deposit" name="deposit" min="0"
+                       value="${Math.round((listing.asking_price || 0) * 0.1)}">
+              </div>
+              <div class="field">
+                <label for="funding">Funding path</label>
+                <select id="funding" name="funding">
+                  <option value="">Select one</option>
+                  <option>Cash</option>
+                  <option>Bank loan (pre-qualified)</option>
+                  <option>Seller financing</option>
+                  <option>Investor or partner</option>
+                  <option>Combination</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="timeline">Completion timeline</label>
+                <select id="timeline" name="timeline">
+                  <option value="">Select one</option>
+                  <option>1–3 months</option>
+                  <option>3–6 months</option>
+                  <option>6+ months</option>
+                </select>
+              </div>
+              <div class="field span-2">
+                <label for="conditions">Conditions</label>
+                <textarea id="conditions" name="conditions"
+                  placeholder="e.g. Subject to financial verification, lease assignment and licence transfer."></textarea>
+              </div>
+              <div class="field span-2">
+                <label for="message">Message to the owner <span class="muted">(optional)</span></label>
+                <textarea id="message" name="message"
+                  placeholder="Who you are, why this business, and how you would run it."></textarea>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="hero__actions">
+            <button class="btn btn--primary" type="submit">Send the offer</button>
+            <a class="btn btn--ghost" href="listing.html?id=${encodeURIComponent(listing.id)}">Back to listing</a>
+          </div>
+          <div id="offer-status" class="notice notice--info" hidden role="status" aria-live="polite"></div>
+        </form>`}
+      </div>
+
+      <aside class="detail__aside">
+        <div class="panel">
+          <h2>The business</h2>
+          <table class="deftable">
+            <tbody>
+              <tr><th scope="row">Asking</th><td>${fullMoney(listing.asking_price, r.symbol)}</td></tr>
+              <tr><th scope="row">Cash flow (SDE)</th><td>${fullMoney(listing.cash_flow_sde, r.symbol)}</td></tr>
+              <tr><th scope="row">Revenue</th><td>${fullMoney(listing.gross_revenue, r.symbol)}</td></tr>
+              <tr><th scope="row">Established</th><td>${listing.established || '—'}</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <h2>What happens next</h2>
+          <ol class="track">
+            ${HANDOFF_TEMPLATE.slice(0, 4).map((m) => `<li data-state="pending"><span class="track__label">${esc(m.label)}</span><span class="track__state">pending</span></li>`).join('')}
+          </ol>
+          <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-3)">
+            Twelve milestones in total, tracked in the handoff plan.
+          </p>
+          <p style="margin:0"><a class="btn btn--ghost btn--block" href="handoff.html">See the handoff plan</a></p>
+        </div>
+      </aside>
+    </div>
+  `;
+
+  const form = document.getElementById('offer-form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const errors = {};
+      const ndaName = form.querySelector('[name="nda_name"]').value.trim();
+      const ndaAgreed = form.querySelector('[name="nda_agreed"]').checked;
+      const amount = Number(form.querySelector('[name="amount"]').value);
+      const deposit = Number(form.querySelector('[name="deposit"]').value);
+      const funding = form.querySelector('[name="funding"]').value;
+      const timeline = form.querySelector('[name="timeline"]').value;
+
+      if (!ndaName) errors.nda_name = 'Enter your printed name.';
+      if (!ndaAgreed) errors.nda_agreed = 'You must accept the NDA.';
+      if (!amount) errors.amount = 'Enter an offer amount.';
+      if (deposit && deposit > amount) errors.deposit = 'Deposit cannot exceed the offer.';
+
+      form.querySelectorAll('.field__error').forEach((el) => { el.hidden = true; });
+      if (Object.keys(errors).length) {
+        for (const [name, msg] of Object.entries(errors)) {
+          const el = form.querySelector(`.field__error[data-for="${name}"]`);
+          if (el) { el.textContent = msg; el.hidden = false; }
+        }
+        const first = form.querySelector('.field__error:not([hidden])');
+        if (first) first.focus?.();
+        return;
+      }
+
+      const deal = store.getDeal(listing.id) || { listingId: listing.id };
+      deal.nda = { signed: true, signer: ndaName, at: new Date().toISOString() };
+      deal.offer = {
+        amount, deposit: deposit || 0, funding, timeline,
+        conditions: form.querySelector('[name="conditions"]').value.trim(),
+        message: form.querySelector('[name="message"]').value.trim(),
+        status: 'sent',
+        at: new Date().toISOString(),
+      };
+      store.setDeal(listing.id, deal);
+
+      const status = document.getElementById('offer-status');
+      status.hidden = false;
+      status.className = 'notice notice--info';
+      status.innerHTML = `
+        <h3>Offer sent</h3>
+        <p>${fullMoney(amount, r.symbol)} offered, ${fullMoney(deposit || 0, r.symbol)} deposit,
+        ${esc(funding || 'funding not specified')}, ${esc(timeline || 'timeline not specified')}.</p>
+        <p style="margin-top:var(--s-3); display:flex; gap:var(--s-2); flex-wrap:wrap">
+          <a class="btn btn--primary" href="deal.html?id=${encodeURIComponent(listing.id)}">Open the handoff tracker</a>
+          <a class="btn btn--ghost" href="dashboard.html">Go to your dashboard</a>
+          <a class="btn btn--ghost" href="loi.html?id=${encodeURIComponent(listing.id)}">Generate the letter of intent</a>
+        </p>`;
+      status.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      form.hidden = true;
+    });
+  }
+}
+
+function existingState(deal, listing, r) {
+  const o = deal.offer;
+  if (!o) return '';
+  const tone = o.status === 'accepted' ? 'good' : o.status === 'declined' ? 'low' : 'warn';
+  const label = o.status === 'accepted' ? 'Accepted' : o.status === 'declined' ? 'Declined' : 'Offer sent';
+  return `
+    <div class="notice notice--info">
+      <h3>There is already an offer on this listing</h3>
+      <table class="deftable" style="margin-top:var(--s-3)">
+        <tbody>
+          <tr><th scope="row">Status</th><td><span class="tag tag--${tone}">${label}</span></td></tr>
+          <tr><th scope="row">Amount</th><td>${fullMoney(o.amount, r.symbol)}</td></tr>
+          <tr><th scope="row">Deposit</th><td>${fullMoney(o.deposit || 0, r.symbol)}</td></tr>
+          <tr><th scope="row">Funding</th><td>${esc(o.funding || '—')}</td></tr>
+          <tr><th scope="row">NDA</th><td>${deal.nda?.signed ? 'Signed by ' + esc(deal.nda.signer) + ', ' + esc((deal.nda.at || '').slice(0, 10)) : 'Not signed'}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+}

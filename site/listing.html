@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
@@ -259,6 +260,34 @@ root.innerHTML = `
         <table class="deftable"><tbody>${buyersHtml}</tbody></table>
       </div>
 
+      <div class="panel" id="nda-panel" ${isOwn ? 'hidden' : ''}>
+        <h2>Owner details and full financials</h2>
+        <div id="nda-lock">
+          <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
+            The owner's contact details, the exact monthly figures, and the supporting documents
+            stay behind one standard agreement.
+          </p>
+          <p style="margin: var(--s-3) 0 0">
+            <button class="btn btn--primary btn--block" id="nda-sign" type="button">Sign the standard NDA to unlock</button>
+          </p>
+        </div>
+        <div id="nda-open" hidden>
+          <table class="deftable">
+            <tbody>
+              <tr><th scope="row">Owner</th><td>${esc(l.owner?.name || 'On file')}</td></tr>
+              <tr><th scope="row">Email</th><td>${esc(l.owner?.email || 'On file')}</td></tr>
+              <tr><th scope="row">Monthly revenue</th><td>${l.gross_revenue ? fullMoney(Math.round(l.gross_revenue / 12), r.symbol) : '—'}</td></tr>
+              <tr><th scope="row">Monthly cash flow</th><td>${l.cash_flow_sde ? fullMoney(Math.round(l.cash_flow_sde / 12), r.symbol) : '—'}</td></tr>
+              <tr><th scope="row">Monthly rent</th><td>${l.monthly_rent ? fullMoney(l.monthly_rent, r.symbol) : '—'}</td></tr>
+              <tr><th scope="row">Monthly payroll</th><td>${l.monthly_payroll ? fullMoney(l.monthly_payroll, r.symbol) : '—'}</td></tr>
+              <tr><th scope="row">Inventory</th><td>${fullMoney(l.inventory_amount, r.symbol)}<br>
+                <span class="muted" style="font-weight:400">${l.inventory_included_in_price ? 'Included in asking price' : 'Not included in asking price'}</span></td></tr>
+            </tbody>
+          </table>
+          <p class="muted" style="font-family: var(--font-ui); font-size: 0.75rem" id="nda-note"></p>
+        </div>
+      </div>
+
       <div class="panel">
         <h2>${isOwn ? 'Your listing' : 'Interested?'}</h2>
         <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
@@ -276,6 +305,9 @@ root.innerHTML = `
             ${store.isSaved(l.id) ? 'Saved' : 'Save for later'}
           </button>
         </p>
+        <p style="margin-bottom: var(--s-3)">
+          <a class="btn btn--ghost btn--block" href="messages.html?id=${encodeURIComponent(l.id)}">${isOwn ? 'View messages' : 'Message the owner'}</a>
+        </p>
         <p style="margin: 0">
           <a class="btn btn--ghost btn--block" href="handoff.html">See the handoff plan</a>
         </p>
@@ -292,6 +324,38 @@ if (saveBtn) {
     store.toggleSaved(l.id);
     saveBtn.textContent = store.isSaved(l.id) ? 'Saved' : 'Save for later';
   });
+}
+
+/* One-click NDA unlock */
+const ndaLock = document.getElementById('nda-lock');
+const ndaOpen = document.getElementById('nda-open');
+const ndaSign = document.getElementById('nda-sign');
+const ndaNote = document.getElementById('nda-note');
+if (ndaLock && ndaOpen) {
+  const applyNda = () => {
+    const deal = store.getDeal(l.id);
+    if (deal?.nda?.signed) {
+      ndaLock.hidden = true;
+      ndaOpen.hidden = false;
+      if (ndaNote) {
+        ndaNote.textContent = `NDA signed by ${deal.nda.signer} on ${deal.nda.at ? deal.nda.at.slice(0, 10) : '—'}. `
+          + 'The signature is timestamped and visible to the owner.';
+      }
+    } else {
+      ndaLock.hidden = false;
+      ndaOpen.hidden = true;
+    }
+  };
+  if (ndaSign) {
+    ndaSign.addEventListener('click', () => {
+      const buyer = store.getVerification('buyer');
+      const deal = store.getDeal(l.id) || { listingId: l.id };
+      deal.nda = { signed: true, signer: buyer?.full_name || 'Verified buyer', at: new Date().toISOString() };
+      store.setDeal(l.id, deal);
+      applyNda();
+    });
+  }
+  applyNda();
 }
 </script>
 </body>

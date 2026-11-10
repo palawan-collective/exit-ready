@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
@@ -104,6 +105,17 @@
       <p style="margin-top: var(--s-5)">
         <a class="btn btn--ghost" href="browse.html">See all listings</a>
       </p>
+    </div>
+  </section>
+
+  <!-- ================= INVENTORY COUNTS ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Where the inventory is</h2>
+        <p>Live listings by industry and by location. Sellers see where the buyers are; buyers see where to look.</p>
+      </div>
+      <div class="dash__stats" id="counts"></div>
     </div>
   </section>
 
@@ -199,7 +211,7 @@
 <script type="module">
 import { LISTINGS, REGIONS } from './data/listings.js';
 import * as store from './data/store.js';
-import { money, shorten } from './data/format.js';
+import { money, shorten, esc } from './data/format.js';
 
 const owned = new Set(store.userListings().map((l) => l.id));
 const el = document.getElementById('home-listings');
@@ -220,6 +232,25 @@ el.innerHTML = store.allListings()
     </dl>
   </a>`;
 }).join('');
+
+// Inventory counts — industries and locations
+const counts = document.getElementById('counts');
+if (counts) {
+  const live = store.allListings()
+    .filter((l) => owned.has(l.id) || (l.status || 'live') === 'live');
+  const byIndustry = {};
+  const byCity = {};
+  for (const l of live) {
+    byIndustry[l.industry] = (byIndustry[l.industry] || 0) + 1;
+    const r = REGIONS.find((x) => x.code === l.region);
+    byCity[`${l.city}, ${r.label}`] = (byCity[`${l.city}, ${r.label}`] || 0) + 1;
+  }
+  const top = (obj, n) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n);
+  const tile = (n, label) => `<div class="panel"><div class="dash__num">${n}</div><div class="dash__label">${esc(label)}</div></div>`;
+  counts.innerHTML = tile(live.length, 'Live listings')
+    + top(byIndustry, 4).map(([k, v]) => tile(v, k)).join('')
+    + top(byCity, 3).map(([k, v]) => tile(v, k)).join('');
+}
 
 // One restrained reveal
 const obs = new IntersectionObserver((entries) => {

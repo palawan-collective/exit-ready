@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify — Exit-Ready</title>
+<meta name="description" content="Verify as a seller or a buyer. Buyers get a transparent readiness score; sellers confirm identity, business existence and authority to sell.">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a class="wordmark" href="index.html">Exit<span>·</span>Ready</a>
+    <nav class="masthead__nav" aria-label="Primary">
+      <a href="browse.html">Browse businesses</a>
+      <a href="sell.html">Sell yours</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="handoff.html">Handoff plan</a>
+      <a class="btn btn--primary" href="sell.html">Start a listing</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section section--plain">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Verify</h2>
+        <p>
+          One process for both sides. Buyers declare a funding path and get a transparent
+          readiness score. Sellers confirm identity, that the business exists, and that they
+          are entitled to sell it.
+        </p>
+      </div>
+
+      <div class="detail">
+        <div>
+          <!-- Role selector -->
+          <div class="filters" role="tablist" aria-label="Choose your role">
+            <button class="btn btn--primary" id="role-buyer" role="tab" aria-selected="true" type="button">
+              I'm buying a business
+            </button>
+            <button class="btn btn--ghost" id="role-owner" role="tab" aria-selected="false" type="button">
+              I'm selling my business
+            </button>
+          </div>
+
+          <!-- ================= BUYER ================= -->
+          <form id="buyer-form" class="stack" novalidate>
+            <fieldset>
+              <legend>Your identity</legend>
+              <div class="form-grid form-grid--2">
+                <div class="field span-2">
+                  <label for="b-full_name">Full name</label>
+                  <input type="text" id="b-full_name" name="full_name" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label for="b-email">Email</label>
+                  <input type="text" id="b-email" name="email" autocomplete="email">
+                </div>
+                <div class="field">
+                  <label for="b-country">Country</label>
+                  <select id="b-country" name="country">
+                    <option value="">Select a country</option>
+                    <option value="US">United States</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="PH">Philippines</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="b-id_type">Identity document</label>
+                  <select id="b-id_type" name="id_type">
+                    <option value="">Select a document</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="b-id_number">Document number</label>
+                  <input type="text" id="b-id_number" name="id_number">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>How you will fund it</legend>
+              <p class="field__hint" style="margin-bottom: var(--s-4)">
+                The funding path is only counted when the how, the deposit capacity and the
+                timeline are all stated.
+              </p>
+              <div class="form-grid form-grid--2">
+                <div class="field">
+                  <label for="b-funding_path">Funding path</label>
+                  <select id="b-funding_path" name="funding_path">
+                    <option value="">Select one</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="b-deposit_band">Deposit capacity</label>
+                  <select id="b-deposit_band" name="deposit_band">
+                    <option value="">Select a band</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="b-timeline">Timeline</label>
+                  <select id="b-timeline" name="timeline">
+                    <option value="">Select one</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="b-references">References</label>
+                  <select id="b-references" name="references">
+                    <option value="0">None yet</option>
+                    <option value="1">1 reference</option>
+                    <option value="2">2 references</option>
+                    <option value="3">3 or more</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Experience and agreement</legend>
+              <label class="check">
+                <input type="radio" name="prior_ownership" value="yes">
+                <span>I have run or bought a business before</span>
+              </label>
+              <label class="check">
+                <input type="radio" name="prior_ownership" value="no">
+                <span>This would be my first business</span>
+              </label>
+              <span class="field__error" data-for="prior_ownership" hidden>Select one.</span>
+
+              <label class="check" style="margin-top: var(--s-3)">
+                <input type="checkbox" id="b-nda_agreed" name="nda_agreed">
+                <span>I have signed the standard NDA
+                  <span class="muted">— optional now. You can sign later from any listing.</span></span>
+              </label>
+
+              <label class="check">
+                <input type="checkbox" name="attest">
+                <span>The information I have provided is accurate and I consent to it being checked.</span>
+              </label>
+              <span class="field__error" data-for="attest" hidden>You must confirm this.</span>
+            </fieldset>
+
+            <div class="hero__actions">
+              <button class="btn btn--primary" type="submit">Get my readiness score</button>
+            </div>
+            <div id="buyer-status" class="notice notice--info" hidden role="status" aria-live="polite"></div>
+          </form>
+
+          <!-- ================= OWNER ================= -->
+          <form id="owner-form" class="stack" novalidate hidden>
+            <fieldset>
+              <legend>Your identity</legend>
+              <div class="form-grid form-grid--2">
+                <div class="field span-2">
+                  <label for="o-full_name">Full name</label>
+                  <input type="text" id="o-full_name" name="full_name" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label for="o-email">Email</label>
+                  <input type="text" id="o-email" name="email" autocomplete="email">
+                </div>
+                <div class="field">
+                  <label for="o-phone">Phone</label>
+                  <input type="text" id="o-phone" name="phone" autocomplete="tel">
+                </div>
+                <div class="field">
+                  <label for="o-country">Country</label>
+                  <select id="o-country" name="country">
+                    <option value="">Select a country</option>
+                    <option value="US">United States</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="PH">Philippines</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="o-id_type">Identity document</label>
+                  <select id="o-id_type" name="id_type">
+                    <option value="">Select a document</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="o-id_number">Document number</label>
+                  <input type="text" id="o-id_number" name="id_number">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>The business</legend>
+              <div class="form-grid form-grid--2">
+                <div class="field span-2">
+                  <label for="o-business_name">Business name</label>
+                  <input type="text" id="o-business_name" name="business_name">
+                </div>
+                <div class="field">
+                  <label for="o-registration_number">Registration number</label>
+                  <input type="text" id="o-registration_number" name="registration_number">
+                </div>
+                <div class="field">
+                  <label for="o-tax_id">Tax ID</label>
+                  <input type="text" id="o-tax_id" name="tax_id">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Authority and accuracy</legend>
+              <label class="check">
+                <input type="checkbox" name="authority">
+                <span>I am entitled to sell this business
+                  <span class="muted">— I own it, or I am authorised by the owners to list it.</span></span>
+              </label>
+              <span class="field__error" data-for="authority" hidden>You must confirm this.</span>
+              <label class="check">
+                <input type="checkbox" name="attest">
+                <span>The information I have provided is accurate and I consent to it being checked.</span>
+              </label>
+              <span class="field__error" data-for="attest" hidden>You must confirm this.</span>
+            </fieldset>
+
+            <div class="notice notice--warn">
+              <h3>Before you submit</h3>
+              <p>
+                This prototype does not submit anywhere and does not store documents. On the live
+                product, verification is reviewed by a person before your listing goes live.
+              </p>
+            </div>
+
+            <div class="hero__actions">
+              <button class="btn btn--primary" type="submit">Submit for review</button>
+            </div>
+            <div id="owner-status" class="notice notice--info" hidden role="status" aria-live="polite"></div>
+          </form>
+        </div>
+
+        <!-- ================= ASIDE ================= -->
+        <aside class="detail__aside">
+          <div class="panel">
+            <h2>How the readiness score works</h2>
+            <table class="deftable">
+              <tbody>
+                <tr><th scope="row">Identity verified</th><td>25 points</td></tr>
+                <tr><th scope="row">Funding path declared</th><td>25 points</td></tr>
+                <tr><th scope="row">NDA signed</th><td>20 points</td></tr>
+                <tr><th scope="row">Prior ownership</th><td>15 points</td></tr>
+                <tr><th scope="row">References</th><td>15 points</td></tr>
+              </tbody>
+            </table>
+            <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-top: var(--s-4)">
+              80 and above reads as ready. 55 to 79 is developing. Below 55 is early.
+              Sellers see the number, not just a badge.
+            </p>
+          </div>
+
+          <div class="panel">
+            <h2>What we check, and what we don't</h2>
+            <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
+              Not a background check and not a guarantee. It answers one question:
+              can this person actually complete a purchase? Identity is checked;
+              funding, deposit and timeline are declared and may be evidenced later.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3>Exit-Ready</h3>
+        <p style="max-width: 30ch">A marketplace for retiring owners and the successors who take over.</p>
+      </div>
+      <div>
+        <h3>Sellers</h3>
+        <ul>
+          <li><a href="sell.html">Start a listing</a></li>
+          <li><a href="handoff.html">Handoff plan</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Buyers</h3>
+        <ul>
+          <li><a href="browse.html">Browse businesses</a></li>
+          <li><a href="browse.html?successor=employee">Employee buyouts</a></li>
+          <li><a href="browse.html?successor=first_time">First-time buyers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Regions</h3>
+        <ul>
+          <li><a href="browse.html?region=US">United States</a></li>
+          <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=PH">Philippines</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>
+        <strong>This site is a working prototype.</strong> Verification submissions are stored in
+        this browser only, in <code>localStorage</code>. Nothing is sent anywhere and no document
+        is uploaded. On the live product, verification is reviewed by a person.
+      </p>
+      <p>
+        Exit-Ready is a marketplace and tooling provider. We are not a business broker,
+        we do not provide valuations, and nothing here is financial, legal or tax advice.
+        A readiness score reports what a buyer declared and had checked; it is not a guarantee
+        of completion. Regulated services are provided by licensed third parties.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import {
+  ID_TYPES, FUNDING_PATHS, TIMELINES, depositBands,
+  READINESS_WEIGHTS, MAX_SCORE, readinessBreakdown, readinessScore, readinessBand,
+  validateBuyer, validateOwner, buyerFromForm, ownerFromForm,
+} from './data/verification.js';
+import { esc } from './data/format.js';
+
+const buyerForm = document.getElementById('buyer-form');
+const ownerForm = document.getElementById('owner-form');
+const roleBuyer = document.getElementById('role-buyer');
+const roleOwner = document.getElementById('role-owner');
+const buyerStatus = document.getElementById('buyer-status');
+const ownerStatus = document.getElementById('owner-status');
+
+const KEYS = { buyer: 'exit-ready:verification:buyer', owner: 'exit-ready:verification:owner' };
+
+/* ---------- populate selects ---------- */
+function fill(select, options, keepFirst = true) {
+  const first = keepFirst ? select.options[0] : null;
+  select.innerHTML = '';
+  if (first) select.appendChild(first);
+  for (const o of options) {
+    const el = document.createElement('option');
+    el.value = o;
+    el.textContent = o;
+    select.appendChild(el);
+  }
+}
+
+fill(document.getElementById('b-id_type'), ID_TYPES);
+fill(document.getElementById('o-id_type'), ID_TYPES);
+fill(document.getElementById('b-funding_path'), FUNDING_PATHS);
+fill(document.getElementById('b-timeline'), TIMELINES);
+
+function syncDepositBands() {
+  const country = document.getElementById('b-country').value;
+  const current = document.getElementById('b-deposit_band').value;
+  fill(document.getElementById('b-deposit_band'), depositBands(country));
+  if (depositBands(country).includes(current)) document.getElementById('b-deposit_band').value = current;
+}
+document.getElementById('b-country').addEventListener('change', syncDepositBands);
+syncDepositBands();
+
+/* ---------- role toggle ---------- */
+function showRole(role) {
+  const isBuyer = role === 'buyer';
+  buyerForm.hidden = !isBuyer;
+  ownerForm.hidden = isBuyer;
+  roleBuyer.setAttribute('aria-selected', String(isBuyer));
+  roleOwner.setAttribute('aria-selected', String(!isBuyer));
+  roleBuyer.className = isBuyer ? 'btn btn--primary' : 'btn btn--ghost';
+  roleOwner.className = isBuyer ? 'btn btn--ghost' : 'btn btn--primary';
+}
+roleBuyer.addEventListener('click', () => showRole('buyer'));
+roleOwner.addEventListener('click', () => showRole('owner'));
+
+/* ---------- validation helpers ---------- */
+function showErrors(form, errors) {
+  form.querySelectorAll('.field__error').forEach(el => { el.hidden = true; });
+  form.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+  for (const [name, message] of Object.entries(errors)) {
+    const err = form.querySelector(`.field__error[data-for="${name}"]`);
+    if (err) { err.textContent = message; err.hidden = false; }
+    const field = form.elements[name];
+    if (field) field.setAttribute('aria-invalid', 'true');
+  }
+}
+
+function readForm(form) {
+  const v = {};
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    if (el.type === 'checkbox') v[el.name] = el.checked;
+    else if (el.type === 'radio') { if (el.checked) v[el.name] = el.value; }
+    else v[el.name] = el.value;
+  }
+  return v;
+}
+
+/* ---------- buyer submit ---------- */
+buyerForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = readForm(buyerForm);
+  const { ok, errors } = validateBuyer(v);
+  if (!ok) {
+    showErrors(buyerForm, errors);
+    buyerStatus.hidden = false;
+    buyerStatus.className = 'notice notice--warn';
+    buyerStatus.innerHTML = '<h3>Not ready yet</h3><p>Check the fields marked above.</p>';
+    return;
+  }
+  showErrors(buyerForm, {});
+  const buyer = buyerFromForm(v);
+  const score = readinessScore(buyer);
+  const band = readinessBand(score);
+  const rows = readinessBreakdown(buyer).map(row => `
+    <tr><th scope="row">${esc(row.label)}</th>
+    <td>${row.earned} of ${row.points}</td></tr>`).join('');
+
+  buyerStatus.hidden = false;
+  buyerStatus.className = 'notice notice--info';
+  buyerStatus.innerHTML = `
+    <h3>Your readiness score: ${score} / ${MAX_SCORE} — ${esc(band.label)}</h3>
+    <table class="deftable"><tbody>${rows}</tbody></table>
+    <p class="muted" style="font-size: 0.75rem; margin-top: var(--s-3)">
+      Stored in this browser only. A seller sees the number and the breakdown before releasing
+      any financial detail. It is not a guarantee of completion.
+    </p>`;
+  buyerStatus.scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  localStorage.setItem(KEYS.buyer, JSON.stringify({ ...buyer, score, band: band.label, at: new Date().toISOString() }));
+});
+
+/* ---------- owner submit ---------- */
+ownerForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = readForm(ownerForm);
+  const { ok, errors } = validateOwner(v);
+  if (!ok) {
+    showErrors(ownerForm, errors);
+    ownerStatus.hidden = false;
+    ownerStatus.className = 'notice notice--warn';
+    ownerStatus.innerHTML = '<h3>Not ready yet</h3><p>Check the fields marked above.</p>';
+    return;
+  }
+  showErrors(ownerForm, {});
+  const owner = ownerFromForm(v);
+  const ref = 'ER-OWN-' + Date.now().toString(36).toUpperCase();
+  ownerStatus.hidden = false;
+  ownerStatus.className = 'notice notice--info';
+  ownerStatus.innerHTML = `
+    <h3>Submitted for review</h3>
+    <p>Reference <strong>${esc(ref)}</strong>. On the live product a person reviews your
+    identity and business records before your listing goes live.</p>
+    <p class="muted" style="font-size: 0.75rem">
+      Stored in this browser only. Nothing was sent anywhere.
+    </p>`;
+  ownerStatus.scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  localStorage.setItem(KEYS.owner, JSON.stringify({ ...owner, reference: ref, at: new Date().toISOString() }));
+});
+
+/* ---------- restore saved submissions ---------- */
+for (const [key, form, status] of [[KEYS.buyer, buyerForm, buyerStatus], [KEYS.owner, ownerForm, ownerStatus]]) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(key));
+    if (!saved) continue;
+    for (const [name, value] of Object.entries(saved)) {
+      const el = form.elements[name];
+      if (!el) continue;
+      if (el.type === 'checkbox') el.checked = Boolean(value);
+      else if (el.type === 'radio') {
+        const r = form.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (r) r.checked = true;
+      } else el.value = value ?? '';
+    }
+    status.hidden = false;
+    status.className = 'notice notice--info';
+    status.innerHTML = `<h3>Saved submission restored</h3><p>From this browser, stored ${esc(saved.at || '')}.</p>`;
+  } catch { /* ignore malformed storage */ }
+}
+
+showRole('buyer');
+</script>
+</body>
+</html>

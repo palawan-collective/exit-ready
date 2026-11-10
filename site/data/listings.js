@@ -360,18 +360,4 @@ export const SAMPLE_BUYERS = [
   },
 ];
 
-export function readinessScore(b) {
-  let s = 0;
-  if (b.identity_verified) s += 25;
-  if (b.funding_path_declared) s += 25;
-  if (b.nda_signed) s += 20;
-  if (b.prior_ownership) s += 15;
-  if (b.references_provided) s += 15;
-  return s;
-}
-
-export function readinessBand(score) {
-  if (score >= 80) return { label: "Ready", tone: "good" };
-  if (score >= 55) return { label: "Developing", tone: "warn" };
-  return { label: "Early", tone: "low" };
-}
+/* Readiness scoring lives in ./verification.js */

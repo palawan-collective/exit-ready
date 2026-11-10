@@ -31,9 +31,11 @@ breaks `listing.html?id=...`. `http-server` serves the files as-is.
 
 ```
 node tests/tracker.test.mjs
+node tests/verification.test.mjs
 ```
 
-22 assertions on the handoff tracker state logic. No dependencies, no test runner.
+22 assertions on the handoff tracker state logic and 46 on verification and readiness scoring.
+No dependencies, no test runner.
 
 ## Pages
 
@@ -43,6 +45,7 @@ node tests/tracker.test.mjs
 | `browse.html` | All listings with working filters: region, industry, successor type, price, sort |
 | `listing.html` | Listing detail. Figures, disclosure flags, operations, handoff plan, buyer readiness |
 | `sell.html` | Create-listing form. Live preview, indicative range, validation, disclosure flags |
+| `verify.html` | Verification for both sides. Buyers get a readiness score with a breakdown; sellers confirm identity, business existence and authority to sell |
 | `how-it-works.html` | The six stages, what verification checks, the NDA gate, pricing, regions |
 | `handoff.html` | The twelve milestones and how they adapt per successor type |
 | `deal.html` | Interactive handoff tracker for one listing. Status, owner, due date, evidence note and two-sided sign-off, stored in `localStorage` |
@@ -52,9 +55,10 @@ node tests/tracker.test.mjs
 | File | Role |
 |---|---|
 | `styles.css` | All styling. Tokens at `:root`, no literal colours or fonts past that block |
-| `data/listings.js` | Sample listings, regions, successor types, disclosure flags, handoff template, sample buyers, readiness scoring |
+| `data/listings.js` | Sample listings, regions, successor types, disclosure flags, handoff template, sample buyers |
 | `data/format.js` | Currency, compact money, date, and HTML-escape helpers |
 | `data/tracker.js` | Handoff tracker state logic — pure functions, no DOM. The rules for status, sign-off and counts |
+| `data/verification.js` | Verification rules and readiness scoring — pure functions, no DOM. Weights, validation, form mapping |
 
 ## The differentiators (what makes this not another classifieds site)
 

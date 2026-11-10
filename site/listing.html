@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
 </header>
@@ -83,11 +84,13 @@ import {
   SAMPLE_BUYERS
 } from './data/listings.js';
 import { readinessScore, readinessBand } from './data/verification.js';
+import * as store from './data/store.js';
 import { fullMoney, shorten, num, longDateLabel, esc } from './data/format.js';
 
 const id = new URLSearchParams(location.search).get('id');
 const root = document.getElementById('detail-root');
-const l = LISTINGS.find(x => x.id === id) || LISTINGS[0];
+const l = store.findListing(id) || LISTINGS[0];
+const isOwn = store.isUserListing(l.id);
 const r = REGIONS.find(x => x.code === l.region);
 
 document.title = `${l.name} — Exit-Ready`;
@@ -169,6 +172,8 @@ root.innerHTML = `
   <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5)">
     ${esc(l.city)}, ${esc(l.area)} · ${esc(l.industry)} · Established ${l.established}
   </p>
+
+  ${isOwn ? `<div class="tags" style="margin-bottom: var(--s-5)"><span class="tag tag--good">Your listing</span></div>` : ''}
 
   <div class="detail">
     <div>
@@ -255,13 +260,21 @@ root.innerHTML = `
       </div>
 
       <div class="panel">
-        <h2>Interested?</h2>
+        <h2>${isOwn ? 'Your listing' : 'Interested?'}</h2>
         <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1)">
-          Verification comes first. You will confirm identity and declare a funding path
-          before the NDA is presented.
+          ${isOwn
+            ? 'This listing is yours. You can follow the deal from the handoff tracker.'
+            : 'Verification comes first. You will confirm identity and declare a funding path before the NDA is presented.'}
         </p>
         <p style="margin-bottom: var(--s-3)">
-          <a class="btn btn--primary btn--block" href="verify.html">Start verification</a>
+          ${isOwn
+            ? `<a class="btn btn--primary btn--block" href="deal.html?id=${encodeURIComponent(l.id)}">Open the handoff tracker</a>`
+            : `<a class="btn btn--primary btn--block" href="offer.html?id=${encodeURIComponent(l.id)}">Make an offer</a>`}
+        </p>
+        <p style="margin-bottom: var(--s-3)">
+          <button class="btn btn--ghost btn--block" type="button" id="save-btn">
+            ${store.isSaved(l.id) ? 'Saved' : 'Save for later'}
+          </button>
         </p>
         <p style="margin: 0">
           <a class="btn btn--ghost btn--block" href="handoff.html">See the handoff plan</a>
@@ -272,6 +285,14 @@ root.innerHTML = `
 
   ${gated}
 `;
+
+const saveBtn = document.getElementById('save-btn');
+if (saveBtn) {
+  saveBtn.addEventListener('click', () => {
+    store.toggleSaved(l.id);
+    saveBtn.textContent = store.isSaved(l.id) ? 'Saved' : 'Save for later';
+  });
+}
 </script>
 </body>
 </html>

@@ -32,10 +32,11 @@ breaks `listing.html?id=...`. `http-server` serves the files as-is.
 ```
 node tests/tracker.test.mjs
 node tests/verification.test.mjs
+node tests/package.test.mjs
 ```
 
-22 assertions on the handoff tracker state logic and 46 on verification and readiness scoring.
-No dependencies, no test runner.
+22 assertions on the handoff tracker state logic, 59 on verification and readiness scoring,
+38 on listing packaging, valuation and matching. No dependencies, no test runner.
 
 ## Pages
 
@@ -46,6 +47,8 @@ No dependencies, no test runner.
 | `listing.html` | Listing detail. Figures, disclosure flags, operations, handoff plan, buyer readiness |
 | `sell.html` | Create-listing form. Live preview, indicative range, validation, disclosure flags |
 | `verify.html` | Verification for both sides. Buyers get a readiness score with a breakdown; sellers confirm identity, business existence and authority to sell |
+| `offer.html` | NDA acceptance and an offer against one listing. Creates a deal both sides can track |
+| `dashboard.html` | The seamless hub. Seller dashboard (listings, exit packs, matched buyers, offers to accept) and buyer dashboard (readiness score, recommendations, saved listings, deals) |
 | `how-it-works.html` | The six stages, what verification checks, the NDA gate, pricing, regions |
 | `handoff.html` | The twelve milestones and how they adapt per successor type |
 | `deal.html` | Interactive handoff tracker for one listing. Status, owner, due date, evidence note and two-sided sign-off, stored in `localStorage` |
@@ -59,6 +62,8 @@ No dependencies, no test runner.
 | `data/format.js` | Currency, compact money, date, and HTML-escape helpers |
 | `data/tracker.js` | Handoff tracker state logic — pure functions, no DOM. The rules for status, sign-off and counts |
 | `data/verification.js` | Verification rules and readiness scoring — pure functions, no DOM. Weights, validation, form mapping |
+| `data/store.js` | The shared client-side store. One `localStorage` state object: user, listings, verification, deals, saved. What a user enters on one page appears on the others |
+| `data/package.js` | The automation layer: form → listing, exit-pack generation (summary + indicative range), and buyer/listing matching |
 
 ## The differentiators (what makes this not another classifieds site)
 

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Exit-Ready</title>
+<meta name="description" content="Your Exit-Ready dashboard: listings, exit packs, matched buyers, offers and deal progress in one place.">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a class="wordmark" href="index.html">Exit<span>·</span>Ready</a>
+    <nav class="masthead__nav" aria-label="Primary">
+      <a href="browse.html">Browse businesses</a>
+      <a href="sell.html">Sell yours</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="handoff.html">Handoff plan</a>
+      <a class="btn btn--primary" href="sell.html">Start a listing</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section section--plain">
+    <div class="container">
+      <div id="root"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h3>Exit-Ready</h3>
+        <p style="max-width: 30ch">A marketplace for retiring owners and the successors who take over.</p>
+      </div>
+      <div>
+        <h3>Sellers</h3>
+        <ul>
+          <li><a href="sell.html">Start a listing</a></li>
+          <li><a href="handoff.html">Handoff plan</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Buyers</h3>
+        <ul>
+          <li><a href="browse.html">Browse businesses</a></li>
+          <li><a href="verify.html">Get verified</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Regions</h3>
+        <ul>
+          <li><a href="browse.html?region=US">United States</a></li>
+          <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=PH">Philippines</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>
+        <strong>This site is a working prototype.</strong> Everything shown here is stored in this
+        browser only, in <code>localStorage</code>. Nothing is sent anywhere and nothing survives
+        a browser reset. On the live product your data lives on our servers and is never sold.
+      </p>
+      <p>
+        Exit-Ready is a marketplace and tooling provider. We are not a business broker,
+        we do not provide valuations, and nothing here is financial, legal or tax advice.
+        Regulated services are provided by licensed third parties.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { LISTINGS, REGIONS, SUCCESSOR_TYPES } from './data/listings.js';
+import { readinessScore, readinessBand, readinessBreakdown } from './data/verification.js';
+import { exitPack, matchedBuyers, recommendedForBuyer, MULTIPLES } from './data/package.js';
+import * as store from './data/store.js';
+import { fullMoney, shorten, esc, longDateLabel } from './data/format.js';
+
+const root = document.getElementById('root');
+const user = store.getUser();
+
+const STATUS_LABEL = {
+  draft: { label: 'Draft', tone: 'low' },
+  live: { label: 'Live', tone: 'good' },
+  verified: { label: 'Verified', tone: 'good' },
+  unverified: { label: 'Unverified', tone: 'warn' },
+};
+
+function statusPill(status) {
+  const s = STATUS_LABEL[status] || STATUS_LABEL.draft;
+  return `<span class="tag tag--${s.tone}">${s.label}</span>`;
+}
+
+function money(n, region) {
+  const sym = (REGIONS.find((r) => r.code === region) || {}).symbol || '$';
+  return fullMoney(n, sym);
+}
+
+function listingCard(l, { actions = '' } = {}) {
+  const r = REGIONS.find((x) => x.code === l.region);
+  const done = Object.values(l.handoff_progress || {}).filter((s) => s === 'done').length;
+  return `
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; gap:var(--s-3); align-items:flex-start; flex-wrap:wrap">
+        <div style="min-width:0">
+          <h2 style="margin-bottom:var(--s-2)">${esc(l.name)}</h2>
+          <p class="muted" style="font-family:var(--font-ui); font-size:var(--step--1); margin:0">
+            ${esc(l.city)}${l.area ? ', ' + esc(l.area) : ''} · ${esc(l.industry)}
+            ${l.established ? ' · Est. ' + l.established : ''}
+          </p>
+        </div>
+        ${statusPill(l.status || 'draft')}
+      </div>
+      <table class="deftable" style="margin-top:var(--s-4)">
+        <tbody>
+          <tr><th scope="row">Asking</th><td>${money(l.asking_price, l.region)}</td></tr>
+          <tr><th scope="row">Cash flow (SDE)</th><td>${money(l.cash_flow_sde, l.region)}</td></tr>
+          <tr><th scope="row">Handoff</th><td>${done} of 12 milestones</td></tr>
+        </tbody>
+      </table>
+      ${l.owner?.name ? `<p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-3)">Listed by ${esc(l.owner.name)}</p>` : ''}
+      <p style="margin: var(--s-4) 0 0; display:flex; gap:var(--s-2); flex-wrap:wrap">${actions}</p>
+    </div>`;
+}
+
+function renderRolePicker() {
+  root.innerHTML = `
+    <div class="sec-head">
+      <h2>Choose how you're using Exit-Ready</h2>
+      <p>Your dashboard adapts. You can switch any time — your data stays put.</p>
+    </div>
+    <div class="grid">
+      <div class="card" style="cursor:default">
+        <div class="card__name" style="font-size:var(--step-1)">I'm selling my business</div>
+        <div class="card__tagline">
+          Create a listing, get an exit pack and an indicative range, verify your identity, and
+          see matched buyers land in one place.
+        </div>
+        <p style="margin-top:var(--s-4)"><a class="btn btn--primary btn--block" href="#owner">Continue as an owner</a></p>
+      </div>
+      <div class="card" style="cursor:default">
+        <div class="card__name" style="font-size:var(--step-1)">I'm buying a business</div>
+        <div class="card__tagline">
+          Get a readiness score sellers can see, save listings, and track every deal from
+          NDA to final payment.
+        </div>
+        <p style="margin-top:var(--s-4)"><a class="btn btn--primary btn--block" href="#buyer">Continue as a buyer</a></p>
+      </div>
+    </div>
+    <p style="margin-top:var(--s-5)">
+      <a class="btn btn--ghost" href="browse.html">Just browsing</a>
+    </p>
+  `;
+  root.querySelector('[href="#owner"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    const name = 'Owner';
+    store.setUser({ role: 'owner', name, email: '' });
+    render();
+  });
+  root.querySelector('[href="#buyer"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    store.setUser({ role: 'buyer', name: 'Buyer', email: '' });
+    render();
+  });
+}
+
+function renderOwner() {
+  const owner = store.getVerification('owner');
+  const listings = store.userListings();
+  const deals = store.allDeals();
+  const buyerVerification = store.getVerification('buyer');
+  const buyers = buyerVerification
+    ? [{
+        ...buyerVerification,
+        region: buyerVerification.country,
+        persona: buyerVerification.persona || 'any',
+        industry: buyerVerification.industry || null,
+        maxPrice: buyerVerification.max_price || null,
+      }]
+    : LISTINGS.slice(0, 3).map((l, i) => ({
+        display_name: ['Sample Buyer A', 'Sample Buyer B', 'Sample Buyer C'][i],
+        persona: ['employee', 'local_operator', 'first_time'][i],
+        region: l.region,
+        industry: l.industry,
+        maxPrice: l.asking_price * 1.2,
+        score: null,
+      }));
+
+  const verified = Boolean(owner && owner.attested);
+  const matches = listings.flatMap((l) => matchedBuyers(l, buyers).slice(0, 2).map((m) => ({ listing: l, ...m })));
+
+  root.innerHTML = `
+    <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
+      <a href="index.html">Home</a> <span class="muted">/</span> <span class="muted">Owner dashboard</span>
+    </p>
+    <div class="sec-head" style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--s-5); flex-wrap:wrap">
+      <div>
+        <h2>Seller dashboard</h2>
+        <p>${esc(store.getUser()?.name || 'Owner')} · ${verified ? 'identity verified' : 'not verified yet'}.</p>
+      </div>
+      <div style="display:flex; gap:var(--s-2); flex-wrap:wrap">
+        <a class="btn btn--primary" href="sell.html">New listing</a>
+        <a class="btn btn--ghost" href="verify.html">${verified ? 'Verification details' : 'Verify your identity'}</a>
+        <a class="btn btn--ghost" href="#" id="switch-role">Switch role</a>
+      </div>
+    </div>
+
+    ${verified ? '' : `
+      <div class="notice notice--warn">
+        <h3>Verify your identity to publish</h3>
+        <p>Your listings stay as drafts until you confirm who you are and that you are entitled
+        to sell. It takes a couple of minutes.</p>
+        <p style="margin:var(--s-3) 0 0"><a class="btn btn--primary" href="verify.html">Start verification</a></p>
+      </div>`}
+
+    <div class="dash__stats">
+      <div class="panel"><div class="dash__num">${listings.length}</div><div class="dash__label">Listings</div></div>
+      <div class="panel"><div class="dash__num">${listings.filter((l) => (l.status || 'draft') === 'live').length}</div><div class="dash__label">Live</div></div>
+      <div class="panel"><div class="dash__num">${matches.length}</div><div class="dash__label">Matched buyers</div></div>
+      <div class="panel"><div class="dash__num">${deals.length}</div><div class="dash__label">Active deals</div></div>
+    </div>
+
+    <div class="sec-head" style="margin-top:var(--s-7)">
+      <h2 style="font-size: var(--step-2)">Your listings</h2>
+      <p>${listings.length ? 'Drafts become live once you are verified.' : 'Create your first listing — it takes about ten minutes.'}</p>
+    </div>
+    <div class="grid">
+      ${listings.length ? listings.map((l) => listingCard(l, {
+        actions: `
+          <a class="btn btn--ghost" href="listing.html?id=${encodeURIComponent(l.id)}">View</a>
+          <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(l.id)}">Handoff tracker</a>
+          ${(l.status || 'draft') !== 'live' && verified
+            ? `<button class="btn btn--primary" data-publish="${esc(l.id)}" type="button">Publish</button>`
+            : ''}
+          <button class="btn btn--ghost" data-pack="${esc(l.id)}" type="button">Exit pack</button>
+        `,
+      })).join('') : '<p class="muted">No listings yet.</p>'}
+    </div>
+    <div id="pack-out"></div>
+
+    <div class="sec-head" style="margin-top:var(--s-7)">
+      <h2 style="font-size: var(--step-2)">Matched buyers</h2>
+      <p>Buyers whose stated criteria fit your listings. Sorted by fit.</p>
+    </div>
+    ${matches.length ? `
+      <div class="grid">
+        ${matches.map((m) => {
+          const b = m.buyer;
+          const score = b.score != null ? b.score : null;
+          return `
+          <div class="card" style="cursor:default">
+            <div class="card__meta">${esc(m.listing.name)}</div>
+            <div class="card__name" style="font-size:var(--step-1)">${esc(b.display_name || b.full_name || 'Buyer')}</div>
+            <div class="card__tagline">${esc((SUCCESSOR_TYPES.find((s) => s.id === b.persona) || {}).label || 'Buyer')}</div>
+            <div class="card__figures">
+              <div class="figure"><dt>Fit</dt><dd>${m.score}%</dd></div>
+              <div class="figure"><dt>Readiness</dt><dd>${score != null ? score + ' / 100' : '—'}</dd></div>
+            </div>
+            <p style="margin-top:var(--s-3)"><a class="btn btn--ghost btn--block" href="listing.html?id=${encodeURIComponent(m.listing.id)}">Open the listing</a></p>
+          </div>`;
+        }).join('')}
+      </div>` : '<p class="muted">No buyer matches yet. Add a listing or complete buyer verification to see matches.</p>'}
+
+    ${deals.length ? `
+      <div class="sec-head" style="margin-top:var(--s-7)">
+        <h2 style="font-size: var(--step-2)">Active deals</h2>
+        <p>Offers you have received or made.</p>
+      </div>
+      <div class="grid">
+        ${deals.map(({ listing: l, deal }) => `
+          <div class="card" style="cursor:default">
+            <div class="card__meta">${esc(l.name)}</div>
+            <div class="card__name" style="font-size:var(--step-1)">${esc(deal.offer?.status || 'Offer')}</div>
+            <div class="card__tagline">${money(deal.offer?.amount || 0, l.region)} offered${deal.offer?.funding ? ' · ' + esc(deal.offer.funding) : ''}${deal.offer?.timeline ? ' · ' + esc(deal.offer.timeline) : ''}</div>
+            <div class="card__figures">
+              <div class="figure"><dt>Deposit</dt><dd>${money(deal.offer?.deposit || 0, l.region)}</dd></div>
+              <div class="figure"><dt>NDA</dt><dd>${deal.nda?.signed ? 'Signed' : 'Not signed'}</dd></div>
+            </div>
+            <p style="margin-top:var(--s-3); display:flex; gap:var(--s-2); flex-wrap:wrap">
+              <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(l.id)}">Tracker</a>
+              ${deal.offer?.status === 'sent' ? `
+                <button class="btn btn--primary" data-accept="${esc(l.id)}" type="button">Accept</button>
+                <button class="btn btn--ghost" data-decline="${esc(l.id)}" type="button">Decline</button>` : ''}
+            </p>
+          </div>`).join('')}
+      </div>` : ''}
+  `;
+
+  root.querySelector('#switch-role').addEventListener('click', (e) => {
+    e.preventDefault();
+    store.clearUser();
+    render();
+  });
+  root.querySelectorAll('[data-publish]').forEach((b) => b.addEventListener('click', () => {
+    store.updateListing(b.dataset.publish, { status: 'live' });
+    render();
+  }));
+  root.querySelectorAll('[data-accept]').forEach((b) => b.addEventListener('click', () => {
+    const deal = store.getDeal(b.dataset.accept) || {};
+    deal.offer = { ...(deal.offer || {}), status: 'accepted', at: new Date().toISOString() };
+    store.setDeal(b.dataset.accept, deal);
+    render();
+  }));
+  root.querySelectorAll('[data-decline]').forEach((b) => b.addEventListener('click', () => {
+    const deal = store.getDeal(b.dataset.decline) || {};
+    deal.offer = { ...(deal.offer || {}), status: 'declined', at: new Date().toISOString() };
+    store.setDeal(b.dataset.decline, deal);
+    render();
+  }));
+  root.querySelectorAll('[data-pack]').forEach((b) => b.addEventListener('click', () => {
+    const l = store.findListing(b.dataset.pack);
+    const pack = exitPack(l);
+    const r = REGIONS.find((x) => x.code === l.region);
+    document.getElementById('pack-out').innerHTML = `
+      <div class="panel" style="margin-top:var(--s-5)">
+        <h2>Exit pack — ${esc(l.name)}</h2>
+        <div class="prose">
+          ${pack.summary.map((p) => `<p>${esc(p)}</p>`).join('')}
+        </div>
+        ${pack.range ? `
+          <table class="deftable" style="margin-top:var(--s-4)">
+            <tbody>
+              <tr><th scope="row">Indicative range</th>
+                  <td>${fullMoney(pack.range.low, r.symbol)} to ${fullMoney(pack.range.high, r.symbol)}
+                  <br><span class="muted" style="font-weight:400">${pack.range.lowMultiple}x to ${pack.range.highMultiple}x annual cash flow for ${esc(l.industry.toLowerCase())}</span></td></tr>
+            </tbody>
+          </table>` : ''}
+        <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem">
+          Orientation only — not a valuation and not advice. Generated ${esc(pack.generatedAt.slice(0, 10))}.
+        </p>
+        <h3 style="font-family:var(--font-ui); font-size:var(--step--1); margin-top:var(--s-5)">Handoff checklist</h3>
+        <ol class="track">${pack.checklist.map((c) => `<li data-state="pending"><span class="track__label">${esc(c.label)}</span><span class="track__state">pending</span></li>`).join('')}</ol>
+      </div>`;
+    document.getElementById('pack-out').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }));
+}
+
+function renderBuyer() {
+  const v = store.getVerification('buyer');
+  const saved = store.savedIds().map((id) => store.findListing(id)).filter(Boolean);
+  const deals = store.allDeals();
+  const criteria = v
+    ? { region: v.country, industry: v.industry || null, maxPrice: v.max_price || null, successorType: v.persona || null }
+    : null;
+  const liveListings = store.allListings().filter((l) => (l.status || 'live') === 'live');
+  const recs = criteria ? recommendedForBuyer(liveListings, criteria, 6) : [];
+
+  const score = v ? readinessScore(v) : 0;
+  const band = readinessBand(score);
+  const breakdown = readinessBreakdown(v || {});
+
+  root.innerHTML = `
+    <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
+      <a href="index.html">Home</a> <span class="muted">/</span> <span class="muted">Buyer dashboard</span>
+    </p>
+    <div class="sec-head" style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--s-5); flex-wrap:wrap">
+      <div>
+        <h2>Buyer dashboard</h2>
+        <p>${esc(store.getUser()?.name || 'Buyer')} · ${v ? 'verified' : 'not verified yet'}.</p>
+      </div>
+      <div style="display:flex; gap:var(--s-2); flex-wrap:wrap">
+        <a class="btn btn--primary" href="verify.html">${v ? 'Update verification' : 'Get verified'}</a>
+        <a class="btn btn--ghost" href="browse.html">Browse businesses</a>
+        <a class="btn btn--ghost" href="#" id="switch-role">Switch role</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Your readiness score</h2>
+      ${v ? `
+        <div class="dash__score">
+          <div>
+            <div class="dash__num">${score}<span class="dash__denominator"> / 100</span></div>
+            <span class="tag tag--${band.tone}">${esc(band.label)}</span>
+          </div>
+          <table class="deftable" style="flex:1">
+            <tbody>
+              ${breakdown.map((row) => `<tr><th scope="row">${esc(row.label)}</th><td>${row.earned} of ${row.points}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-3)">
+          Sellers see this before releasing any financial detail. It reports what you declared and
+          had checked — it is not a guarantee.
+        </p>` : `
+        <p class="muted" style="font-family:var(--font-ui); font-size:var(--step--1)">
+          Verify your identity and declare a funding path to get a score sellers can see.
+        </p>
+        <p style="margin-top:var(--s-3)"><a class="btn btn--primary" href="verify.html">Start verification</a></p>`}
+    </div>
+
+    <div class="sec-head" style="margin-top:var(--s-7)">
+      <h2 style="font-size: var(--step-2)">Recommended for you</h2>
+      <p>${criteria ? 'Ranked against the criteria in your verification.' : 'Verify to get listings matched to your region, budget and successor type.'}</p>
+    </div>
+    <div class="grid">
+      ${recs.length ? recs.map(({ listing: l, score: s }) => {
+        const r = REGIONS.find((x) => x.code === l.region);
+        return `
+        <a class="card" href="listing.html?id=${encodeURIComponent(l.id)}">
+          <div class="card__meta">${r.label} · ${esc(l.city)} · ${esc(l.industry)}</div>
+          <div class="card__name">${esc(l.name)}</div>
+          <div class="card__tagline">${esc(l.tagline || '')}</div>
+          <dl class="card__figures">
+            <div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div>
+            <div class="figure"><dt>Fit</dt><dd>${s}%</dd></div>
+          </dl>
+        </a>`;
+      }).join('') : '<p class="muted">No matches yet.</p>'}
+    </div>
+
+    <div class="sec-head" style="margin-top:var(--s-7)">
+      <h2 style="font-size: var(--step-2)">Saved listings</h2>
+      <p>${saved.length ? `${saved.length} saved.` : 'Save listings from any listing page.'}</p>
+    </div>
+    <div class="grid">
+      ${saved.length ? saved.map((l) => {
+        const r = REGIONS.find((x) => x.code === l.region);
+        return `
+        <div class="card" style="cursor:default">
+          <div class="card__meta">${r.label} · ${esc(l.city)} · ${esc(l.industry)}</div>
+          <div class="card__name">${esc(l.name)}</div>
+          <div class="card__figures"><div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div></div>
+          <p style="margin-top:var(--s-3)"><a class="btn btn--ghost btn--block" href="listing.html?id=${encodeURIComponent(l.id)}">Open</a></p>
+        </div>`;
+      }).join('') : '<p class="muted">Nothing saved yet.</p>'}
+    </div>
+
+    ${deals.length ? `
+      <div class="sec-head" style="margin-top:var(--s-7)">
+        <h2 style="font-size: var(--step-2)">Active deals</h2>
+      </div>
+      <div class="grid">
+        ${deals.map(({ listing: l, deal }) => `
+          <div class="card" style="cursor:default">
+            <div class="card__meta">${esc(l.name)}</div>
+            <div class="card__name" style="font-size:var(--step-1)">${esc(deal.offer.status || 'Offer')}</div>
+            <div class="card__tagline">${money(deal.offer.amount, l.region)} offered</div>
+            <p style="margin-top:var(--s-3)"><a class="btn btn--ghost btn--block" href="deal.html?id=${encodeURIComponent(l.id)}">Open the tracker</a></p>
+          </div>`).join('')}
+      </div>` : ''}
+  `;
+
+  root.querySelector('#switch-role').addEventListener('click', (e) => {
+    e.preventDefault();
+    store.clearUser();
+    render();
+  });
+}
+
+function render() {
+  const u = store.getUser();
+  if (!u) { renderRolePicker(); return; }
+  if (u.role === 'buyer') { renderBuyer(); } else { renderOwner(); }
+}
+
+render();
+</script>
+</body>
+</html>

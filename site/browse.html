@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
 </header>
@@ -141,7 +142,12 @@
 
 <script type="module">
 import { LISTINGS, REGIONS, SUCCESSOR_TYPES, DISCLOSURE_FLAGS } from './data/listings.js';
+import * as store from './data/store.js';
 import { shorten, esc } from './data/format.js';
+
+const ALL = store.allListings();
+const owned = new Set(store.userListings().map((l) => l.id));
+const visible = (l) => owned.has(l.id) || (l.status || 'live') === 'live';
 
 const params = new URLSearchParams(location.search);
 const filters = document.getElementById('filters');
@@ -156,7 +162,7 @@ const noResults = document.getElementById('no-results');
 
 // Populate selects
 REGIONS.forEach(r => fRegion.add(new Option(r.label, r.code)));
-[...new Set(LISTINGS.map(l => l.industry))].sort()
+[...new Set(ALL.map(l => l.industry))].sort()
   .forEach(i => fIndustry.add(new Option(i, i)));
 SUCCESSOR_TYPES.filter(s => s.id !== 'any')
   .forEach(s => fSuccessor.add(new Option(s.label, s.id)));
@@ -174,7 +180,8 @@ function render() {
   const max = fMax.value ? Number(fMax.value) : null;
   const sort = fSort.value;
 
-  let rows = LISTINGS.filter(l => {
+  let rows = ALL.filter(l => {
+    if (!visible(l)) return false;
     if (region && l.region !== region) return false;
     if (industry && l.industry !== industry) return false;
     if (successor && !l.successor_types_wanted.includes(successor)
@@ -224,6 +231,7 @@ function render() {
       <div class="card__name">${esc(l.name)}</div>
       <div class="card__tagline">${esc(l.tagline)}</div>
       ${flags ? `<div class="tags">${flags}</div>` : ''}
+      ${owned.has(l.id) ? `<div class="tags"><span class="tag tag--${(l.status || 'draft') === 'live' ? 'good' : 'warn'}">${(l.status || 'draft') === 'live' ? 'Your live listing' : 'Your draft'}</span></div>` : ''}
       <dl class="card__figures">
         <div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div>
         <div class="figure"><dt>Revenue</dt><dd>${shorten(l.gross_revenue, r.symbol)}</dd></div>

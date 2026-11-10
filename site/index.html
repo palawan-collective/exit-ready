@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
 </header>
@@ -37,6 +38,7 @@
         </p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="sell.html">Start a listing</a>
+          <a class="btn btn--ghost" href="dashboard.html">Your dashboard</a>
           <a class="btn btn--ghost" href="browse.html">Browse businesses</a>
         </div>
       </div>
@@ -96,7 +98,7 @@
     <div class="container">
       <div class="sec-head">
         <h2>Businesses for sale</h2>
-        <p>Sample listings shown to demonstrate the format. US, UK and Philippines.</p>
+        <p>Live listings across the United States, United Kingdom and Philippines — including your own, the moment you create them.</p>
       </div>
       <div id="home-listings" class="grid"></div>
       <p style="margin-top: var(--s-5)">
@@ -196,10 +198,15 @@
 
 <script type="module">
 import { LISTINGS, REGIONS } from './data/listings.js';
+import * as store from './data/store.js';
 import { money, shorten } from './data/format.js';
 
+const owned = new Set(store.userListings().map((l) => l.id));
 const el = document.getElementById('home-listings');
-el.innerHTML = LISTINGS.slice(0, 6).map(l => {
+el.innerHTML = store.allListings()
+  .filter((l) => owned.has(l.id) || (l.status || 'live') === 'live')
+  .slice(0, 6)
+  .map(l => {
   const r = REGIONS.find(x => x.code === l.region);
   return `
   <a class="card" href="listing.html?id=${l.id}">

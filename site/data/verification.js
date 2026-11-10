@@ -46,6 +46,39 @@ export function depositBands(country) {
   return DEPOSIT_BANDS[country] || DEPOSIT_BANDS.US;
 }
 
+const BUDGET_MAX = {
+  US: [100_000, 250_000, 500_000, 1_000_000],
+  UK: [100_000, 250_000, 500_000, 1_000_000],
+  PH: [2_500_000, 5_000_000, 10_000_000, 25_000_000],
+};
+
+/** Budget ceiling options for a region. "Any budget" returns null. */
+export function budgetBands(country) {
+  const sym = { US: '$', UK: '£', PH: '₱' }[country] || '$';
+  const bands = ['Any budget'];
+  for (const n of BUDGET_MAX[country] || BUDGET_MAX.US) {
+    bands.push(n >= 1_000_000
+      ? `Up to ${sym}${(n / 1_000_000)}M`
+      : `Up to ${sym}${Math.round(n / 1000)}k`);
+  }
+  return bands;
+}
+
+/** Parse a budget band back into a number ceiling, or null for "Any budget". */
+export function budgetCeiling(band) {
+  if (!band || band.startsWith('Any')) return null;
+  const m = /([\d.]+)\s*(k|M)/.exec(band);
+  if (!m) return null;
+  return Math.round(Number(m[1]) * (m[2] === 'M' ? 1_000_000 : 1_000));
+}
+
+export const INDUSTRIES = [
+  'Food & Beverage', 'Personal Services', 'Trades & Services', 'Healthcare',
+  'Retail', 'eCommerce', 'Professional Services', 'Other',
+];
+
+export const SUCCESSOR_PERSONAS = ['employee', 'local_operator', 'first_time', 'any'];
+
 /** Points earned per factor, in the order they are shown to the seller. */
 export function readinessBreakdown(buyer) {
   return READINESS_WEIGHTS.map((w) => ({
@@ -85,6 +118,9 @@ export function validateBuyer(v) {
   if (v.prior_ownership === undefined || v.prior_ownership === null || v.prior_ownership === '') {
     errors.prior_ownership = 'Select yes or no.';
   }
+  if (!v.industry) errors.industry = 'Select the industry you are looking for.';
+  if (!v.budget) errors.budget = 'Select a budget.';
+  if (!v.persona) errors.persona = 'Select a successor type.';
   if (!v.attest) errors.attest = 'Confirm the information is accurate.';
   return { ok: Object.keys(errors).length === 0, errors };
 }
@@ -120,6 +156,10 @@ export function buyerFromForm(v) {
     prior_ownership: v.prior_ownership === 'yes',
     references_provided: Number(v.references) > 0,
     nda_signed: Boolean(v.nda_agreed),
+    /* Search criteria — used for matching, not scoring. */
+    industry: v.industry || null,
+    max_price: budgetCeiling(v.budget),
+    persona: v.persona || null,
   };
 }
 

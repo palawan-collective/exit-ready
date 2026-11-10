@@ -20,6 +20,7 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </div>
 </header>
@@ -116,6 +117,39 @@
                     <option value="2">2 references</option>
                     <option value="3">3 or more</option>
                   </select>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>What you're looking for</legend>
+              <p class="field__hint" style="margin-bottom: var(--s-4)">
+                This is how listings are matched to you. Change it any time.
+              </p>
+              <div class="form-grid form-grid--2">
+                <div class="field">
+                  <label for="b-industry">Industry</label>
+                  <select id="b-industry" name="industry">
+                    <option value="">Select one</option>
+                  </select>
+                  <span class="field__error" data-for="industry" hidden>Select an industry.</span>
+                </div>
+                <div class="field">
+                  <label for="b-persona">Successor type</label>
+                  <select id="b-persona" name="persona">
+                    <option value="">Select one</option>
+                    <option value="employee">Employee buyout</option>
+                    <option value="local_operator">Local operator</option>
+                    <option value="first_time">First-time buyer</option>
+                  </select>
+                  <span class="field__error" data-for="persona" hidden>Select a successor type.</span>
+                </div>
+                <div class="field span-2">
+                  <label for="b-budget">Budget</label>
+                  <select id="b-budget" name="budget">
+                    <option value="">Select one</option>
+                  </select>
+                  <span class="field__error" data-for="budget" hidden>Select a budget.</span>
                 </div>
               </div>
             </fieldset>
@@ -322,10 +356,11 @@
 
 <script type="module">
 import {
-  ID_TYPES, FUNDING_PATHS, TIMELINES, depositBands,
+  ID_TYPES, FUNDING_PATHS, TIMELINES, depositBands, budgetBands, INDUSTRIES,
   READINESS_WEIGHTS, MAX_SCORE, readinessBreakdown, readinessScore, readinessBand,
   validateBuyer, validateOwner, buyerFromForm, ownerFromForm,
 } from './data/verification.js';
+import * as store from './data/store.js';
 import { esc } from './data/format.js';
 
 const buyerForm = document.getElementById('buyer-form');
@@ -334,8 +369,6 @@ const roleBuyer = document.getElementById('role-buyer');
 const roleOwner = document.getElementById('role-owner');
 const buyerStatus = document.getElementById('buyer-status');
 const ownerStatus = document.getElementById('owner-status');
-
-const KEYS = { buyer: 'exit-ready:verification:buyer', owner: 'exit-ready:verification:owner' };
 
 /* ---------- populate selects ---------- */
 function fill(select, options, keepFirst = true) {
@@ -354,15 +387,19 @@ fill(document.getElementById('b-id_type'), ID_TYPES);
 fill(document.getElementById('o-id_type'), ID_TYPES);
 fill(document.getElementById('b-funding_path'), FUNDING_PATHS);
 fill(document.getElementById('b-timeline'), TIMELINES);
+fill(document.getElementById('b-industry'), INDUSTRIES);
 
-function syncDepositBands() {
+function syncRegion() {
   const country = document.getElementById('b-country').value;
-  const current = document.getElementById('b-deposit_band').value;
+  const deposit = document.getElementById('b-deposit_band').value;
   fill(document.getElementById('b-deposit_band'), depositBands(country));
-  if (depositBands(country).includes(current)) document.getElementById('b-deposit_band').value = current;
+  if (depositBands(country).includes(deposit)) document.getElementById('b-deposit_band').value = deposit;
+  const budget = document.getElementById('b-budget').value;
+  fill(document.getElementById('b-budget'), budgetBands(country));
+  if (budgetBands(country).includes(budget)) document.getElementById('b-budget').value = budget;
 }
-document.getElementById('b-country').addEventListener('change', syncDepositBands);
-syncDepositBands();
+document.getElementById('b-country').addEventListener('change', syncRegion);
+syncRegion();
 
 /* ---------- role toggle ---------- */
 function showRole(role) {
@@ -431,7 +468,12 @@ buyerForm.addEventListener('submit', (e) => {
     </p>`;
   buyerStatus.scrollIntoView({ block: 'center', behavior: 'smooth' });
 
-  localStorage.setItem(KEYS.buyer, JSON.stringify({ ...buyer, score, band: band.label, at: new Date().toISOString() }));
+  const record = { ...buyer, score, band: band.label, at: new Date().toISOString() };
+  store.setVerification('buyer', record);
+  if (store.getUser()?.role !== 'buyer') {
+    store.setUser({ role: 'buyer', name: buyer.full_name || 'Buyer', email: buyer.email || '' });
+  }
+  localStorage.setItem('exit-ready:verification:buyer', JSON.stringify(record));
 });
 
 /* ---------- owner submit ---------- */
@@ -460,27 +502,30 @@ ownerForm.addEventListener('submit', (e) => {
     </p>`;
   ownerStatus.scrollIntoView({ block: 'center', behavior: 'smooth' });
 
-  localStorage.setItem(KEYS.owner, JSON.stringify({ ...owner, reference: ref, at: new Date().toISOString() }));
+  const record = { ...owner, reference: ref, at: new Date().toISOString() };
+  store.setVerification('owner', record);
+  if (store.getUser()?.role !== 'owner') {
+    store.setUser({ role: 'owner', name: owner.full_name || 'Owner', email: owner.email || '' });
+  }
+  localStorage.setItem('exit-ready:verification:owner', JSON.stringify(record));
 });
 
 /* ---------- restore saved submissions ---------- */
-for (const [key, form, status] of [[KEYS.buyer, buyerForm, buyerStatus], [KEYS.owner, ownerForm, ownerStatus]]) {
-  try {
-    const saved = JSON.parse(localStorage.getItem(key));
-    if (!saved) continue;
-    for (const [name, value] of Object.entries(saved)) {
-      const el = form.elements[name];
-      if (!el) continue;
-      if (el.type === 'checkbox') el.checked = Boolean(value);
-      else if (el.type === 'radio') {
-        const r = form.querySelector(`input[name="${name}"][value="${value}"]`);
-        if (r) r.checked = true;
-      } else el.value = value ?? '';
-    }
-    status.hidden = false;
-    status.className = 'notice notice--info';
-    status.innerHTML = `<h3>Saved submission restored</h3><p>From this browser, stored ${esc(saved.at || '')}.</p>`;
-  } catch { /* ignore malformed storage */ }
+for (const [role, form, status] of [['buyer', buyerForm, buyerStatus], ['owner', ownerForm, ownerStatus]]) {
+  const saved = store.getVerification(role);
+  if (!saved) continue;
+  for (const [name, value] of Object.entries(saved)) {
+    const el = form.elements[name];
+    if (!el) continue;
+    if (el.type === 'checkbox') el.checked = Boolean(value);
+    else if (el.type === 'radio') {
+      const radio = form.querySelector(`input[name="${name}"][value="${value}"]`);
+      if (radio) radio.checked = true;
+    } else if (el.type !== 'button') el.value = value ?? '';
+  }
+  status.hidden = false;
+  status.className = 'notice notice--info';
+  status.innerHTML = `<h3>Saved submission restored</h3><p>From this browser, stored ${esc(saved.at || '')}.</p>`;
 }
 
 showRole('buyer');

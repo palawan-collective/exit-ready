@@ -20,6 +20,11 @@
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
+        <span class="role-switch__label">Viewing as</span>
+        <button type="button" data-role="buyer">Buyer</button>
+        <button type="button" data-role="owner">Seller</button>
+      </div>
       <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
     </nav>
@@ -531,5 +536,6 @@ for (const [role, form, status] of [['buyer', buyerForm, buyerStatus], ['owner',
 
 showRole('buyer');
 </script>
+  <script src="role.js"></script>
 </body>
 </html>

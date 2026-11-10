@@ -22,6 +22,11 @@
       <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
       <a class="btn btn--primary" href="#listing-form">Start a listing</a>
+      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
+        <span class="role-switch__label">Viewing as</span>
+        <button type="button" data-role="buyer">Buyer</button>
+        <button type="button" data-role="owner">Seller</button>
+      </div>
     </nav>
   </div>
 </header>
@@ -546,5 +551,6 @@ form.addEventListener('submit', (e) => {
 
 updatePreview();
 </script>
+  <script src="role.js"></script>
 </body>
 </html>

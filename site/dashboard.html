@@ -21,6 +21,11 @@
       <a href="handoff.html">Handoff plan</a>
       <a href="pricing.html">Pricing</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
+        <span class="role-switch__label">Viewing as</span>
+        <button type="button" data-role="buyer">Buyer</button>
+        <button type="button" data-role="owner">Seller</button>
+      </div>
     </nav>
   </div>
 </header>
@@ -135,47 +140,6 @@ function listingCard(l, { actions = '' } = {}) {
     </div>`;
 }
 
-function renderRolePicker() {
-  root.innerHTML = `
-    <div class="sec-head">
-      <h2>Choose how you're using Exit-Ready</h2>
-      <p>Your dashboard adapts. You can switch any time — your data stays put.</p>
-    </div>
-    <div class="grid">
-      <div class="card" style="cursor:default">
-        <div class="card__name" style="font-size:var(--step-1)">I'm selling my business</div>
-        <div class="card__tagline">
-          Create a listing, get an exit pack and an indicative range, verify your identity, and
-          see matched buyers land in one place.
-        </div>
-        <p style="margin-top:var(--s-4)"><a class="btn btn--primary btn--block" href="#owner">Continue as an owner</a></p>
-      </div>
-      <div class="card" style="cursor:default">
-        <div class="card__name" style="font-size:var(--step-1)">I'm buying a business</div>
-        <div class="card__tagline">
-          Get a readiness score sellers can see, save listings, and track every deal from
-          NDA to final payment.
-        </div>
-        <p style="margin-top:var(--s-4)"><a class="btn btn--primary btn--block" href="#buyer">Continue as a buyer</a></p>
-      </div>
-    </div>
-    <p style="margin-top:var(--s-5)">
-      <a class="btn btn--ghost" href="browse.html">Just browsing</a>
-    </p>
-  `;
-  root.querySelector('[href="#owner"]').addEventListener('click', (e) => {
-    e.preventDefault();
-    const name = 'Owner';
-    store.setUser({ role: 'owner', name, email: '' });
-    render();
-  });
-  root.querySelector('[href="#buyer"]').addEventListener('click', (e) => {
-    e.preventDefault();
-    store.setUser({ role: 'buyer', name: 'Buyer', email: '' });
-    render();
-  });
-}
-
 function renderOwner() {
   const owner = store.getVerification('owner');
   const listings = store.userListings();
@@ -213,7 +177,7 @@ function renderOwner() {
       <div style="display:flex; gap:var(--s-2); flex-wrap:wrap">
         <a class="btn btn--primary" href="sell.html">New listing</a>
         <a class="btn btn--ghost" href="verify.html">${verified ? 'Verification details' : 'Verify your identity'}</a>
-        <a class="btn btn--ghost" href="#" id="switch-role">Switch role</a>
+
       </div>
     </div>
 
@@ -304,11 +268,6 @@ function renderOwner() {
       </div>` : ''}
   `;
 
-  root.querySelector('#switch-role').addEventListener('click', (e) => {
-    e.preventDefault();
-    store.clearUser();
-    render();
-  });
   const alertsSeen = document.getElementById('alerts-seen');
   if (alertsSeen) {
     alertsSeen.addEventListener('click', () => {
@@ -405,7 +364,7 @@ function renderBuyer() {
       <div style="display:flex; gap:var(--s-2); flex-wrap:wrap">
         <a class="btn btn--primary" href="verify.html">${v ? 'Update verification' : 'Get verified'}</a>
         <a class="btn btn--ghost" href="browse.html">Browse businesses</a>
-        <a class="btn btn--ghost" href="#" id="switch-role">Switch role</a>
+
       </div>
     </div>
 
@@ -506,11 +465,6 @@ function renderBuyer() {
       </div>` : ''}
   `;
 
-  root.querySelector('#switch-role').addEventListener('click', (e) => {
-    e.preventDefault();
-    store.clearUser();
-    render();
-  });
   const alertsSeen = document.getElementById('alerts-seen');
   if (alertsSeen) {
     alertsSeen.addEventListener('click', () => {
@@ -520,13 +474,18 @@ function renderBuyer() {
   }
 }
 
-function render() {
-  const u = store.getUser();
-  if (!u) { renderRolePicker(); return; }
-  if (u.role === 'buyer') { renderBuyer(); } else { renderOwner(); }
+function currentRole() {
+  try { return localStorage.getItem('exit-ready:role') || 'buyer'; } catch (e) { return 'buyer'; }
 }
+
+function render() {
+  if (currentRole() === 'owner') { renderOwner(); } else { renderBuyer(); }
+}
+
+window.onRoleChange = render;
 
 store.ready().then(render).catch(() => render());
 </script>
+  <script src="role.js"></script>
 </body>
 </html>

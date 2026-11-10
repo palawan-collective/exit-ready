@@ -848,6 +848,30 @@ legend {
 }
 
 /* ===========================================================================
+   Role switch (mock — no sign-in)
+   =========================================================================== */
+
+.role-switch {
+  display: inline-flex;
+  gap: var(--s-2);
+  align-items: center;
+  border-left: 1px solid var(--rule);
+  padding-left: var(--s-4);
+  margin-left: var(--s-2);
+}
+.role-switch__label {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.role-switch .btn { padding: 0.45em 0.8em; font-size: 0.75rem; }
+@media (max-width: 720px) {
+  .role-switch { border-left: 0; padding-left: 0; margin-left: 0; }
+}
+
+/* ===========================================================================
    Dashboard
    =========================================================================== */
 

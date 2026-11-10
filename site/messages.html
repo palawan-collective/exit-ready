@@ -27,6 +27,11 @@
       <a href="sell.html">Sell yours</a>
       <a href="dashboard.html">Dashboard</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
+        <span class="role-switch__label">Viewing as</span>
+        <button type="button" data-role="buyer">Buyer</button>
+        <button type="button" data-role="owner">Seller</button>
+      </div>
     </nav>
   </div>
 </header>
@@ -190,5 +195,6 @@ function threadBlock(listingId) {
     </div>`;
 }
 </script>
+  <script src="role.js"></script>
 </body>
 </html>

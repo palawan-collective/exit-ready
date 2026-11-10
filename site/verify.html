@@ -534,7 +534,9 @@ for (const [role, form, status] of [['buyer', buyerForm, buyerStatus], ['owner',
   status.innerHTML = `<h3>Saved submission restored</h3><p>From this browser, stored ${esc(saved.at || '')}.</p>`;
 }
 
-showRole('buyer');
+let __startRole = 'buyer';
+try { __startRole = localStorage.getItem('exit-ready:role') === 'owner' ? 'owner' : 'buyer'; } catch (e) { /* ignore */ }
+showRole(__startRole);
 </script>
   <script src="role.js"></script>
 </body>

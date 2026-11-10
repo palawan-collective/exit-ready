@@ -164,6 +164,18 @@ function renderOwner() {
 
   const verified = Boolean(owner && owner.attested);
   const matches = listings.flatMap((l) => matchedBuyers(l, buyers).slice(0, 2).map((m) => ({ listing: l, ...m })));
+  const seenAt = store.alertsSeenAt();
+  const activityItems = deals.flatMap(({ listing: l, deal }) => {
+    const fresh = (m) => m.at && m.at > (seenAt || 0);
+    const items = [];
+    if ((deal.thread || []).some((m) => m.from === 'buyer' && fresh(m))) {
+      items.push(`<a href="messages.html?id=${encodeURIComponent(l.id)}">New message</a> about ${esc(l.name)}`);
+    }
+    if (deal.offer?.at && deal.offer.at > (seenAt || 0)) {
+      items.push(`New offer on ${esc(l.name)}`);
+    }
+    return items;
+  });
 
   root.innerHTML = `
     <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
@@ -180,6 +192,14 @@ function renderOwner() {
 
       </div>
     </div>
+
+    ${activityItems.length ? `
+      <div class="notice notice--info">
+        <h3>${activityItems.length} new since your last visit</h3>
+        <ul style="margin-top: var(--s-2); padding-left: 1.1em">
+          ${activityItems.map((a) => `<li style="margin-bottom: var(--s-1)">${a}</li>`).join('')}
+        </ul>
+      </div>` : ''}
 
     ${verified ? '' : `
       <div class="notice notice--warn">

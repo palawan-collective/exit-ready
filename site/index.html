@@ -167,6 +167,17 @@
     </div>
   </section>
 
+  <!-- ================= RECENTLY SOLD ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Recently sold</h2>
+        <p>Realised prices from completed handoffs. This is the evidence behind every indicative range we show.</p>
+      </div>
+      <div class="dash__stats" id="sold-panel"></div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer">
@@ -221,7 +232,7 @@
 <script type="module">
 import { LISTINGS, REGIONS } from './data/listings.js';
 import * as store from './data/store.js';
-import { money, shorten, esc } from './data/format.js';
+import { money, shorten, esc, fullMoney } from './data/format.js';
 
 const owned = new Set(store.userListings().map((l) => l.id));
 const el = document.getElementById('home-listings');
@@ -262,12 +273,46 @@ if (counts) {
     + top(byCity, 3).map(([k, v]) => tile(v, k)).join('');
 }
 
+// Recently sold — closed prices, the comparables surface
+  const soldPanel = document.getElementById('sold-panel');
+  if (soldPanel) {
+    const sold = store.soldListings();
+    if (sold.length) {
+      const sym = (code) => (REGIONS.find((x) => x.code === code) || {}).symbol || '$';
+      const comp = store.soldComparables();
+      const rows = sold.slice(0, 4).map((l) => {
+        const r = REGIONS.find((x) => x.code === l.region);
+        return `
+        <div class="panel">
+          <div class="card__meta">${esc(l.industry)} · ${esc(l.city)}, ${esc(r.label)}</div>
+          <div class="card__name" style="font-size:var(--step-1)">${esc(l.name)}</div>
+          <table class="deftable" style="margin-top:var(--s-3)">
+            <tbody>
+              <tr><th scope="row">Sold for</th><td>${fullMoney(l.sold_price, sym(l.region))}</td></tr>
+              <tr><th scope="row">Asking</th><td>${fullMoney(l.asking_price, sym(l.region))}</td></tr>
+              <tr><th scope="row">Closed</th><td>${esc((l.sold_at || '').slice(0, 10))}</td></tr>
+            </tbody>
+          </table>
+        </div>`;
+      }).join('');
+      soldPanel.innerHTML = `<div class="panel"><div class="dash__num">${comp ? comp.count : sold.length}</div>
+        <div class="dash__label">Completed sales</div>
+        <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-2)">
+          Median ${comp ? fullMoney(comp.median, '') : '—'}
+        </p></div>` + rows;
+    } else {
+      soldPanel.innerHTML = `<div class="panel" style="grid-column: 1 / -1">
+        <div class="dash__num">0</div>
+        <div class="dash__label">No completed sales recorded yet in this browser</div></div>`;
+    }
+  }
+
 store.ready().then(() => {
-// One restrained reveal
-const obs = new IntersectionObserver((entries) => {
-  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
-}, { rootMargin: '0px 0px -10% 0px' });
-document.querySelectorAll('.reveal').forEach(n => obs.observe(n));
+  // One restrained reveal
+  const obs = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
+  }, { rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.reveal').forEach(n => obs.observe(n));
 });
 </script>
   <script src="role.js"></script>

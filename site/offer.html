@@ -111,6 +111,7 @@ function render(listing) {
   const existing = store.getDeal(listing.id);
   const v = store.getVerification('buyer');
   const score = v ? readinessScore(v) : 0;
+  const VERIFIED = Boolean(v);
   const band = readinessBand(score);
 
   document.title = `Make an offer — ${listing.name} — Exit-Ready`;
@@ -130,10 +131,13 @@ function render(listing) {
 
     <div class="detail">
       <div>
-        ${!v ? `
+        ${!VERIFIED ? `
           <div class="notice notice--warn">
-            <h3>You are not verified yet</h3>
-            <p>Owners see a readiness score before they respond. Verify first — it takes a minute.</p>
+            <h3>Verify before you offer</h3>
+            <p>
+              Owners only respond to verified buyers. Confirm your identity and declare a funding
+              path first — it takes a minute, and it produces the readiness score they see.
+            </p>
             <p style="margin:var(--s-3) 0 0"><a class="btn btn--primary" href="verify.html">Get verified</a></p>
           </div>` : `
           <div class="notice notice--info">
@@ -141,9 +145,9 @@ function render(listing) {
             <p>The owner can see this score before responding to your offer.</p>
           </div>`}
 
-        ${existing ? existingState(existing, listing, r) : ''}
+        ${VERIFIED ? (existing ? existingState(existing, listing, r) : '') : ''}
 
-        ${existing && existing.offer && ['sent', 'active'].includes(existing.offer.status) ? '' : `
+        ${(!VERIFIED || (existing && existing.offer && ['sent', 'active'].includes(existing.offer.status))) ? '' : `
         <form id="offer-form" class="stack" novalidate>
           <fieldset>
             <legend>Step 1 — Standard non-disclosure agreement</legend>

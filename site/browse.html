@@ -40,6 +40,10 @@
       </div>
 
       <form class="filters" id="filters" role="search" aria-label="Filter listings">
+        <div class="field" style="flex: 1 1 260px; min-width: 240px">
+          <label for="f-q">Search</label>
+          <input type="search" id="f-q" name="q" placeholder="salon in Bristol, café, ecommerce…">
+        </div>
         <div class="field">
           <label for="f-region">Region</label>
           <select id="f-region" name="region">
@@ -153,7 +157,7 @@ import { shorten, esc } from './data/format.js';
 
 const ALL = store.allListings();
 const owned = new Set(store.userListings().map((l) => l.id));
-const visible = (l) => owned.has(l.id) || (l.status || 'live') === 'live';
+const visible = (l) => owned.has(l.id) || ['live', 'sold'].includes(l.status || 'live');
 
 const params = new URLSearchParams(location.search);
 const filters = document.getElementById('filters');
@@ -162,6 +166,7 @@ const fIndustry = document.getElementById('f-industry');
 const fSuccessor = document.getElementById('f-successor');
 const fMax = document.getElementById('f-max');
 const fSort = document.getElementById('f-sort');
+const fQ = document.getElementById('f-q');
 const grid = document.getElementById('listing-grid');
 const count = document.getElementById('result-count');
 const noResults = document.getElementById('no-results');
@@ -185,6 +190,7 @@ function render() {
   const successor = fSuccessor.value;
   const max = fMax.value ? Number(fMax.value) : null;
   const sort = fSort.value;
+  const q = fQ.value.trim().toLowerCase();
 
   let rows = ALL.filter(l => {
     if (!visible(l)) return false;
@@ -202,6 +208,16 @@ function render() {
     }
     return true;
   });
+
+  if (q) {
+    const hay = (l) => [l.name, l.tagline, l.city, l.area, l.industry, l.description,
+      l.reason_for_selling, ...(l.highlights || [])].join(' ').toLowerCase();
+    const words = q.split(/\s+/);
+    rows = rows.filter(l => {
+      const text = hay(l);
+      return words.every(w => text.includes(w));
+    });
+  }
 
   if (sort === 'price-asc')  rows = rows.slice().sort((a,b) => a.asking_price - b.asking_price);
   if (sort === 'price-desc') rows = rows.slice().sort((a,b) => b.asking_price - a.asking_price);
@@ -237,7 +253,8 @@ function render() {
       <div class="card__name">${esc(l.name)}</div>
       <div class="card__tagline">${esc(l.tagline)}</div>
       ${flags ? `<div class="tags">${flags}</div>` : ''}
-      ${owned.has(l.id) ? `<div class="tags"><span class="tag tag--${(l.status || 'draft') === 'live' ? 'good' : 'warn'}">${(l.status || 'draft') === 'live' ? 'Your live listing' : 'Your draft'}</span></div>` : ''}
+      ${owned.has(l.id) ? `<div class="tags"><span class="tag tag--${(l.status || 'draft') === 'live' ? 'good' : (l.status || 'draft') === 'sold' ? 'good' : 'warn'}">${(l.status || 'draft') === 'live' ? 'Your live listing' : (l.status || 'draft') === 'sold' ? 'Your sold listing' : 'Your draft'}</span></div>` : ''}
+      ${l.status === 'sold' ? `<div class="tags"><span class="tag tag--good">Sold</span></div>` : ''}
       <dl class="card__figures">
         <div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div>
         <div class="figure"><dt>Revenue</dt><dd>${shorten(l.gross_revenue, r.symbol)}</dd></div>

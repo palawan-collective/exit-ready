@@ -62,18 +62,21 @@ export function isOwnerRole() { return session?.profile?.role === 'owner' || isA
 
 /**
  * Fill the in-memory state from Supabase when a session exists.
- * Safe to call on every page; cheap and idempotent.
+ *
+ * Fast path and timeout are both deliberate: this must never hold up a page
+ * render. With no cached session it returns immediately; with one it still
+ * gives up after a few seconds rather than hanging forever.
  */
 export async function ready() {
   if (primed) return session;
   primed = true;
-  if (!REMOTE_ENABLED || !db.isRemote()) return null;
+  if (!REMOTE_ENABLED || !db.isRemote() || !hasCachedSession()) return null;
   try {
-    const s = await db.currentSession();
+    const s = await withTimeout(db.currentSession(), 4000);
     if (!s?.user) return null;
-    const profile = await db.ensureProfile(s.user.id, { email: s.user.email || '' });
+    const profile = await withTimeout(db.ensureProfile(s.user.id, { email: s.user.email || '' }), 4000);
     session = { userId: s.user.id, email: s.user.email || '', profile };
-    await pullRemote();
+    await withTimeout(pullRemote(), 6000);
     setUser({
       role: profile.role === 'admin' ? 'owner' : profile.role,
       name: profile.display_name || s.user.email || '',
@@ -85,6 +88,20 @@ export async function ready() {
     session = null;
   }
   return session;
+}
+
+function hasCachedSession() {
+  try {
+    const raw = localStorage.getItem('sb-khbtdhvoghdlicgidgkc-auth-token');
+    return Boolean(raw && raw !== 'null');
+  } catch { return false; }
+}
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
 }
 
 async function pullRemote() {
@@ -242,6 +259,45 @@ export function duplicateListing(id) {
     status: 'draft',
   };
   return addListing(copy);
+}
+
+/* ---------- sold state (the comparables engine) ---------- */
+
+/** Close a listing on a sale. Records the realised price and the date. */
+export async function markSold(id, soldPrice, soldOn = new Date().toISOString()) {
+  const listing = findListing(id);
+  if (!listing) return null;
+  const patch = {
+    status: 'sold',
+    sold_price: Number(soldPrice) || 0,
+    sold_at: soldOn,
+  };
+  if (isSignedIn() && isOwnerRole()) {
+    try { await db.updateListing(id, patch); } catch (e) { console.warn('Exit-Ready: sold state not saved remotely.', e); }
+  }
+  const s = load();
+  s.listings = (s.listings || []).map((l) => (l.id === id ? { ...l, ...patch } : l));
+  save();
+  return findListing(id);
+}
+
+export function soldListings() {
+  return userListings().filter((l) => l.status === 'sold');
+}
+
+/** Median sold price for an industry, from everything sold in this browser. */
+export function soldComparables(industry) {
+  const rows = industry ? soldListings().filter((l) => l.industry === industry) : soldListings();
+  if (!rows.length) return null;
+  const prices = rows.map((l) => l.sold_price).filter((p) => p > 0).sort((a, b) => a - b);
+  if (!prices.length) return null;
+  const mid = Math.floor(prices.length / 2);
+  return {
+    count: prices.length,
+    median: prices.length % 2 ? prices[mid] : Math.round((prices[mid - 1] + prices[mid]) / 2),
+    low: prices[0],
+    high: prices[prices.length - 1],
+  };
 }
 
 /* ---------- verification ---------- */

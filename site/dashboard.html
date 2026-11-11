@@ -140,6 +140,23 @@ function listingCard(l, { actions = '' } = {}) {
     </div>`;
 }
 
+const ROLE_LABEL_DEAL = {
+  seller: 'Seller',
+  buyer: 'Buyer',
+  joint: 'Both sides',
+};
+
+/** Human label for a deal's stage. */
+function dealStageLabel(status) {
+  return ({
+    sent: 'Offer sent — awaiting the seller',
+    active: 'Deal in progress',
+    declined: 'Declined',
+    withdrawn: 'Withdrawn by the buyer',
+    cancelled: 'Cancelled',
+  })[status] || 'No offer yet';
+}
+
 function renderOwner() {
   const owner = store.getVerification('owner');
   const listings = store.userListings();
@@ -177,6 +194,28 @@ function renderOwner() {
     return items;
   });
 
+  /* Every buyer who has touched one of my listings, with where the deal stands. */
+  const buyerRoster = deals.flatMap(({ listing: l, deal }) => {
+    const thread = deal.thread || [];
+    const fromBuyer = thread.filter((m) => m.from === 'buyer');
+    if (!fromBuyer.length && !deal.offer) return [];
+    const buyerVerification = store.getVerification('buyer');
+    const last = thread[thread.length - 1];
+    const stage = deal.offer
+      ? ({ sent: 'Offer awaiting your reply', active: 'Deal in progress', declined: 'Offer declined',
+          withdrawn: 'Offer withdrawn', cancelled: 'Cancelled — listing is down' }[deal.offer.status] || 'Offer made')
+      : 'In conversation';
+    return [{
+      listingId: l.id,
+      listingName: l.name,
+      name: (deal.offer && deal.offer.signerName) || fromBuyer[0]?.name || 'Verified buyer',
+      personaLabel: (buyerVerification && SUCCESSOR_TYPES.find((s) => s.id === buyerVerification.persona)?.label) || 'Buyer',
+      score: buyerVerification ? readinessScore(buyerVerification) : null,
+      stage,
+      lastAt: last?.at || deal.offer?.at,
+    }];
+  }).sort((a, b) => String(b.lastAt || '').localeCompare(String(a.lastAt || '')));
+
   root.innerHTML = `
     <p style="font-family:var(--font-ui); font-size:var(--step--1); margin-bottom:var(--s-4)">
       <a href="index.html">Home</a> <span class="muted">/</span> <span class="muted">Owner dashboard</span>
@@ -213,7 +252,7 @@ function renderOwner() {
       <div class="panel"><div class="dash__num">${listings.length}</div><div class="dash__label">Listings</div></div>
       <div class="panel"><div class="dash__num">${listings.filter((l) => (l.status || 'draft') === 'live').length}</div><div class="dash__label">Live</div></div>
       <div class="panel"><div class="dash__num">${matches.length}</div><div class="dash__label">Matched buyers</div></div>
-      <div class="panel"><div class="dash__num">${deals.length}</div><div class="dash__label">Active deals</div></div>
+      <div class="panel"><div class="dash__num">${listings.filter((l) => l.status === 'sold').length}</div><div class="dash__label">Sold</div></div>
     </div>
 
     <div class="sec-head" style="margin-top:var(--s-7)">
@@ -232,7 +271,11 @@ function renderOwner() {
               ? (verified ? `<button class="btn btn--primary" data-publish="${esc(l.id)}" type="button">Publish</button>` : '')
               : `<button class="btn btn--ghost" data-unpublish="${esc(l.id)}" type="button">Unpublish</button>`}
             <button class="btn btn--ghost" data-pack="${esc(l.id)}" type="button">Exit pack</button>
+            ${(l.status || 'draft') === 'live'
+              ? `<button class="btn btn--ghost" data-sold="${esc(l.id)}" type="button">Mark as sold</button>`
+              : ''}
             <button class="btn btn--ghost" data-duplicate="${esc(l.id)}" type="button">Duplicate</button>
+            ${l.status === 'sold' ? `<button class="btn btn--ghost" data-unsold="${esc(l.id)}" type="button">Reopen</button>` : ''}
             <button class="btn btn--ghost" data-delete="${esc(l.id)}" type="button">Delete</button>
           `,
         });
@@ -263,6 +306,28 @@ function renderOwner() {
         }).join('')}
       </div>` : '<p class="muted">No buyer matches yet. Add a listing or complete buyer verification to see matches.</p>'}
 
+    <div class="sec-head" style="margin-top:var(--s-7)">
+      <h2 style="font-size: var(--step-2)">My buyers</h2>
+      <p>Everyone who has contacted you or made an offer, in one place, with their readiness score and where things stand.</p>
+    </div>
+    ${buyerRoster.length ? `
+      <div class="grid">
+        ${buyerRoster.map((b) => `
+          <div class="card" style="cursor:default">
+            <div class="card__meta">${esc(b.personaLabel)} · ${esc(b.listingName)}</div>
+            <div class="card__name" style="font-size:var(--step-1)">${esc(b.name)}</div>
+            <div class="card__tagline">${esc(b.stage)}</div>
+            <div class="card__figures">
+              <div class="figure"><dt>Readiness</dt><dd>${b.score != null ? b.score + ' / 100' : '—'}</dd></div>
+              <div class="figure"><dt>Last activity</dt><dd>${esc(b.lastAt ? b.lastAt.slice(0, 10) : '—')}</dd></div>
+            </div>
+            <p style="margin-top:var(--s-3); display:flex; gap:var(--s-2); flex-wrap:wrap">
+              <a class="btn btn--ghost" href="messages.html?id=${encodeURIComponent(b.listingId)}">Messages</a>
+              <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(b.listingId)}">Tracker</a>
+            </p>
+          </div>`).join('')}
+      </div>` : '<p class="muted">No buyers yet. They arrive as soon as someone messages you or makes an offer.</p>'}
+
     ${deals.length ? `
       <div class="sec-head" style="margin-top:var(--s-7)">
         <h2 style="font-size: var(--step-2)">Active deals</h2>
@@ -272,7 +337,7 @@ function renderOwner() {
         ${deals.map(({ listing: l, deal }) => `
           <div class="card" style="cursor:default">
             <div class="card__meta">${esc(l.name)}</div>
-            <div class="card__name" style="font-size:var(--step-1)">${esc(deal.offer?.status || 'Offer')}</div>
+            <div class="card__name" style="font-size:var(--step-1)">${esc(dealStageLabel(deal.offer?.status))}</div>
             <div class="card__tagline">${money(deal.offer?.amount || 0, l.region)} offered${deal.offer?.funding ? ' · ' + esc(deal.offer.funding) : ''}${deal.offer?.timeline ? ' · ' + esc(deal.offer.timeline) : ''}</div>
             <div class="card__figures">
               <div class="figure"><dt>Deposit</dt><dd>${money(deal.offer?.deposit || 0, l.region)}</dd></div>
@@ -282,8 +347,7 @@ function renderOwner() {
               <a class="btn btn--ghost" href="deal.html?id=${encodeURIComponent(l.id)}">Tracker</a>
               ${deal.offer?.status === 'sent' ? `
                 <button class="btn btn--primary" data-accept="${esc(l.id)}" type="button">Accept</button>
-                <button class="btn btn--ghost" data-decline="${esc(l.id)}" type="button">Decline</button>` : ''}
-            </p>
+                <button class="btn btn--ghost" data-decline="${esc(l.id)}" type="button">Decline</button>` : ''}            </p>
           </div>`).join('')}
       </div>` : ''}
   `;
@@ -313,6 +377,20 @@ function renderOwner() {
   }));
   root.querySelectorAll('[data-duplicate]').forEach((b) => b.addEventListener('click', () => {
     store.duplicateListing(b.dataset.duplicate);
+    render();
+  }));
+  root.querySelectorAll('[data-sold]').forEach((b) => b.addEventListener('click', () => {
+    const listing = store.findListing(b.dataset.sold);
+    const guess = Math.round((listing.asking_price || 0) * 0.92);
+    const input = prompt('Sold price (numbers only):', String(guess));
+    if (input === null) return;
+    const price = Number(String(input).replace(/[^0-9.]/g, ''));
+    if (!price) return;
+    store.markSold(b.dataset.sold, price);
+    render();
+  }));
+  root.querySelectorAll('[data-unsold]').forEach((b) => b.addEventListener('click', () => {
+    store.updateListing(b.dataset.unsold, { status: 'live', sold_price: null, sold_at: null });
     render();
   }));
   root.querySelectorAll('[data-delete]').forEach((b) => b.addEventListener('click', () => {

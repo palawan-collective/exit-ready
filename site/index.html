@@ -34,136 +34,101 @@
 <main id="main">
 
   <!-- ================= HERO ================= -->
-  <section class="hero">
-    <div class="container hero__grid">
-      <div>
-        <h1>You built it. You decide who gets it.</h1>
-        <p class="hero__lede">
-          Sell to a verified successor — your team, a local operator, or a first-time buyer —
-          with every promise written down and tracked.
-        </p>
-        <div class="hero__actions">
-          <a class="btn btn--primary" href="sell.html">Start a listing</a>
-      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
-        <span class="role-switch__label">Viewing as</span>
-        <button type="button" data-role="buyer">Buyer</button>
-        <button type="button" data-role="owner">Seller</button>
-      </div>
-          <a class="btn btn--ghost" href="dashboard.html">Your dashboard</a>
-          <a class="btn btn--ghost" href="browse.html">Browse businesses</a>
-        </div>
-      </div>
+  <section class="hero hero--band">
+    <div class="container">
+      <p class="hero__kicker">US · UK · Philippines</p>
+      <h1>You built it. You decide who gets it.</h1>
+      <p class="hero__lede">
+        Sell to a verified successor — your team, a local operator, or a first-time buyer —
+        with every promise written down and tracked.
+      </p>
 
-      <aside class="evidence" aria-label="Example handoff plan">
-        <div class="evidence__head">
-          <h2>Handoff plan · Village Hair Salon</h2>
-        </div>
-        <div class="evidence__body">
-          <ol class="track">
-            <li data-state="done"><span class="track__label">Letter of intent signed</span><span class="track__state">done</span></li>
-            <li data-state="done"><span class="track__label">NDA executed</span><span class="track__state">done</span></li>
-            <li data-state="in_progress"><span class="track__label">Financial verification window</span><span class="track__state">in progress</span></li>
-            <li data-state="pending"><span class="track__label">Offer accepted</span><span class="track__state">pending</span></li>
-            <li data-state="pending"><span class="track__label">Deposit or escrow funded</span><span class="track__state">pending</span></li>
-          </ol>
-        </div>
-      </aside>
+      <form class="hero__search" id="hero-search" role="search" aria-label="Find a business">
+        <input type="search" id="hero-q" placeholder="What are you looking for? salon, café, ecommerce…">
+        <select id="hero-region" aria-label="Region">
+          <option value="">Anywhere</option>
+          <option value="US">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="PH">Philippines</option>
+        </select>
+        <button class="btn btn--primary" type="submit">Search</button>
+      </form>
+
+      <div class="hero__stats" id="hero-stats"></div>
+
+      <div class="hero__actions" style="margin-top: var(--s-6)">
+        <a class="btn btn--ghost" href="sell.html">List your business</a>
+        <a class="btn btn--ghost" href="verify.html">Get verified as a buyer</a>
+      </div>
     </div>
   </section>
 
-  <!-- ================= WHY ================= -->
+  <!-- ================= LIVE LISTINGS ================= -->
   <section class="section">
+    <div class="container">
+      <div class="sec-head" style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--s-5); flex-wrap:wrap">
+        <div>
+          <h2>Businesses for sale</h2>
+          <p>Live listings across three regions. Every one carries its verification state.</p>
+        </div>
+        <a class="btn btn--ghost" href="browse.html">See all listings</a>
+      </div>
+      <div id="home-listings" class="grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
         <h2>Classifieds are a lead form. This is a process.</h2>
-        <p>
-          On an ordinary listing site, anyone can enquire and nothing is verified.
-          Here, both sides are checked and every stage leaves a record.
-        </p>
+        <p>Both sides are verified, and every stage leaves a record.</p>
       </div>
-
       <div class="steps">
-        <div class="step">
-          <h3>Your buyer is verified</h3>
-          <p>A readiness score shows identity, funding path, deposit capacity and timeline before you release anything.</p>
-          <p style="margin-top: var(--s-3)"><a href="verify.html">See how verification works</a></p>
-        </div>
-        <div class="step">
-          <h3>Your numbers are gated</h3>
-          <p>Financial detail sits behind a standard NDA, executed in one step and logged with a timestamp.</p>
-        </div>
-        <div class="step">
-          <h3>Your handoff is written down</h3>
-          <p>Twelve milestones both sides sign off — training days, landlord consent, licence transfer, final release.</p>
-        </div>
-        <div class="step">
-          <h3>Your risks are on the record</h3>
-          <p>Disclosure flags are required and timestamped, so nothing surfaces as a surprise after the offer.</p>
-        </div>
+        <div class="step"><h3>Your buyer is verified</h3><p>A readiness score shows identity, funding path, deposit capacity and timeline before you release anything.</p></div>
+        <div class="step"><h3>Your numbers are gated</h3><p>Financial detail sits behind a standard NDA, executed in one step and logged with a timestamp.</p></div>
+        <div class="step"><h3>Your handoff is written down</h3><p>Twelve milestones both sides sign off — training days, landlord consent, licence transfer, final release.</p></div>
+        <div class="step"><h3>Your risks are on the record</h3><p>Disclosure flags are required and timestamped, so nothing surfaces as a surprise after the offer.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ================= LISTINGS ================= -->
+  <!-- ================= SELL YOURS ================= -->
   <section class="section">
     <div class="container">
       <div class="sec-head">
-        <h2>Businesses for sale</h2>
-        <p>Live listings across the United States, United Kingdom and Philippines — including your own, the moment you create them.</p>
+        <h2>Sell your business online</h2>
+        <p>Ten minutes now saves months later. We build the exit pack; you approve it.</p>
       </div>
-      <div id="home-listings" class="grid"></div>
-      <p style="margin-top: var(--s-5)">
-        <a class="btn btn--ghost" href="browse.html">See all listings</a>
+      <div class="grid">
+        <div class="card" style="cursor:default">
+          <div class="card__name" style="font-size:var(--step-1)">Built automatically</div>
+          <div class="card__tagline">Connect the basics and the listing writes itself: a plain-English summary, an indicative range, and your disclosure flags.</div>
+        </div>
+        <div class="card" style="cursor:default">
+          <div class="card__name" style="font-size:var(--step-1)">Matched, not listed</div>
+          <div class="card__tagline">Buyers who fit your region, industry, budget and successor type are brought to you — ranked, with their readiness score.</div>
+        </div>
+        <div class="card" style="cursor:default">
+          <div class="card__name" style="font-size:var(--step-1)">Priced on close</div>
+          <div class="card__tagline">A success fee only when the handoff completes and both sides have signed every milestone.</div>
+        </div>
+      </div>
+      <p style="margin-top: var(--s-6)">
+        <a class="btn btn--primary" href="sell.html">Start a listing</a>
+        <a class="btn btn--ghost" href="how-it-works.html" style="margin-left: var(--s-3)">How it works</a>
       </p>
     </div>
   </section>
 
   <!-- ================= INVENTORY COUNTS ================= -->
-  <section class="section">
+  <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
         <h2>Where the inventory is</h2>
-        <p>Live listings by industry and by location. Sellers see where the buyers are; buyers see where to look.</p>
+        <p>Live listings by industry and by location, updated as owners list.</p>
       </div>
       <div class="dash__stats" id="counts"></div>
-    </div>
-  </section>
-
-  <!-- ================= SUCCESSOR TYPES ================= -->
-  <section class="section">
-    <div class="container">
-      <div class="sec-head">
-        <h2>Who takes over matters as much as the price</h2>
-        <p>
-          A sale to your own team looks nothing like a sale to an outside buyer.
-          Tell us who you want, and the process adapts.
-        </p>
-      </div>
-
-      <div class="steps">
-        <div class="step">
-          <h3>Employee buyout</h3>
-          <p>Your staff take it on. Usually staged payments, an earn-out, and a longer training period.</p>
-        </div>
-        <div class="step">
-          <h3>Local operator</h3>
-          <p>Someone already in your trade, nearby. Faster diligence, fewer surprises, quicker handover.</p>
-        </div>
-        <div class="step">
-          <h3>First-time buyer</h3>
-          <p>Leaving employment to buy. Needs financing support and more transition time from you.</p>
-        </div>
-      </div>
-
-      <div class="notice notice--info" style="margin-top: var(--s-6)">
-        <h3>What we are, and what we are not</h3>
-        <p>
-          Exit-Ready is a marketplace and record-keeping tool. We are not a broker,
-          a licensed valuation provider, or a financial adviser. Every figure shown is an
-          indicative, owner-reported range. Regulated steps — valuation, tax, legal transfer —
-          go to licensed professionals.
-        </p>
-      </div>
     </div>
   </section>
 
@@ -172,7 +137,7 @@
     <div class="container">
       <div class="sec-head">
         <h2>Recently sold</h2>
-        <p>Realised prices from completed handoffs. This is the evidence behind every indicative range we show.</p>
+        <p>Realised prices from completed handoffs — the evidence behind every indicative range we show.</p>
       </div>
       <div class="dash__stats" id="sold-panel"></div>
     </div>
@@ -230,35 +195,88 @@
 </footer>
 
 <script type="module">
-import { LISTINGS, REGIONS } from './data/listings.js';
+import { REGIONS } from './data/listings.js';
 import * as store from './data/store.js';
-import { money, shorten, esc, fullMoney } from './data/format.js';
+import { shorten, esc, fullMoney } from './data/format.js';
 
 const owned = new Set(store.userListings().map((l) => l.id));
+const isLive = (l) => owned.has(l.id) || (l.status || 'live') === 'live';
+
+/* Per-industry covers: consistent, branded, no stock photography. */
+const COVERS = {
+  'Food & Beverage': { cls: 'cover--fbd', glyph: '<path d="M4 8h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/>' },
+  'Personal Services': { cls: 'cover--svc', glyph: '<path d="M7 4l1.5 5L7 14l1.5 5"/><path d="M17 4l-1.5 5L17 14l-1.5 5"/>' },
+  'Trades & Services': { cls: 'cover--trd', glyph: '<path d="M14 4l6 6-3 3-6-6z"/><path d="M11 7L4 14l3 3 7-7"/>' },
+  Healthcare: { cls: 'cover--hlt', glyph: '<path d="M12 5v14M5 12h14"/>' },
+  Retail: { cls: 'cover--ret', glyph: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/>' },
+  eCommerce: { cls: 'cover--ecom', glyph: '<path d="M4 8h16v11H4z"/><path d="M9 8V5h6v3"/>' },
+  'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
+  Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
+};
+const cover = (industry) => {
+  const c = COVERS[industry] || COVERS.Other;
+  return `<div class="cover ${c.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+    aria-hidden="true">${c.glyph}</svg></div>`;
+};
+
+/* ---------- hero stats ---------- */
+const heroStats = document.getElementById('hero-stats');
+if (heroStats) {
+  const all = store.allListings().filter(isLive);
+  const verifiedBuyers = store.getVerification('buyer') ? 1 : 0;
+  const stats = [
+    { n: all.length, l: 'Live listings' },
+    { n: new Set(all.map((l) => l.city + l.region)).size, l: 'Locations' },
+    { n: new Set(all.map((l) => l.industry)).size, l: 'Industries' },
+    { n: verifiedBuyers, l: 'Verified buyers' },
+  ];
+  heroStats.innerHTML = stats
+    .map((s) => `<div class="hero__stat"><b>${s.n}</b><span>${s.l}</span></div>`).join('');
+}
+
+/* ---------- hero search ---------- */
+const heroForm = document.getElementById('hero-search');
+if (heroForm) {
+  heroForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('hero-q').value.trim();
+    const region = document.getElementById('hero-region').value;
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (region) params.set('region', region);
+    const suffix = params.toString() ? '?' + params.toString() : '';
+    location.href = 'browse.html' + suffix;
+  });
+}
+
+/* ---------- listings grid ---------- */
 const el = document.getElementById('home-listings');
-el.innerHTML = store.allListings()
-  .filter((l) => owned.has(l.id) || (l.status || 'live') === 'live')
-  .slice(0, 6)
-  .map(l => {
-  const r = REGIONS.find(x => x.code === l.region);
-  return `
-  <a class="card" href="listing.html?id=${l.id}">
-    <div class="card__meta">${r.label} · ${l.city} · ${l.industry}</div>
-    <div class="card__name">${l.name}</div>
-    <div class="card__tagline">${l.tagline}</div>
+if (el) {
+  el.innerHTML = store.allListings()
+    .filter(isLive)
+    .slice(0, 6)
+    .map((l) => {
+      const r = REGIONS.find((x) => x.code === l.region);
+      return `
+  <a class="card" href="listing.html?id=${encodeURIComponent(l.id)}">
+    ${cover(l.industry)}
+    <div class="card__meta">${esc(r.label)} · ${esc(l.city)}</div>
+    <div class="card__name">${esc(l.name)}</div>
+    <div class="card__tagline">${esc(l.tagline)}</div>
     <dl class="card__figures">
       <div class="figure"><dt>Asking</dt><dd>${shorten(l.asking_price, r.symbol)}</dd></div>
       <div class="figure"><dt>Revenue</dt><dd>${shorten(l.gross_revenue, r.symbol)}</dd></div>
       <div class="figure"><dt>Cash flow</dt><dd>${shorten(l.cash_flow_sde, r.symbol)}</dd></div>
     </dl>
   </a>`;
-}).join('');
+    }).join('');
+}
 
-// Inventory counts — industries and locations
+/* ---------- inventory counts ---------- */
 const counts = document.getElementById('counts');
 if (counts) {
-  const live = store.allListings()
-    .filter((l) => owned.has(l.id) || (l.status || 'live') === 'live');
+  const live = store.allListings().filter(isLive);
   const byIndustry = {};
   const byCity = {};
   for (const l of live) {
@@ -273,46 +291,46 @@ if (counts) {
     + top(byCity, 3).map(([k, v]) => tile(v, k)).join('');
 }
 
-// Recently sold — closed prices, the comparables surface
-  const soldPanel = document.getElementById('sold-panel');
-  if (soldPanel) {
-    const sold = store.soldListings();
-    if (sold.length) {
-      const sym = (code) => (REGIONS.find((x) => x.code === code) || {}).symbol || '$';
-      const comp = store.soldComparables();
-      const rows = sold.slice(0, 4).map((l) => {
-        const r = REGIONS.find((x) => x.code === l.region);
-        return `
-        <div class="panel">
-          <div class="card__meta">${esc(l.industry)} · ${esc(l.city)}, ${esc(r.label)}</div>
-          <div class="card__name" style="font-size:var(--step-1)">${esc(l.name)}</div>
-          <table class="deftable" style="margin-top:var(--s-3)">
-            <tbody>
-              <tr><th scope="row">Sold for</th><td>${fullMoney(l.sold_price, sym(l.region))}</td></tr>
-              <tr><th scope="row">Asking</th><td>${fullMoney(l.asking_price, sym(l.region))}</td></tr>
-              <tr><th scope="row">Closed</th><td>${esc((l.sold_at || '').slice(0, 10))}</td></tr>
-            </tbody>
-          </table>
-        </div>`;
-      }).join('');
-      soldPanel.innerHTML = `<div class="panel"><div class="dash__num">${comp ? comp.count : sold.length}</div>
-        <div class="dash__label">Completed sales</div>
-        <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-2)">
-          Median ${comp ? fullMoney(comp.median, '') : '—'}
-        </p></div>` + rows;
-    } else {
-      soldPanel.innerHTML = `<div class="panel" style="grid-column: 1 / -1">
-        <div class="dash__num">0</div>
-        <div class="dash__label">No completed sales recorded yet in this browser</div></div>`;
-    }
+/* ---------- recently sold ---------- */
+const soldPanel = document.getElementById('sold-panel');
+if (soldPanel) {
+  const sold = store.soldListings();
+  if (sold.length) {
+    const sym = (code) => (REGIONS.find((x) => x.code === code) || {}).symbol || '$';
+    const comp = store.soldComparables();
+    const rows = sold.slice(0, 4).map((l) => {
+      const r = REGIONS.find((x) => x.code === l.region);
+      return `
+      <div class="panel">
+        <div class="card__meta">${esc(l.industry)} · ${esc(l.city)}, ${esc(r.label)}</div>
+        <div class="card__name" style="font-size:var(--step-1)">${esc(l.name)}</div>
+        <table class="deftable" style="margin-top:var(--s-3)">
+          <tbody>
+            <tr><th scope="row">Sold for</th><td>${fullMoney(l.sold_price, sym(l.region))}</td></tr>
+            <tr><th scope="row">Asking</th><td>${fullMoney(l.asking_price, sym(l.region))}</td></tr>
+            <tr><th scope="row">Closed</th><td>${esc((l.sold_at || '').slice(0, 10))}</td></tr>
+          </tbody>
+        </table>
+      </div>`;
+    }).join('');
+    soldPanel.innerHTML = `<div class="panel"><div class="dash__num">${comp ? comp.count : sold.length}</div>
+      <div class="dash__label">Completed sales</div>
+      <p class="muted" style="font-family:var(--font-ui); font-size:0.75rem; margin-top:var(--s-2)">
+        Median ${comp ? fullMoney(comp.median, '') : '—'}
+      </p></div>` + rows;
+  } else {
+    soldPanel.innerHTML = `<div class="panel" style="grid-column: 1 / -1">
+      <div class="dash__num">0</div>
+      <div class="dash__label">No completed sales recorded yet in this browser</div></div>`;
   }
+}
 
+/* ---------- scroll reveal ---------- */
 store.ready().then(() => {
-  // One restrained reveal
   const obs = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
   }, { rootMargin: '0px 0px -10% 0px' });
-  document.querySelectorAll('.reveal').forEach(n => obs.observe(n));
+  document.querySelectorAll('.reveal').forEach((n) => obs.observe(n));
 });
 </script>
   <script src="role.js"></script>

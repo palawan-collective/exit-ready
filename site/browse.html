@@ -157,6 +157,24 @@ import { shorten, esc } from './data/format.js';
 
 const ALL = store.allListings();
 const owned = new Set(store.userListings().map((l) => l.id));
+/* Per-industry covers: consistent, branded, no stock photography. */
+const COVERS = {
+  'Food & Beverage': { cls: 'cover--fbd', glyph: '<path d="M4 8h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/>' },
+  'Personal Services': { cls: 'cover--svc', glyph: '<path d="M7 4l1.5 5L7 14l1.5 5"/><path d="M17 4l-1.5 5L17 14l-1.5 5"/>' },
+  'Trades & Services': { cls: 'cover--trd', glyph: '<path d="M14 4l6 6-3 3-6-6z"/><path d="M11 7L4 14l3 3 7-7"/>' },
+  Healthcare: { cls: 'cover--hlt', glyph: '<path d="M12 5v14M5 12h14"/>' },
+  Retail: { cls: 'cover--ret', glyph: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/>' },
+  eCommerce: { cls: 'cover--ecom', glyph: '<path d="M4 8h16v11H4z"/><path d="M9 8V5h6v3"/>' },
+  'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
+  Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
+};
+const cover = (industry) => {
+  const cMap = COVERS[industry] || COVERS.Other;
+  return `<div class="cover ${cMap.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+    aria-hidden="true">${cMap.glyph}</svg></div>`;
+};
+
 const visible = (l) => owned.has(l.id) || ['live', 'sold'].includes(l.status || 'live');
 
 const params = new URLSearchParams(location.search);
@@ -180,6 +198,7 @@ SUCCESSOR_TYPES.filter(s => s.id !== 'any')
 
 // Apply URL params
 if (params.get('region')) fRegion.value = params.get('region');
+if (params.get('q')) fQ.value = params.get('q');
 if (params.get('industry')) fIndustry.value = params.get('industry');
 if (params.get('successor')) fSuccessor.value = params.get('successor');
 if (params.get('max')) fMax.value = params.get('max');
@@ -249,6 +268,7 @@ function render() {
 
     return `
     <a class="card" href="listing.html?id=${l.id}">
+      ${cover(l.industry)}
       <div class="card__meta">${esc(r.label)} · ${esc(l.city)} · ${esc(l.industry)}</div>
       <div class="card__name">${esc(l.name)}</div>
       <div class="card__tagline">${esc(l.tagline)}</div>

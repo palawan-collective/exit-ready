@@ -43,9 +43,9 @@ ok('bands carry a tone', ['good', 'warn', 'low'].includes(readinessBand(80).tone
 
 // --- sample buyers keep their published scores ---
 const scores = SAMPLE_BUYERS.map(readinessScore);
-ok('sample buyer scores are 100/50/40', JSON.stringify(scores) === '[100,50,40]', JSON.stringify(scores));
-ok('sample buyer bands are Ready/Early/Early',
-  JSON.stringify(SAMPLE_BUYERS.map(b => readinessBand(readinessScore(b)).label)) === '["Ready","Early","Early"]');
+ok('sample buyer scores match published set', JSON.stringify(scores) === '[100,50,40,100,50,85,80,25]', JSON.stringify(scores));
+ok('sample buyer bands match published set',
+  JSON.stringify(SAMPLE_BUYERS.map(b => readinessBand(readinessScore(b)).label)) === '["Ready","Early","Early","Ready","Early","Ready","Ready","Early"]');
 
 // --- funding path derivation ---
 ok('funding declared when how+deposit+timeline set',
@@ -135,8 +135,8 @@ ok('ownerFromForm keeps authority', ownerRecord.authority_confirmed === true);
 ok('ownerFromForm keeps attestation', ownerRecord.attested === true);
 
 // --- listings still resolve ---
-ok('six sample listings', LISTINGS.length === 6, String(LISTINGS.length));
-ok('three regions represented', new Set(LISTINGS.map(l => l.region)).size === 3);
+ok('sample listings cover all destinations', LISTINGS.length === 24, String(LISTINGS.length));
+ok('all regions represented', new Set(LISTINGS.map(l => l.region)).size === 8, String(new Set(LISTINGS.map(l => l.region)).size));
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

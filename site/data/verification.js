@@ -40,6 +40,11 @@ const DEPOSIT_BANDS = {
   US: ['Under $10k', '$10k – $25k', '$25k – $50k', '$50k – $100k', '$100k+'],
   UK: ['Under £10k', '£10k – £25k', '£25k – £50k', '£50k – £100k', '£100k+'],
   PH: ['Under ₱500k', '₱500k – ₱1M', '₱1M – ₱2M', '₱2M – ₱5M', '₱5M+'],
+  AE: ['Under AED 50k', 'AED 50k – 100k', 'AED 100k – 250k', 'AED 250k – 500k', 'AED 500k+'],
+  SG: ['Under S$20k', 'S$20k – 50k', 'S$50k – 100k', 'S$100k – 250k', 'S$250k+'],
+  AU: ['Under A$20k', 'A$20k – 50k', 'A$50k – 100k', 'A$100k – 250k', 'A$250k+'],
+  SE: ['Under kr 100k', 'kr 100k – 250k', 'kr 250k – 500k', 'kr 500k – 1M', 'kr 1M+'],
+  PT: ['Under €20k', '€20k – 50k', '€50k – 100k', '€100k – 250k', '€250k+'],
 };
 
 export function depositBands(country) {
@@ -50,16 +55,29 @@ const BUDGET_MAX = {
   US: [100_000, 250_000, 500_000, 1_000_000],
   UK: [100_000, 250_000, 500_000, 1_000_000],
   PH: [2_500_000, 5_000_000, 10_000_000, 25_000_000],
+  AE: [250_000, 500_000, 1_000_000, 2_500_000],
+  SG: [150_000, 300_000, 600_000, 1_200_000],
+  AU: [150_000, 300_000, 600_000, 1_200_000],
+  SE: [1_000_000, 2_500_000, 5_000_000, 10_000_000],
+  PT: [150_000, 300_000, 600_000, 1_200_000],
 };
+
+const BUDGET_SYM = { US: '$', UK: '£', PH: '₱', AE: 'AED ', SG: 'S$', AU: 'A$', SE: 'kr ', PT: '€' };
+
+function fmtBudget(n, sym) {
+  if (n >= 1_000_000) {
+    const m = n / 1_000_000;
+    return `Up to ${sym}${Number.isInteger(m) ? m : m.toFixed(1)}M`;
+  }
+  return `Up to ${sym}${Math.round(n / 1000)}k`;
+}
 
 /** Budget ceiling options for a region. "Any budget" returns null. */
 export function budgetBands(country) {
-  const sym = { US: '$', UK: '£', PH: '₱' }[country] || '$';
+  const sym = BUDGET_SYM[country] || '$';
   const bands = ['Any budget'];
   for (const n of BUDGET_MAX[country] || BUDGET_MAX.US) {
-    bands.push(n >= 1_000_000
-      ? `Up to ${sym}${(n / 1_000_000)}M`
-      : `Up to ${sym}${Math.round(n / 1000)}k`);
+    bands.push(fmtBudget(n, sym));
   }
   return bands;
 }

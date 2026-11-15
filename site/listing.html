@@ -63,6 +63,11 @@
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -167,6 +172,20 @@ const buyersHtml = SAMPLE_BUYERS.map(b => {
   </tr>`;
 }).join('');
 
+const gallery = (l.gallery && l.gallery.length ? l.gallery : (l.image ? [l.image] : [])).slice(0,3);
+const galleryHtml = gallery.length ? `
+  <div class="panel" style="padding: var(--s-3);">
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap: var(--s-3);">
+      <img src="${esc(gallery[0])}" alt="${esc(l.name)}" style="width:100%; height:360px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">
+      <div style="display:grid; gap: var(--s-3);">
+        ${(gallery[1] ? `<img src="${esc(gallery[1])}" alt="" loading="lazy" style="width:100%; height:174px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">` : `<div style="height:174px; border-radius:var(--radius); background:var(--surface-sunken)"></div>`)}
+        ${(gallery[2] ? `<img src="${esc(gallery[2])}" alt="" loading="lazy" style="width:100%; height:174px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">` : `<div style="height:174px; border-radius:var(--radius); background:var(--surface-sunken)"></div>`)}
+      </div>
+    </div>
+  </div>` : '';
+
+const listOrDash = (arr) => (arr && arr.length) ? `<ul style="margin:0; padding-left:1.15em">${arr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '—';
+
 root.innerHTML = `
   <p style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-4)">
     <a href="browse.html">Browse</a> <span class="muted">/</span>
@@ -175,13 +194,14 @@ root.innerHTML = `
   </p>
 
   <h1 style="font-size: var(--step-4); letter-spacing:-0.025em; margin-bottom: var(--s-3)">${esc(l.name)}</h1>
-  <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5)">
-    ${esc(l.city)}, ${esc(l.area)} · ${esc(l.industry)} · Established ${l.established}
+  <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-4)">
+    ${esc(l.city)}, ${esc(l.area)} · ${esc(l.industry)} · Established ${l.established} · ${esc(r.label)}
   </p>
 
-  ${isOwn ? `<div class="tags" style="margin-bottom: var(--s-5)"><span class="tag tag--good">Your listing</span></div>` : ''}
+  ${isOwn ? `<div class="tags" style="margin-bottom: var(--s-4)"><span class="tag tag--good">Your listing</span></div>` : ''}
+  ${galleryHtml}
 
-  <div class="detail">
+  <div class="detail" style="margin-top: var(--s-5)">
     <div>
       <!-- ============ FIGURES ============ -->
       <div class="panel">
@@ -199,6 +219,19 @@ root.innerHTML = `
           </tbody>
         </table>
         ${dealTags ? `<div class="tags" style="margin-top: var(--s-4)">${dealTags}</div>` : ''}
+      </div>
+
+      <!-- ============ BUSINESS DETAILS ============ -->
+      <div class="panel">
+        <h2>Business details</h2>
+        <table class="deftable">
+          <tbody>
+            <tr><th scope="row">Operating model</th><td style="font-weight:400">${esc(l.operating_model || '—')}</td></tr>
+            <tr><th scope="row">Customer base</th><td style="font-weight:400">${esc(l.customer_base || '—')}</td></tr>
+            <tr><th scope="row">Assets included</th><td style="font-weight:400">${esc(l.assets_included || '—')}</td></tr>
+            <tr><th scope="row">Ideal buyer</th><td style="font-weight:400">${esc(l.ideal_buyer || '—')}</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- ============ DISCLOSURE ============ -->
@@ -235,6 +268,28 @@ root.innerHTML = `
             <tr><th scope="row">Hours</th><td>${esc(l.hours)}</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- ============ TRANSITION & SUPPORT ============ -->
+      <div class="panel">
+        <h2>Transition & handover</h2>
+        <table class="deftable">
+          <tbody>
+            <tr><th scope="row">Training/support</th><td style="font-weight:400">${esc(l.training_support || '—')}</td></tr>
+            <tr><th scope="row">Transition period</th><td style="font-weight:400">${esc(l.transition_period || '—')}</td></tr>
+            <tr><th scope="row">Documents available</th><td style="font-weight:400">${listOrDash(l.documents_available)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ============ GROWTH & RISKS ============ -->
+      <div class="panel">
+        <h2>Growth opportunities</h2>
+        ${listOrDash(l.growth_opportunities)}
+      </div>
+      <div class="panel">
+        <h2>Risks & notes</h2>
+        <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin:0">${esc(l.risks_notes || 'No additional notes provided.')}</p>
       </div>
     </div>
 

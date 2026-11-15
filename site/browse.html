@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Browse businesses for sale — Exit-Ready</title>
-<meta name="description" content="Browse businesses for sale in the US, UK and Philippines. Filter by region, industry, price and successor type.">
+<meta name="description" content="Browse businesses for sale globally across the US, UK, Dubai, Singapore, Australia, Sweden, Portugal and the Philippines. Filter by region, industry, price and successor type.">
 <link rel="stylesheet" href="styles.css">
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -36,7 +36,7 @@
     <div class="container">
       <div class="sec-head">
         <h2>Businesses for sale</h2>
-        <p>Listings across the United States, United Kingdom and Philippines. Sample data for format testing.</p>
+        <p>Global listings across the United States, United Kingdom, Dubai, Singapore, Australia, Sweden, Portugal and the Philippines. Sample data for format testing.</p>
       </div>
 
       <form class="filters" id="filters" role="search" aria-label="Filter listings">
@@ -130,6 +130,11 @@
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -168,8 +173,11 @@ const COVERS = {
   'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
   Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
 };
-const cover = (industry) => {
-  const cMap = COVERS[industry] || COVERS.Other;
+const cover = (l) => {
+  if (l.image) {
+    return `<div class="cover cover--photo"><img src="${esc(l.image)}" alt="" loading="lazy"><span class="cover__label">${esc(l.industry)}</span></div>`;
+  }
+  const cMap = COVERS[l.industry] || COVERS.Other;
   return `<div class="cover ${cMap.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true">${cMap.glyph}</svg></div>`;
@@ -268,7 +276,7 @@ function render() {
 
     return `
     <a class="card" href="listing.html?id=${l.id}">
-      ${cover(l.industry)}
+      ${cover(l)}
       <div class="card__meta">${esc(r.label)} · ${esc(l.city)} · ${esc(l.industry)}</div>
       <div class="card__name">${esc(l.name)}</div>
       <div class="card__tagline">${esc(l.tagline)}</div>

@@ -862,8 +862,8 @@ legend {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.055) 1px, transparent 0);
-  background-size: 22px 22px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 100%), radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+  background-size: auto, 22px 22px;
   pointer-events: none;
 }
 .hero--band .container { position: relative; z-index: 1; }
@@ -877,25 +877,27 @@ legend {
 }
 .hero--band .hero__lede {
   font-size: var(--step-2);
-  color: rgba(255,255,255,0.72);
+  color: rgba(251,250,247,0.9);
   max-width: 52ch;
   margin-bottom: var(--s-6);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 .hero__kicker {
   font-family: var(--font-ui);
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--accent-hover);
+  color: #7db8a3;
   margin-bottom: var(--s-4);
 }
 .hero--band .btn--ghost {
   color: var(--ink-inverse);
-  border-color: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.04);
 }
 .hero--band .btn--ghost:hover {
   border-color: var(--ink-inverse);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.12);
   color: var(--ink-inverse);
 }
 
@@ -949,7 +951,7 @@ legend {
 .hero__stat span {
   font-family: var(--font-ui);
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(251,250,247,0.78);
 }
 
 /* ===========================================================================
@@ -982,16 +984,18 @@ legend {
   background-size: 16px 16px;
 }
 .cover svg { position: relative; z-index: 1; opacity: 0.95; }
+.cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cover--photo::after { background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%); }
 .cover__label {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   bottom: var(--s-4);
   left: var(--s-5);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255,255,255,0.9);
 }
 .cover--fbd  { background: linear-gradient(135deg, #1F5F4B, #2E7A5E); }
 .cover--svc  { background: linear-gradient(135deg, #2A5C8A, #3C7AB5); }

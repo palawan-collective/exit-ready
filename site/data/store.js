@@ -18,15 +18,128 @@ let state = null;
 let session = null;
 let primed = false;
 
+function demoState() {
+  const now = new Date();
+  const ago = (d, h = 10) => new Date(now.getTime() - d * 86400000 - h * 3600000).toISOString();
+  return {
+    user: { role: 'owner', name: 'Alex Morgan', email: 'alex@example.com', at: ago(14) },
+    verification: {
+      owner: {
+        full_name: 'Alex Morgan', email: 'alex@example.com', phone: '+1 555 0100',
+        country: 'US', id_type: 'Passport', id_number: 'P-88421',
+        business_name: 'Riverside Specialty Roasters', registration_number: 'LLC-77821', tax_id: 'TX-9931',
+        authority_confirmed: true, attested: true, identity_verified: true,
+      },
+      buyer: {
+        full_name: 'Jordan Lee', email: 'jordan@example.com', country: 'US',
+        identity_verified: true, funding_path: 'SBA-style bank loan (pre-qualified)',
+        deposit_capacity_band: '$50k – $100k', timeline: '1–3 months',
+        funding_path_declared: true, prior_ownership: true, references_provided: true, nda_signed: true,
+        industry: 'Food & Beverage', max_price: 500000, persona: 'local_operator',
+      },
+    },
+    listings: [
+      {
+        id: 'er-demo-1', sample: false, status: 'live', region: 'US', industry: 'Food & Beverage',
+        name: 'Riverside Specialty Roasters', tagline: 'Neighbourhood roastery café with wholesale accounts and loyal regulars.',
+        city: 'Portland', area: 'Oregon', established: 2015,
+        asking_price: 325000, gross_revenue: 640000, cash_flow_sde: 148000, ebitda: 132000,
+        inventory_amount: 18000, inventory_included_in_price: true, financing_ready: true,
+        employees_count: 6, employee_type: 'Mixed', real_estate_status: 'Leased',
+        building_sf: 1100, lease_expiration: '2029-05-31', monthly_rent: 4200, nnn: 600,
+        hours: '7:00 AM – 6:00 PM', monthly_payroll: 16500, reason_for_selling: 'Owner relocating',
+        successor_types_wanted: ['local_operator', 'first_time'], seller_financing_offered: true, earn_out_offered: true,
+        disclosure_flags: ['financials_unaudited', 'lease_transfer_required'],
+        description: 'Established roastery café with strong morning trade, retail bean sales, and 10 recurring wholesale accounts. Trained team and documented SOPs in place.',
+        highlights: ['10 recurring wholesale accounts', 'In-house roasting and trained baristas', 'Documented recipes and supplier relationships', 'Owner available for 6-week transition'],
+        handoff_progress: { loi: 'done', nda: 'done', verification: 'in_progress' },
+        image: 'https://picsum.photos/seed/erdemo1/1200/700',
+        gallery: ['https://picsum.photos/seed/erdemo1/1200/700', 'https://picsum.photos/seed/erdemo1-a/1200/700', 'https://picsum.photos/seed/erdemo1-b/1200/700'],
+        operating_model: 'Retail café with in-house roasting and B2B wholesale supply.',
+        customer_base: 'Local regulars, commuters, and recurring wholesale café/office clients.',
+        assets_included: 'Roasting equipment, café fit-out, POS, recipes, supplier contracts, brand and social accounts.',
+        training_support: '6 weeks operational and wholesale handover.',
+        transition_period: '45 days post-close support.',
+        documents_available: ['P&L summaries', 'Lease', 'Equipment list', 'Supplier/wholesale contacts', 'SOPs'],
+        ideal_buyer: 'Hands-on operator or hospitality buyer seeking a turnkey café-roastery.',
+        growth_opportunities: ['Expand wholesale', 'Online bean subscriptions', 'Catering/events', 'Extended hours'],
+        risks_notes: 'Lease transfer subject to landlord consent; owner-led sourcing introductions included.',
+        owner: { name: 'Alex Morgan', email: 'alex@example.com' }, createdAt: ago(30),
+      },
+      {
+        id: 'er-demo-2', sample: false, status: 'draft', region: 'US', industry: 'Professional Services',
+        name: 'Harbor Bookkeeping Studio', tagline: 'Recurring-retainer bookkeeping practice serving local SMEs.',
+        city: 'Seattle', area: 'Washington', established: 2018,
+        asking_price: 180000, gross_revenue: 240000, cash_flow_sde: 110000, ebitda: 98000,
+        inventory_amount: 0, inventory_included_in_price: true, financing_ready: false,
+        employees_count: 2, employee_type: 'Part-time', real_estate_status: 'Home based',
+        building_sf: null, lease_expiration: null, monthly_rent: null, nnn: null,
+        hours: 'Mon–Fri, flexible', monthly_payroll: 4200, reason_for_selling: 'Owner retiring',
+        successor_types_wanted: ['employee', 'local_operator'], seller_financing_offered: true, earn_out_offered: false,
+        disclosure_flags: ['financials_unaudited', 'owner_is_key_person'],
+        description: 'Bookkeeping and payroll support practice with 38 retainer clients and low churn. Documented workflows and cloud tooling included.',
+        highlights: ['38 recurring monthly clients', 'Documented processes and templates', 'Cloud-based, location-flexible', 'Owner-led introductions planned'],
+        handoff_progress: {},
+        image: 'https://picsum.photos/seed/erdemo2/1200/700',
+        gallery: ['https://picsum.photos/seed/erdemo2/1200/700', 'https://picsum.photos/seed/erdemo2-a/1200/700', 'https://picsum.photos/seed/erdemo2-b/1200/700'],
+        operating_model: 'Monthly-retainer bookkeeping and payroll services delivered remotely.',
+        customer_base: 'Local SME clients on recurring service agreements.',
+        assets_included: 'Client contracts, workflows/templates, tooling setup, and brand assets.',
+        training_support: '6–8 weeks client introductions and process handover.',
+        transition_period: '60 days support.',
+        documents_available: ['Client list summary', 'Revenue summaries', 'Process docs', 'Service agreements'],
+        ideal_buyer: 'Bookkeeper/accountant or small practice seeking recurring revenue.',
+        growth_opportunities: ['Advisory/CFO services', 'Expand client base', 'Package pricing'],
+        risks_notes: 'Client relationships owner-led; structured introductions and handover planned.',
+        owner: { name: 'Alex Morgan', email: 'alex@example.com' }, createdAt: ago(5),
+      },
+    ],
+    saved: ['er-1001', 'er-2001', 'er-2102', 'er-2401'],
+    alertsSeenAt: ago(2),
+    deals: {
+      'er-1001': {
+        listingId: 'er-1001', buyerId: 'b-demo',
+        nda: { signed: true, at: ago(10), signerName: 'Jordan Lee' },
+        offer: { amount: 138000, deposit: 15000, funding: 'SBA-style bank loan (pre-qualified)', timeline: '1–3 months', status: 'sent', at: ago(3), signerName: 'Jordan Lee' },
+        milestones: {},
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Hi — very interested in the café. Is the lease assignment straightforward with the landlord?', at: ago(7) },
+          { from: 'owner', name: 'Owner', text: 'Thanks for reaching out. Landlord is open to assignment for a qualified operator; I can share the lease summary after NDA.', at: ago(6) },
+          { from: 'buyer', name: 'Jordan Lee', text: 'NDA signed. I have also shared proof of funds and pre-qualification.', at: ago(4) },
+        ],
+      },
+      'er-2102': {
+        listingId: 'er-2102', buyerId: 'b-demo',
+        nda: { signed: true, at: ago(12), signerName: 'Jordan Lee' },
+        offer: { amount: 740000, deposit: 80000, funding: 'Cash and investor partner', timeline: '3–6 months', status: 'active', at: ago(8), decidedAt: ago(5), signerName: 'Jordan Lee' },
+        milestones: { loi: { status: 'done', seller: true, buyer: true, completed_at: ago(6).slice(0,16).replace('T',' ') } },
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Could you share MRR retention details and infra documentation?', at: ago(9) },
+          { from: 'owner', name: 'Owner', text: 'Shared in the data room summary — churn is ~8% annually with strong logo retention.', at: ago(8) },
+        ],
+      },
+      'er-2001': {
+        listingId: 'er-2001', buyerId: 'b-demo',
+        nda: { signed: false },
+        offer: {},
+        milestones: {},
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Interested in learning more about the wholesale accounts and roast profiles.', at: ago(2, 2) },
+        ],
+      },
+    },
+  };
+}
+
 /* ---------- local persistence (always on) ---------- */
 
 function load() {
   if (state !== null) return state;
   try {
     const raw = localStorage.getItem(KEY);
-    state = raw ? JSON.parse(raw) : {};
+    state = raw ? JSON.parse(raw) : demoState();
   } catch {
-    state = {};
+    state = demoState();
   }
   return state;
 }

@@ -36,7 +36,7 @@
   <!-- ================= HERO ================= -->
   <section class="hero hero--band">
     <div class="container">
-      <p class="hero__kicker">US · UK · Philippines</p>
+      <p class="hero__kicker">Global · US · UK · Dubai · Singapore · Australia · Sweden · Portugal · Philippines</p>
       <h1>You built it. You decide who gets it.</h1>
       <p class="hero__lede">
         Sell to a verified successor — your team, a local operator, or a first-time buyer —
@@ -49,6 +49,11 @@
           <option value="">Anywhere</option>
           <option value="US">United States</option>
           <option value="UK">United Kingdom</option>
+          <option value="AE">Dubai, UAE</option>
+          <option value="SG">Singapore</option>
+          <option value="AU">Australia</option>
+          <option value="SE">Sweden</option>
+          <option value="PT">Portugal</option>
           <option value="PH">Philippines</option>
         </select>
         <button class="btn btn--primary" type="submit">Search</button>
@@ -173,6 +178,11 @@
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -213,8 +223,11 @@ const COVERS = {
   'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
   Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
 };
-const cover = (industry) => {
-  const c = COVERS[industry] || COVERS.Other;
+const cover = (l) => {
+  if (l.image) {
+    return `<div class="cover cover--photo"><img src="${esc(l.image)}" alt="" loading="lazy"><span class="cover__label">${esc(l.industry)}</span></div>`;
+  }
+  const c = COVERS[l.industry] || COVERS.Other;
   return `<div class="cover ${c.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true">${c.glyph}</svg></div>`;
@@ -260,7 +273,7 @@ if (el) {
       const r = REGIONS.find((x) => x.code === l.region);
       return `
   <a class="card" href="listing.html?id=${encodeURIComponent(l.id)}">
-    ${cover(l.industry)}
+    ${cover(l)}
     <div class="card__meta">${esc(r.label)} · ${esc(l.city)}</div>
     <div class="card__name">${esc(l.name)}</div>
     <div class="card__tagline">${esc(l.tagline)}</div>

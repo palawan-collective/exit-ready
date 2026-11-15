@@ -6,7 +6,9 @@
  * behaves exactly as it did before.
  */
 
-import { LISTINGS as SAMPLE_LISTINGS } from './listings.js';
+import { LISTINGS } from './listings.js';
+
+const SAMPLE_LISTINGS = LISTINGS;
 import * as db from './db.js';
 import { REMOTE_ENABLED } from './config.js';
 

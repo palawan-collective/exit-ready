@@ -1170,3 +1170,41 @@ legend {
   .hv2-track{width:100%}
 }
 @media(prefers-reduced-motion:reduce){ .hv2-copy>*,.hv2-card,.hv2-dot,.hv2-photo img{animation:none!important} }
+
+/* ===========================================================================
+   Mobile ergonomics — most visitors are on a phone
+   =========================================================================== */
+.mobile-nav { display:none; }
+@media(max-width:640px){
+  body { padding-bottom:72px; }
+  .masthead__inner { height:62px; gap:12px; }
+  .masthead__nav { margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .masthead__nav > a { display:none; }
+  .role-switch__label { display:none; }
+  .role-switch button,
+  .btn, button,
+  input:not([type=checkbox]):not([type=radio]), select, textarea, [role=button] { min-height:44px; }
+  .btn--sm { min-height:44px; }
+  .mobile-nav {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    position:fixed; z-index:60; left:0; right:0; bottom:0;
+    background:var(--paper); border-top:1px solid var(--rule);
+    box-shadow:0 -8px 24px -18px rgba(20,23,26,.6);
+  }
+  .mobile-nav a {
+    display:flex; align-items:center; justify-content:center; min-height:60px;
+    font-family:var(--font-ui); font-size:12px; font-weight:600;
+    color:var(--ink-muted); border-right:1px solid var(--rule);
+  }
+  .mobile-nav a:last-child { border-right:0; }
+  .mobile-nav a[aria-current=page] { color:var(--accent); box-shadow:inset 0 3px 0 var(--accent); }
+  .hv2-photo__tag, .hv2-eyebrow, .hv2-card__tag, .hv2-card__note,
+  .hv2-card--handoff p, .hv2-markets__label, .hv2-fact small,
+  .card__kick, .cover__label, .field__hint, .dash__label, .deal__index,
+  .deal__field span { font-size:12px!important; }
+  .hv2-copy { padding-top:32px; }
+  .wordmark, .hv2-link, .footer a { display:inline-flex; align-items:center; min-height:44px; }
+  .footer a { padding-block:4px; }
+  input[type=checkbox], input[type=radio] { width:26px; height:26px; accent-color:var(--accent); }
+  th { font-size:12px!important; }
+}

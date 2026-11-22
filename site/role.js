@@ -6,6 +6,27 @@
  */
 (function () {
   var KEY = 'exit-ready:role';
+
+  /* Mobile navigation: a compact fixed tab bar on small screens. */
+  (function () {
+    if (document.querySelector('.mobile-nav')) return;
+    var here = location.pathname.split('/').pop() || 'index.html';
+    var tabs = [
+      ['index.html', 'Home'],
+      ['browse.html', 'Browse'],
+      ['sell.html', 'Sell'],
+      ['dashboard.html', 'Dashboard']
+    ];
+    var nav = document.createElement('nav');
+    nav.className = 'mobile-nav';
+    nav.setAttribute('aria-label', 'Mobile navigation');
+    nav.innerHTML = tabs.map(function (t) {
+      var active = here === t[0] || (here === '' && t[0] === 'index.html');
+      return '<a href="' + t[0] + '"' + (active ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
+    }).join('');
+    document.body.appendChild(nav);
+  })();
+
   var bar = document.querySelector('[data-role-switch]');
   if (!bar) return;
 

@@ -1343,6 +1343,27 @@ legend {
 .flow__icon svg{stroke:#D6F2E5;stroke-width:2}
 .flow__tag{font-size:11px;color:#D6F2E5;border-color:rgba(214,242,229,.55);padding:6px 11px}
 
+/* 3D flip cards — enter + hover/tap */
+.value-grid{perspective:1400px}
+.value-card{height:300px;padding:0;border:0;background:transparent;overflow:visible;opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.value-grid.is-in .value-card{opacity:1;transform:none}
+.value-card__inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(-88deg);transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.value-grid.is-in .value-card__inner{transform:rotateX(0)}
+.value-grid.is-in .value-card:nth-child(2) .value-card__inner{transition-delay:.16s}
+.value-grid.is-in .value-card:nth-child(3) .value-card__inner{transition-delay:.32s}
+.value-card__face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--surface-raised);padding:26px;display:flex;flex-direction:column;overflow:hidden}
+.value-card__face--front:hover{border-color:var(--rule-strong)}
+.value-card__face--back{transform:rotateY(180deg);background:#123D31;border-color:#123D31;color:#FBFAF7}
+.value-card__face--back .value-card__letter{color:#A8DCC6}
+.value-card__big{font-family:var(--font-body);font-size:1.5rem;line-height:1.2;margin:18px 0 12px;color:#fff}
+.value-card__backcopy{font-size:0.875rem;line-height:1.6;color:rgba(251,250,247,.78);margin:0}
+.value-card__hint{margin-top:auto;font-family:var(--font-mono);font-size:0.6875rem;letter-spacing:.08em;text-transform:uppercase;color:#A8DCC6;opacity:.8}
+@media(hover:hover){.value-card:hover .value-card__inner{transform:rotateY(180deg)}}
+.value-card.is-flipped .value-card__inner{transform:rotateY(180deg)}
+.value-card:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.value-card__inner{transform:none}.value-grid.is-in .value-card__inner,.value-card:hover .value-card__inner,.value-card.is-flipped .value-card__inner{transform:none}.value-card__face--back{display:none}}
+@media(max-width:640px){.value-card{height:320px}}
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>
@@ -2413,23 +2434,53 @@ legend {
         <p>Ten minutes now saves months later. We build the exit pack; you approve it.</p>
       </div>
       <div class="value-grid" id="sell-rail">
-        <article class="value-card">
-          <span class="value-card__letter">A</span>
-          <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><rect x="2" y="6" width="60" height="28" rx="3"/><path d="M9 14h22M9 21h16M9 27h26"/></svg></span>
-          <h3>Built automatically</h3>
-          <p>A plain-English summary, an indicative range and your disclosure flags, drafted for you.</p>
+        <article class="value-card" tabindex="0">
+          <div class="value-card__inner">
+            <div class="value-card__face value-card__face--front">
+              <span class="value-card__letter">A</span>
+              <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><rect x="2" y="6" width="60" height="28" rx="3"/><path d="M9 14h22M9 21h16M9 27h26"/></svg></span>
+              <h3>Built automatically</h3>
+              <p>A plain-English summary, an indicative range and your disclosure flags, drafted for you.</p>
+            </div>
+            <div class="value-card__face value-card__face--back">
+              <span class="value-card__letter">A · THE RESULT</span>
+              <p class="value-card__big">Ten minutes in, not ten weeks.</p>
+              <p class="value-card__backcopy">You answer the basics once. The listing, summary and range write themselves — ready for your approval.</p>
+              <span class="value-card__hint">Hover or tap to flip back</span>
+            </div>
+          </div>
         </article>
-        <article class="value-card">
-          <span class="value-card__letter">B</span>
-          <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><circle cx="18" cy="20" r="7"/><circle cx="46" cy="20" r="7"/><path d="M25 20h14"/></svg></span>
-          <h3>Matched, not listed</h3>
-          <p>Buyers who fit your region, industry and successor type come to you — ranked by readiness.</p>
+        <article class="value-card" tabindex="0">
+          <div class="value-card__inner">
+            <div class="value-card__face value-card__face--front">
+              <span class="value-card__letter">B</span>
+              <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><circle cx="18" cy="20" r="7"/><circle cx="46" cy="20" r="7"/><path d="M25 20h14"/></svg></span>
+              <h3>Matched, not listed</h3>
+              <p>Buyers who fit your region, industry and successor type come to you — ranked by readiness.</p>
+            </div>
+            <div class="value-card__face value-card__face--back">
+              <span class="value-card__letter">B · THE RESULT</span>
+              <p class="value-card__big">The right buyer, already vetted.</p>
+              <p class="value-card__backcopy">Your deal is shown to a shortlist that fits — with identity, funding and intent scored before contact.</p>
+              <span class="value-card__hint">Hover or tap to flip back</span>
+            </div>
+          </div>
         </article>
-        <article class="value-card">
-          <span class="value-card__letter">C</span>
-          <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><path d="M32 5l8 5v9c0 7-4 11-8 13-4-2-8-6-8-13v-9z"/><path d="M28 20l3 3 6-6"/></svg></span>
-          <h3>Paid on close</h3>
-          <p>A success fee only when the handoff completes and both sides have signed every milestone.</p>
+        <article class="value-card" tabindex="0">
+          <div class="value-card__inner">
+            <div class="value-card__face value-card__face--front">
+              <span class="value-card__letter">C</span>
+              <span class="value-card__art"><svg viewBox="0 0 64 40" fill="none"><path d="M32 5l8 5v9c0 7-4 11-8 13-4-2-8-6-8-13v-9z"/><path d="M28 20l3 3 6-6"/></svg></span>
+              <h3>Paid on close</h3>
+              <p>A success fee only when the handoff completes and both sides have signed every milestone.</p>
+            </div>
+            <div class="value-card__face value-card__face--back">
+              <span class="value-card__letter">C · THE RESULT</span>
+              <p class="value-card__big">Aligned all the way to close.</p>
+              <p class="value-card__backcopy">No listing fee, no surprises. We earn only when the handoff is finished and every milestone is signed off.</p>
+              <span class="value-card__hint">Hover or tap to flip back</span>
+            </div>
+          </div>
         </article>
       </div>
       <p style="margin-top: var(--s-6)">
@@ -2537,6 +2588,17 @@ legend {
   
 <script>
 /* ---------- flow + value motion ---------- */
+/* ---------- tap-to-flip on touch devices ---------- */
+(function () {
+  document.querySelectorAll('.value-card').forEach(function (card) {
+    function flip() { card.classList.toggle('is-flipped'); }
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+    });
+  });
+})();
+
 (function () {
   function observe(el, cls) {
     if (!el) return;

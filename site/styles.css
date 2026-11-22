@@ -1335,3 +1335,24 @@ legend {
 .flow__icon{border-color:rgba(255,255,255,.45)}
 .flow__icon svg{stroke:#D6F2E5;stroke-width:2}
 .flow__tag{font-size:11px;color:#D6F2E5;border-color:rgba(214,242,229,.55);padding:6px 11px}
+
+/* 3D flip cards — enter + hover/tap */
+.value-grid{perspective:1400px}
+.value-card{height:300px;padding:0;border:0;background:transparent;overflow:visible;opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.value-grid.is-in .value-card{opacity:1;transform:none}
+.value-card__inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(-88deg);transform-origin:50% 100%;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.value-grid.is-in .value-card__inner{transform:rotateX(0)}
+.value-grid.is-in .value-card:nth-child(2) .value-card__inner{transition-delay:.16s}
+.value-grid.is-in .value-card:nth-child(3) .value-card__inner{transition-delay:.32s}
+.value-card__face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--surface-raised);padding:26px;display:flex;flex-direction:column;overflow:hidden}
+.value-card__face--front:hover{border-color:var(--rule-strong)}
+.value-card__face--back{transform:rotateY(180deg);background:#123D31;border-color:#123D31;color:#FBFAF7}
+.value-card__face--back .value-card__letter{color:#A8DCC6}
+.value-card__big{font-family:var(--font-body);font-size:1.5rem;line-height:1.2;margin:18px 0 12px;color:#fff}
+.value-card__backcopy{font-size:0.875rem;line-height:1.6;color:rgba(251,250,247,.78);margin:0}
+.value-card__hint{margin-top:auto;font-family:var(--font-mono);font-size:0.6875rem;letter-spacing:.08em;text-transform:uppercase;color:#A8DCC6;opacity:.8}
+@media(hover:hover){.value-card:hover .value-card__inner{transform:rotateY(180deg)}}
+.value-card.is-flipped .value-card__inner{transform:rotateY(180deg)}
+.value-card:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.value-card__inner{transform:none}.value-grid.is-in .value-card__inner,.value-card:hover .value-card__inner,.value-card.is-flipped .value-card__inner{transform:none}.value-card__face--back{display:none}}
+@media(max-width:640px){.value-card{height:320px}}

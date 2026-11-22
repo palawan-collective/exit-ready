@@ -1432,6 +1432,36 @@ p,li,dd{text-wrap:pretty}
 .role-switch .btn--ghost,.role-switch button[aria-pressed=false]{background:#fff;color:#14171A;border-color:var(--rule-strong)}
 .figure dt{font-size:12px!important}
 
+
+/* ===========================================================================
+   Mobile pass 2 — photo unobstructed, readable flip cards, uniform footer
+   =========================================================================== */
+.value-card .value-card__face--back .value-card__big,
+.value-card .value-card__face--back .value-card__backcopy{color:#FFFFFF!important;opacity:1!important}
+.value-card .value-card__face--back .value-card__letter,
+.value-card .value-card__face--back .value-card__hint{color:#D9EDE5!important;opacity:1!important}
+.value-card__face--back .value-card__backcopy{font-size:15px;line-height:1.55}
+@media(max-width:640px){
+  .hv2-photo{height:auto;overflow:visible;background:transparent;display:flex;flex-direction:column;gap:14px;padding-top:16px}
+  .hv2-photo img{height:240px;object-position:50% 30%;border-radius:var(--radius-lg)}
+  .hv2-photo::after{display:none}
+  .hv2-photo__tag{position:static;order:2;padding-left:0;border-left:0;color:var(--ink-muted);font-size:12px}
+  .hv2-card--buyer,.hv2-card--handoff{position:static;order:3;width:auto;max-width:none;margin:0;left:auto;right:auto;bottom:auto;animation:none!important;box-shadow:none;border-color:var(--rule)}
+  .hv2-card--handoff{order:4}
+  .hv2-facts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 10px!important}
+  .hv2-fact{border:0!important;margin:0!important;padding:0!important}
+  .hv2-fact b{font-size:1.5rem!important}
+  .hv2-fact small{color:rgba(255,255,255,.88)!important;font-size:11px!important;letter-spacing:.06em!important}
+  .hv2-link{color:#fff!important;border-bottom-color:rgba(255,255,255,.6)!important}
+  .footer__grid{grid-template-columns:1fr!important;gap:16px!important}
+  .footer ul{display:block!important}
+  .footer li{margin-bottom:4px!important}
+  .footer a{display:inline-block!important;padding:5px 0!important;font-size:15px!important;white-space:nowrap!important}
+  .footer h3{margin-bottom:8px!important}
+  .footer__grid>div{padding-bottom:12px!important;border-bottom:1px solid var(--rule)}
+  .footer__grid>div:last-child{border-bottom:0}
+}
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>

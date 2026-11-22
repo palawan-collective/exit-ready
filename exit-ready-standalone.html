@@ -869,8 +869,8 @@ legend {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.055) 1px, transparent 0);
-  background-size: 22px 22px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 100%), radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+  background-size: auto, 22px 22px;
   pointer-events: none;
 }
 .hero--band .container { position: relative; z-index: 1; }
@@ -884,25 +884,27 @@ legend {
 }
 .hero--band .hero__lede {
   font-size: var(--step-2);
-  color: rgba(255,255,255,0.72);
+  color: rgba(251,250,247,0.9);
   max-width: 52ch;
   margin-bottom: var(--s-6);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 .hero__kicker {
   font-family: var(--font-ui);
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--accent-hover);
+  color: #7db8a3;
   margin-bottom: var(--s-4);
 }
 .hero--band .btn--ghost {
   color: var(--ink-inverse);
-  border-color: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.04);
 }
 .hero--band .btn--ghost:hover {
   border-color: var(--ink-inverse);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.12);
   color: var(--ink-inverse);
 }
 
@@ -956,7 +958,7 @@ legend {
 .hero__stat span {
   font-family: var(--font-ui);
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(251,250,247,0.78);
 }
 
 /* ===========================================================================
@@ -989,16 +991,18 @@ legend {
   background-size: 16px 16px;
 }
 .cover svg { position: relative; z-index: 1; opacity: 0.95; }
+.cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cover--photo::after { background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%); }
 .cover__label {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   bottom: var(--s-4);
   left: var(--s-5);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255,255,255,0.9);
 }
 .cover--fbd  { background: linear-gradient(135deg, #1F5F4B, #2E7A5E); }
 .cover--svc  { background: linear-gradient(135deg, #2A5C8A, #3C7AB5); }
@@ -1069,6 +1073,111 @@ legend {
 }
 .dash__score > div:first-child { display: flex; flex-direction: column; gap: var(--s-2); align-items: flex-start; }
 
+/* ===========================================================================
+   Hero v2 — succession marketplace (editorial, photographic, motion-safe)
+   =========================================================================== */
+.hero--v2 {
+  --hv2-forest:#123D31; --hv2-deep:#0B2A21; --hv2-cream:#FBFAF7;
+  --hv2-mint:#A8DCC6; --hv2-line:#DCD8CE; --hv2-strong:#B9B4A7;
+  position:relative; background:var(--hv2-forest); color:var(--hv2-cream);
+  padding:0; min-height:600px; overflow:hidden; isolation:isolate;
+}
+.hero--v2.hero--band::after { display:none; }
+.hero--v2::before {
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:58px 58px;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,transparent 62%);
+  mask-image:linear-gradient(90deg,#000 0%,transparent 62%);
+}
+.hv2-photo { position:absolute; right:0; top:0; bottom:0; width:47%; z-index:0; overflow:hidden; background:var(--hv2-deep); }
+.hv2-photo img { width:100%; height:100%; object-fit:cover; object-position:50% 20%; filter:saturate(.96) contrast(1.04); animation:hv2Zoom 26s ease-in-out infinite alternate; }
+.hv2-photo::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,var(--hv2-forest) 0%,rgba(18,61,49,.72) 16%,rgba(18,61,49,.08) 48%,rgba(11,42,33,.2) 100%); }
+.hv2-photo__tag { position:absolute; z-index:3; left:32px; top:28px; font-family:var(--font-ui); font-size:0.62rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.9); border-left:2px solid var(--hv2-mint); padding-left:10px; }
+.hv2-copy { position:relative; z-index:2; max-width:700px; padding:40px 0 36px; }
+.hv2-eyebrow { display:flex; align-items:center; gap:12px; margin:0 0 20px; font-family:var(--font-mono); font-size:0.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--hv2-mint); }
+.hv2-eyebrow::before { content:""; width:34px; height:1px; background:var(--hv2-mint); }
+.hero--v2 h1 { font-family:var(--font-body); font-size:clamp(50px,5.4vw,78px); font-weight:500; line-height:1.01; letter-spacing:-.045em; margin:0 0 18px; color:var(--hv2-cream); }
+.hero--v2 h1 em { display:block; font-style:italic; font-weight:400; color:var(--hv2-mint); }
+.hv2-lede { font-size:1.0625rem; line-height:1.55; color:rgba(251,250,247,.82); max-width:50ch; margin:0 0 24px; }
+.hv2-lede strong { color:#fff; font-weight:600; }
+.hv2-finder { background:#fff; border-radius:6px; padding:5px; box-shadow:0 26px 60px -28px rgba(0,0,0,.65); max-width:700px; }
+.hv2-roles { display:flex; gap:4px; padding:5px 5px 8px; }
+.hv2-roles button { flex:1; border:0; background:transparent; color:var(--ink-muted); padding:9px; border-radius:5px; font-family:var(--font-ui); font-size:0.8125rem; font-weight:600; cursor:pointer; }
+.hv2-roles button[aria-pressed="true"] { background:var(--hv2-forest); color:#fff; }
+.hv2-search { display:grid; grid-template-columns:minmax(0,1fr) 140px 140px auto; gap:7px; padding:0 5px 5px; }
+.hv2-search input, .hv2-search select { min-width:0; width:100%; height:48px; border:1px solid var(--hv2-line); border-radius:5px; padding:0 13px; background:var(--hv2-cream); color:var(--ink); font-family:var(--font-ui); font-size:0.875rem; }
+.hv2-search input::placeholder { color:#6B716F; }
+.hv2-search select { cursor:pointer; appearance:none; padding-right:28px; background-image:linear-gradient(45deg,transparent 50%,#5A6068 50%),linear-gradient(135deg,#5A6068 50%,transparent 50%); background-position:calc(100% - 17px) 21px,calc(100% - 12px) 21px; background-size:5px 5px,5px 5px; background-repeat:no-repeat; }
+.hv2-search .btn { min-height:48px; padding-inline:18px; white-space:nowrap; }
+.hv2-actions { display:flex; align-items:center; gap:24px; margin-top:24px; flex-wrap:wrap; }
+.hv2-actions .btn--ghost { color:var(--hv2-cream); border-color:rgba(255,255,255,.55); background:rgba(255,255,255,.06); }
+.hv2-actions .btn--ghost:hover { background:rgba(255,255,255,.14); }
+.hv2-link { font-family:var(--font-ui); font-size:0.875rem; font-weight:600; color:var(--hv2-mint); border-bottom:1px solid rgba(168,220,198,.55); padding-bottom:3px; }
+.hv2-link:hover { color:#fff; }
+.hv2-facts { display:flex; gap:0; margin-top:26px; padding-top:16px; border-top:1px solid rgba(255,255,255,.22); flex-wrap:wrap; max-width:700px; }
+.hv2-fact { padding-right:22px; margin-right:22px; border-right:1px solid rgba(255,255,255,.2); }
+.hv2-fact:last-child { border:0; margin:0; padding:0; }
+.hv2-fact b { display:block; font-family:var(--font-body); font-size:1.625rem; font-weight:500; line-height:1; color:#fff; }
+.hv2-fact small { display:block; font-family:var(--font-mono); font-size:0.6rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(251,250,247,.62); margin-top:7px; }
+.hv2-card { position:absolute; z-index:3; background:#fff; color:var(--ink); border:1px solid var(--hv2-strong); border-radius:6px; box-shadow:0 26px 54px -24px rgba(0,0,0,.55); }
+.hv2-card--buyer { left:32px; bottom:28px; width:250px; padding:15px 16px 14px; animation:hv2FloatIn .75s cubic-bezier(.2,.7,.2,1) .45s both, hv2Hover 7s ease-in-out 1.3s infinite; }
+.hv2-card--handoff { right:32px; bottom:28px; width:216px; padding:13px 15px; animation:hv2FloatIn .75s cubic-bezier(.2,.7,.2,1) .6s both, hv2Hover 8s ease-in-out 2s infinite; }
+.hv2-card__tag { display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:0.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); }
+.hv2-card--handoff .hv2-card__tag { color:var(--ink-muted); }
+.hv2-dot { width:7px; height:7px; border-radius:50%; background:#2E8B6B; box-shadow:0 0 0 3px #E6EFEB; animation:hv2Pulse 2.6s ease-in-out infinite; }
+.hv2-card__name { font-family:var(--font-body); font-size:1.625rem; font-weight:500; margin:9px 0 1px; line-height:1.1; }
+.hv2-card__step { font-family:var(--font-body); font-size:1.375rem; font-weight:500; margin:5px 0 0; }
+.hv2-card__meta { font-size:0.75rem; color:var(--ink-muted); margin:0 0 11px; }
+.hv2-card__note { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:center; border-top:1px solid var(--hv2-line); padding-top:10px; font-size:0.6875rem; color:var(--ink-muted); }
+.hv2-card__note b { color:var(--accent); font-weight:600; }
+.hv2-track { height:5px; background:#EDEAE3; border-radius:99px; margin:11px 0 8px; overflow:hidden; }
+.hv2-track i { display:block; width:67%; height:100%; background:var(--accent); border-radius:99px; }
+.hv2-card--handoff p { margin:0; font-size:0.6875rem; color:var(--ink-muted); }
+.hv2-markets { background:var(--hv2-deep); color:rgba(251,250,247,.75); }
+.hv2-markets .container { display:flex; align-items:center; gap:0; min-height:62px; overflow-x:auto; }
+.hv2-markets__label { font-family:var(--font-mono); font-size:0.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--hv2-mint); white-space:nowrap; padding-right:24px; margin-right:24px; border-right:1px solid rgba(255,255,255,.2); }
+.hv2-markets span:not(.hv2-markets__label) { font-family:var(--font-ui); font-size:0.8125rem; white-space:nowrap; padding-right:22px; margin-right:22px; border-right:1px solid rgba(255,255,255,.16); }
+.hv2-markets span:last-child { border:0; }
+
+@keyframes hv2Rise { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+@keyframes hv2FloatIn { from{opacity:0;transform:translateY(20px) scale(.97)} to{opacity:1;transform:none} }
+@keyframes hv2Hover { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes hv2Zoom { from{transform:scale(1.02)} to{transform:scale(1.09)} }
+@keyframes hv2Pulse { 0%,100%{box-shadow:0 0 0 3px #E6EFEB} 50%{box-shadow:0 0 0 6px rgba(46,139,107,.18)} }
+.hv2-copy > * { animation:hv2Rise .7s cubic-bezier(.2,.7,.2,1) both; }
+.hv2-copy > *:nth-child(1){animation-delay:.05s} .hv2-copy > *:nth-child(2){animation-delay:.12s}
+.hv2-copy > *:nth-child(3){animation-delay:.19s} .hv2-copy > *:nth-child(4){animation-delay:.26s}
+.hv2-copy > *:nth-child(5){animation-delay:.33s} .hv2-copy > *:nth-child(6){animation-delay:.4s}
+
+@media(max-width:1100px){
+  .hv2-photo{width:52%}
+  .hv2-copy{max-width:560px;padding:56px 0 52px}
+  .hv2-search{grid-template-columns:minmax(0,1fr) 132px auto}
+  .hv2-search select:last-of-type{display:none}
+}
+@media(max-width:900px){
+  .hero--v2{display:flex;flex-direction:column}
+  .hv2-photo{position:relative;width:100%;height:420px;order:2}
+  .hv2-photo::after{background:linear-gradient(180deg,rgba(18,61,49,.35),rgba(11,42,33,.7))}
+  .hv2-copy{max-width:none;padding:56px 0 48px;order:1}
+  .hv2-card--buyer{left:24px;bottom:58px}
+  .hv2-card--handoff{right:24px;bottom:20px}
+}
+@media(max-width:640px){
+  .hv2-photo{height:380px}
+  .hv2-search{grid-template-columns:1fr 1fr}
+  .hv2-search input,.hv2-search .btn{grid-column:1 / -1}
+  .hv2-fact{padding-right:12px;margin-right:12px}
+  .hv2-fact b{font-size:1.375rem}
+  .hv2-card--buyer{width:min(250px,calc(100% - 32px));left:16px;bottom:16px;padding:12px 14px}
+  .hv2-card--handoff{left:16px;right:auto;bottom:176px;width:min(250px,calc(100% - 32px));padding:10px 12px}
+  .hv2-card--handoff .hv2-card__step{font-size:1.125rem}
+  .hv2-track{width:100%}
+}
+@media(prefers-reduced-motion:reduce){ .hv2-copy>*,.hv2-card,.hv2-dot,.hv2-photo img{animation:none!important} }
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>
@@ -1082,7 +1191,7 @@ legend {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Browse businesses for sale — Exit-Ready</title>
-<meta name="description" content="Browse businesses for sale in the US, UK and Philippines. Filter by region, industry, price and successor type.">
+<meta name="description" content="Browse businesses for sale globally across the US, UK, Dubai, Singapore, Australia, Sweden, Portugal and the Philippines. Filter by region, industry, price and successor type.">
 
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -1114,7 +1223,7 @@ legend {
     <div class="container">
       <div class="sec-head">
         <h2>Businesses for sale</h2>
-        <p>Listings across the United States, United Kingdom and Philippines. Sample data for format testing.</p>
+        <p>Global listings across the United States, United Kingdom, Dubai, Singapore, Australia, Sweden, Portugal and the Philippines. Sample data for format testing.</p>
       </div>
 
       <form class="filters" id="filters" role="search" aria-label="Filter listings">
@@ -1208,6 +1317,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -1302,6 +1416,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -1397,6 +1516,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -1586,6 +1710,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -1912,6 +2041,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -1973,34 +2107,75 @@ legend {
 <main id="main">
 
   <!-- ================= HERO ================= -->
-  <section class="hero hero--band">
+  <section class="hero hero--band hero--v2">
+    <div class="hv2-photo">
+      <img src="https://images.unsplash.com/photo-1753351054656-48517dde5059?w=1600&q=85&fit=crop&auto=format" alt="A smiling café owner holding her open sign" loading="eager">
+      <div class="hv2-photo__tag">The owner. The successor. The plan.</div>
+      <div class="hv2-card hv2-card--buyer">
+        <div class="hv2-card__tag"><span class="hv2-dot"></span> Verified buyer · matched today</div>
+        <h2 class="hv2-card__name">Gabriel S.</h2>
+        <p class="hv2-card__meta">Matched with a family café in Portland</p>
+        <div class="hv2-card__note"><b>✓ Funds confirmed</b><span>7 acquisitions closed</span></div>
+      </div>
+      <div class="hv2-card hv2-card--handoff">
+        <div class="hv2-card__tag">Handoff plan</div>
+        <h2 class="hv2-card__step">8 / 12 signed off</h2>
+        <div class="hv2-track"><i></i></div>
+        <p>Finance &amp; legal review · both sides</p>
+      </div>
+    </div>
+
     <div class="container">
-      <p class="hero__kicker">US · UK · Philippines</p>
-      <h1>You built it. You decide who gets it.</h1>
-      <p class="hero__lede">
-        Sell to a verified successor — your team, a local operator, or a first-time buyer —
-        with every promise written down and tracked.
-      </p>
+      <div class="hv2-copy">
+        <p class="hv2-eyebrow">The succession marketplace</p>
+        <h1>You built it.<em>Choose who owns it next.</em></h1>
+        <p class="hv2-lede">Sell to a <strong>verified successor</strong> — your team, a local operator, or a first-time buyer — with every promise written down and tracked.</p>
 
-      <form class="hero__search" id="hero-search" role="search" aria-label="Find a business">
-        <input type="search" id="hero-q" placeholder="What are you looking for? salon, café, ecommerce…">
-        <select id="hero-region" aria-label="Region">
-          <option value="">Anywhere</option>
-          <option value="US">United States</option>
-          <option value="UK">United Kingdom</option>
-          <option value="PH">Philippines</option>
-        </select>
-        <button class="btn btn--primary" type="submit">Search</button>
-      </form>
+        <div class="hv2-finder">
+          <div class="hv2-roles" role="group" aria-label="I am">
+            <button type="button" id="hv2-role-buy" aria-pressed="false" data-role="buy">I'm buying</button>
+            <button type="button" id="hv2-role-sell" aria-pressed="true" data-role="sell">I'm selling</button>
+          </div>
+          <form class="hv2-search" id="hero-search" role="search" aria-label="Find a business">
+            <input type="search" id="hero-q" aria-label="Business type or keyword" placeholder="Business type or keyword">
+            <select id="hero-region" aria-label="Region">
+              <option value="">Anywhere</option>
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="UK">United Kingdom</option>
+              <option value="AE">Dubai, UAE</option>
+              <option value="SG">Singapore</option>
+              <option value="AU">Australia</option>
+              <option value="SE">Sweden</option>
+              <option value="PT">Portugal</option>
+              <option value="PH">Philippines</option>
+            </select>
+            <select id="hero-extra" aria-label="Successor type">
+              <option value="">Any type</option>
+              <option value="employee">Employee buyout</option>
+              <option value="operator">Local operator</option>
+              <option value="first_time">First-time buyer</option>
+            </select>
+            <button class="btn btn--primary" id="hero-go" type="submit">Get started →</button>
+          </form>
+        </div>
 
-      <div class="hero__stats" id="hero-stats"></div>
+        <div class="hv2-actions">
+          <a class="btn btn--ghost" href="sell.html">List your business</a>
+          <a class="hv2-link" href="how-it-works.html">See how the handoff works →</a>
+        </div>
 
-      <div class="hero__actions" style="margin-top: var(--s-6)">
-        <a class="btn btn--ghost" href="sell.html">List your business</a>
-        <a class="btn btn--ghost" href="verify.html">Get verified as a buyer</a>
+        <div class="hv2-facts" id="hero-stats" aria-label="What the site offers"></div>
       </div>
     </div>
   </section>
+
+  <div class="hv2-markets">
+    <div class="container">
+      <span class="hv2-markets__label">Where we work</span>
+      <span>United States</span><span>Canada</span><span>United Kingdom</span><span>Europe</span><span>Gulf</span><span>Singapore</span><span>Philippines</span><span>Australia</span>
+    </div>
+  </div>
 
   <!-- ================= LIVE LISTINGS ================= -->
   <section class="section">
@@ -2112,6 +2287,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -2204,6 +2384,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -2326,6 +2511,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -2509,6 +2699,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -2730,6 +2925,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -2816,6 +3016,11 @@ legend {
                 <select id="country" name="country" required>
                   <option value="US">United States</option>
                   <option value="UK">United Kingdom</option>
+                  <option value="AE">Dubai, UAE</option>
+                  <option value="SG">Singapore</option>
+                  <option value="AU">Australia</option>
+                  <option value="SE">Sweden</option>
+                  <option value="PT">Portugal</option>
                   <option value="PH">Philippines</option>
                 </select>
               </div>
@@ -3120,6 +3325,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -3222,6 +3432,11 @@ legend {
                     <option value="">Select a country</option>
                     <option value="US">United States</option>
                     <option value="UK">United Kingdom</option>
+                    <option value="AE">Dubai, UAE</option>
+                    <option value="SG">Singapore</option>
+                    <option value="AU">Australia</option>
+                    <option value="SE">Sweden</option>
+                    <option value="PT">Portugal</option>
                     <option value="PH">Philippines</option>
                   </select>
                 </div>
@@ -3362,6 +3577,11 @@ legend {
                     <option value="">Select a country</option>
                     <option value="US">United States</option>
                     <option value="UK">United Kingdom</option>
+                    <option value="AE">Dubai, UAE</option>
+                    <option value="SG">Singapore</option>
+                    <option value="AU">Australia</option>
+                    <option value="SE">Sweden</option>
+                    <option value="PT">Portugal</option>
                     <option value="PH">Philippines</option>
                   </select>
                 </div>
@@ -3487,6 +3707,11 @@ legend {
         <ul>
           <li><a href="browse.html?region=US">United States</a></li>
           <li><a href="browse.html?region=UK">United Kingdom</a></li>
+          <li><a href="browse.html?region=AE">Dubai, UAE</a></li>
+          <li><a href="browse.html?region=SG">Singapore</a></li>
+          <li><a href="browse.html?region=AU">Australia</a></li>
+          <li><a href="browse.html?region=SE">Sweden</a></li>
+          <li><a href="browse.html?region=PT">Portugal</a></li>
           <li><a href="browse.html?region=PH">Philippines</a></li>
         </ul>
       </div>
@@ -3615,8 +3840,14 @@ function esc(s) {
 
 const REGIONS = [
   { code: "US", label: "United States", currency: "USD", symbol: "$" },
+  { code: "CA", label: "Canada", currency: "CAD", symbol: "C$" },
   { code: "UK", label: "United Kingdom", currency: "GBP", symbol: "£" },
   { code: "PH", label: "Philippines", currency: "PHP", symbol: "₱" },
+  { code: "AE", label: "Dubai, UAE", currency: "AED", symbol: "AED " },
+  { code: "SG", label: "Singapore", currency: "SGD", symbol: "S$" },
+  { code: "AU", label: "Australia", currency: "AUD", symbol: "A$" },
+  { code: "SE", label: "Sweden", currency: "SEK", symbol: "kr " },
+  { code: "PT", label: "Portugal", currency: "EUR", symbol: "€" },
 ];
 
 const SUCCESSOR_TYPES = [
@@ -3660,267 +3891,643 @@ const HANDOFF_TEMPLATE = [
 
 const LISTINGS = [
   {
-    id: "er-1001",
-    region: "US",
-    name: "Koreatown Dessert Café",
-    tagline: "Turnkey dessert and beverage counter in a high-traffic shopping centre.",
-    city: "Los Angeles",
-    area: "Koreatown",
-    industry: "Food & Beverage",
-    established: 2013,
-    asking_price: 144000,
-    gross_revenue: 360000,
-    cash_flow_sde: 108000,
-    ebitda: null,
-    inventory_amount: 5000,
-    inventory_included_in_price: false,
-    financing_ready: true,
-    employees_count: 4,
-    employee_type: "Part-time",
-    real_estate_status: "Leased",
-    building_sf: 792,
-    lease_expiration: "2028-03-31",
-    monthly_rent: 3635,
-    nnn: 1386,
-    hours: "9:00 AM – 10:00 PM",
-    monthly_payroll: 2500,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["local_operator", "first_time"],
-    seller_financing_offered: false,
-    earn_out_offered: true,
+    id: "er-1001", region: "US", name: "Koreatown Dessert Café", tagline: "Turnkey dessert and beverage counter in a high-traffic shopping centre.",
+    city: "Los Angeles", area: "Koreatown", industry: "Food & Beverage", established: 2013,
+    asking_price: 144000, gross_revenue: 360000, cash_flow_sde: 108000, ebitda: 92000,
+    inventory_amount: 5000, inventory_included_in_price: false, financing_ready: true,
+    employees_count: 4, employee_type: "Part-time", real_estate_status: "Leased",
+    building_sf: 792, lease_expiration: "2028-03-31", monthly_rent: 3635, nnn: 1386,
+    hours: "9:00 AM – 10:00 PM", monthly_payroll: 2500, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "first_time"], seller_financing_offered: false, earn_out_offered: true,
     disclosure_flags: ["financials_unaudited", "inventory_excluded", "lease_transfer_required"],
-    description:
-      "A well-established dessert café in a high-traffic, well-known shopping centre. Surrounded by dense residential communities and strong retail co-tenancy, the business benefits from consistent foot traffic, excellent street visibility, and a steady stream of repeat customers.",
-    highlights: [
-      "Average monthly gross sales of about $30,000",
-      "Average monthly net income of about $9,000",
-      "Lease runs through March 2033 including transferable option term",
-      "Four trained part-time staff already in place",
-      "Compact 792 sq ft footprint, efficient to run",
-    ],
+    description: "A well-established dessert café in a high-traffic, well-known shopping centre. Surrounded by dense residential communities and strong retail co-tenancy, the business benefits from consistent foot traffic, excellent street visibility, and a steady stream of repeat customers.",
+    highlights: ["Average monthly gross sales of about $30,000","Average monthly net income of about $9,000","Lease runs through March 2033 including transferable option term","Four trained part-time staff already in place","Compact 792 sq ft footprint, efficient to run"],
     handoff_progress: { loi: "done", nda: "done", verification: "in_progress", offer: "pending" },
+    image: "https://picsum.photos/seed/er1001/1200/700", gallery: ["https://picsum.photos/seed/er1001/1200/700", "https://picsum.photos/seed/er1001-a/1200/700", "https://picsum.photos/seed/er1001-b/1200/700"],
+    operating_model: "Counter-service dessert and beverage café with dine-in and takeaway.",
+    customer_base: "Local residents, students, and shopping-centre foot traffic with high repeat rate.",
+    assets_included: "Equipment, fixtures, POS, recipes, social accounts, supplier list, and training materials.",
+    training_support: "4 weeks owner-led training covering suppliers, prep, staffing, and peak-hour operations.",
+    transition_period: "30–60 days post-close support available.",
+    documents_available: ["P&L (owner-prepared)", "Lease summary", "Equipment list", "Supplier contacts", "Staff roster"],
+    ideal_buyer: "Hands-on local operator or first-time owner seeking a turnkey food concept.",
+    growth_opportunities: ["Extend hours", "Add delivery platforms", "Introduce seasonal menu items", "Catering for nearby offices"],
+    risks_notes: "Lease transfer subject to landlord consent; inventory counted and settled separately at closing.",
   },
   {
-    id: "er-1002",
-    region: "US",
-    name: "French Home Goods eCommerce",
-    tagline: "Curated imported homeware brand selling direct to consumers.",
-    city: "Portland",
-    area: "Oregon",
-    industry: "eCommerce",
-    established: 2016,
-    asking_price: 400000,
-    gross_revenue: 920000,
-    cash_flow_sde: 165000,
-    ebitda: null,
-    inventory_amount: 48000,
-    inventory_included_in_price: true,
-    financing_ready: true,
-    employees_count: 3,
-    employee_type: "Mixed",
-    real_estate_status: "Home based",
-    building_sf: null,
-    lease_expiration: null,
-    monthly_rent: null,
-    nnn: null,
-    hours: "Online, 24/7",
-    monthly_payroll: 7400,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["any"],
-    seller_financing_offered: false,
-    earn_out_offered: false,
+    id: "er-1002", region: "US", name: "French Home Goods eCommerce", tagline: "Curated imported homeware brand selling direct to consumers.",
+    city: "Portland", area: "Oregon", industry: "eCommerce", established: 2016,
+    asking_price: 400000, gross_revenue: 920000, cash_flow_sde: 165000, ebitda: 148000,
+    inventory_amount: 48000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 3, employee_type: "Mixed", real_estate_status: "Home based",
+    building_sf: null, lease_expiration: null, monthly_rent: null, nnn: null,
+    hours: "Online, 24/7", monthly_payroll: 7400, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["any"], seller_financing_offered: false, earn_out_offered: false,
     disclosure_flags: ["financials_unaudited", "owner_is_key_person"],
-    description:
-      "An established eCommerce brand importing and reselling French home goods. Supplier relationships are in place and the catalogue is stable. The owner currently handles buying and merchandising personally.",
-    highlights: [
-      "Supplier relationships established and documented",
-      "Stable, repeatable product catalogue",
-      "Warehouse-free: fulfilment is third-party",
-      "Inventory included in the asking price",
-    ],
+    description: "An established eCommerce brand importing and reselling French home goods. Supplier relationships are in place and the catalogue is stable. The owner currently handles buying and merchandising personally.",
+    highlights: ["Supplier relationships established and documented","Stable, repeatable product catalogue","Warehouse-free: fulfilment is third-party","Inventory included in the asking price"],
     handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er1002/1200/700", gallery: ["https://picsum.photos/seed/er1002/1200/700", "https://picsum.photos/seed/er1002-a/1200/700", "https://picsum.photos/seed/er1002-b/1200/700"],
+    operating_model: "Direct-to-consumer eCommerce with third-party fulfilment and seasonal buying cycles.",
+    customer_base: "US-based home decor customers with repeat purchase behaviour and email list.",
+    assets_included: "Brand, website/store, supplier contracts, customer/email lists, content, and on-hand inventory.",
+    training_support: "6 weeks transition on sourcing, merchandising, 3PL workflow, and marketing calendar.",
+    transition_period: "45 days post-close advisory support.",
+    documents_available: ["Sales reports", "Supplier agreements", "Inventory valuation", "Ad/account access list", "3PL contract"],
+    ideal_buyer: "Operator or investor comfortable with eCommerce merchandising and supplier management.",
+    growth_opportunities: ["Expand marketplace channels", "Launch bundles/subscriptions", "Increase paid media efficiency", "Wholesale partnerships"],
+    risks_notes: "Owner currently key for buying relationships; introductions and documented processes included.",
   },
   {
-    id: "er-1003",
-    region: "UK",
-    name: "Village Hair Salon",
-    tagline: "Long-standing salon with a loyal local clientele.",
-    city: "Bristol",
-    area: "Bedminster",
-    industry: "Personal Services",
-    established: 2008,
-    asking_price: 78000,
-    gross_revenue: 155000,
-    cash_flow_sde: 52000,
-    ebitda: null,
-    inventory_amount: 2500,
-    inventory_included_in_price: true,
-    financing_ready: false,
-    employees_count: 3,
-    employee_type: "Mixed",
-    real_estate_status: "Leased",
-    building_sf: 620,
-    lease_expiration: "2029-06-24",
-    monthly_rent: 1450,
-    nnn: 0,
-    hours: "Tue–Sat, 9:00–18:00",
-    monthly_payroll: 4200,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["employee", "local_operator"],
-    seller_financing_offered: true,
-    earn_out_offered: true,
-    disclosure_flags: [
-      "financials_unaudited",
-      "lease_transfer_required",
-      "owner_is_key_person",
-      "staff_retention_risk",
-    ],
-    description:
-      "A well-known neighbourhood salon trading for over fifteen years. Bookings come largely from repeat clients, and two stylists have been with the business more than five years. The owner is retiring and would prefer to sell to the team.",
-    highlights: [
-      "Fifteen years of continuous trading at the same address",
-      "Two stylists with over five years' tenure each",
-      "Owner open to seller financing and an earn-out",
-      "Steady repeat-client base, minimal marketing spend",
-    ],
+    id: "er-1003", region: "UK", name: "Village Hair Salon", tagline: "Long-standing salon with a loyal local clientele.",
+    city: "Bristol", area: "Bedminster", industry: "Personal Services", established: 2008,
+    asking_price: 78000, gross_revenue: 155000, cash_flow_sde: 52000, ebitda: 47000,
+    inventory_amount: 2500, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 3, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 620, lease_expiration: "2029-06-24", monthly_rent: 1450, nnn: 0,
+    hours: "Tue–Sat, 9:00–18:00", monthly_payroll: 4200, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["employee", "local_operator"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited","lease_transfer_required","owner_is_key_person","staff_retention_risk"],
+    description: "A well-known neighbourhood salon trading for over fifteen years. Bookings come largely from repeat clients, and two stylists have been with the business more than five years. The owner is retiring and would prefer to sell to the team.",
+    highlights: ["Fifteen years of continuous trading at the same address","Two stylists with over five years' tenure each","Owner open to seller financing and an earn-out","Steady repeat-client base, minimal marketing spend"],
     handoff_progress: { loi: "in_progress" },
+    image: "https://picsum.photos/seed/er1003/1200/700", gallery: ["https://picsum.photos/seed/er1003/1200/700", "https://picsum.photos/seed/er1003-a/1200/700", "https://picsum.photos/seed/er1003-b/1200/700"],
+    operating_model: "Appointment-based neighbourhood hair salon with walk-in capacity.",
+    customer_base: "Loyal repeat local clientele with strong word-of-mouth referrals.",
+    assets_included: "Salon chairs/equipment, product inventory, booking system, client list (consent-based), and brand assets.",
+    training_support: "6–8 weeks handover with owner introduction to regular clients and staff transition plan.",
+    transition_period: "Up to 3 months flexible support; earn-out option available.",
+    documents_available: ["Owner-maintained accounts", "Lease details", "Staff terms summary", "Equipment list", "Booking history summary"],
+    ideal_buyer: "Senior stylist, existing team member, or local operator seeking stable clientele.",
+    growth_opportunities: ["Online booking/marketing", "Retail product sales", "Extended hours", "Additional chair rental/stylist"],
+    risks_notes: "Owner relationships important; lease transfer and staff retention to be managed in handoff.",
   },
   {
-    id: "er-1004",
-    region: "UK",
-    name: "Mobile Pet Grooming Round",
-    tagline: "Established grooming round with van and recurring bookings.",
-    city: "Leeds",
-    area: "West Yorkshire",
-    industry: "Trades & Services",
-    established: 2019,
-    asking_price: 42000,
-    gross_revenue: 88000,
-    cash_flow_sde: 34000,
-    ebitda: null,
-    inventory_amount: 1800,
-    inventory_included_in_price: true,
-    financing_ready: false,
-    employees_count: 1,
-    employee_type: "Full-time",
-    real_estate_status: "None",
-    building_sf: null,
-    lease_expiration: null,
-    monthly_rent: null,
-    nnn: null,
-    hours: "Mon–Fri, daytime",
-    monthly_payroll: 0,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["first_time", "local_operator"],
-    seller_financing_offered: true,
-    earn_out_offered: false,
+    id: "er-1004", region: "UK", name: "Mobile Pet Grooming Round", tagline: "Established grooming round with van and recurring bookings.",
+    city: "Leeds", area: "West Yorkshire", industry: "Trades & Services", established: 2019,
+    asking_price: 42000, gross_revenue: 88000, cash_flow_sde: 34000, ebitda: 31000,
+    inventory_amount: 1800, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 1, employee_type: "Full-time", real_estate_status: "None",
+    building_sf: null, lease_expiration: null, monthly_rent: null, nnn: null,
+    hours: "Mon–Fri, daytime", monthly_payroll: 0, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["first_time", "local_operator"], seller_financing_offered: true, earn_out_offered: false,
     disclosure_flags: ["financials_unaudited", "owner_is_key_person"],
-    description:
-      "A one-van mobile grooming round with a booked, recurring client base across West Yorkshire. No premises and no staff: the asset is the route, the van and the repeat customers.",
-    highlights: [
-      "No premises costs",
-      "Recurring, booked client base",
-      "Van and equipment included",
-      "Owner willing to work a handover period",
-    ],
+    description: "A one-van mobile grooming round with a booked, recurring client base across West Yorkshire. No premises and no staff: the asset is the route, the van and the repeat customers.",
+    highlights: ["No premises costs","Recurring, booked client base","Van and equipment included","Owner willing to work a handover period"],
     handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er1004/1200/700", gallery: ["https://picsum.photos/seed/er1004/1200/700", "https://picsum.photos/seed/er1004-a/1200/700", "https://picsum.photos/seed/er1004-b/1200/700"],
+    operating_model: "Mobile, route-based pet grooming service operating from a fully equipped van.",
+    customer_base: "Recurring household clients across defined local routes with advance bookings.",
+    assets_included: "Grooming van, equipment, tools, booking records, route plan, and customer list (consent-based).",
+    training_support: "3–4 weeks route handover and client introductions.",
+    transition_period: "30 days post-sale support.",
+    documents_available: ["Booking/revenue records", "Van/equipment inventory", "Route schedule", "Expense summary"],
+    ideal_buyer: "Qualified groomer or first-time buyer wanting a low-overhead, owner-operated business.",
+    growth_opportunities: ["Add second van/groomer", "Expand routes", "Introduce retail/add-on services", "Online booking/referrals"],
+    risks_notes: "Business is owner-operated; successful transfer depends on route handover and client continuity.",
   },
   {
-    id: "er-1005",
-    region: "PH",
-    name: "Seaside Café and Bakery",
-    tagline: "Beachfront café with in-house bakery serving a growing tourist route.",
-    city: "San Vicente",
-    area: "Palawan",
-    industry: "Food & Beverage",
-    established: 2017,
-    asking_price: 2800000,
-    gross_revenue: 5400000,
-    cash_flow_sde: 1450000,
-    ebitda: null,
-    inventory_amount: 85000,
-    inventory_included_in_price: false,
-    financing_ready: false,
-    employees_count: 7,
-    employee_type: "Mixed",
-    real_estate_status: "Leased",
-    building_sf: 140,
-    lease_expiration: "2027-12-31",
-    monthly_rent: 45000,
-    nnn: 0,
-    hours: "6:00 AM – 9:00 PM",
-    monthly_payroll: 98000,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["local_operator", "employee"],
-    seller_financing_offered: true,
-    earn_out_offered: true,
-    disclosure_flags: [
-      "financials_unaudited",
-      "inventory_excluded",
-      "lease_transfer_required",
-      "licence_transfer_required",
-      "owner_is_key_person",
-    ],
-    description:
-      "A beachfront café with an in-house bakery, trading since 2017 on a steadily growing tourist route. The owner is retiring and wants a successor who will keep the existing team. Records are owner-maintained rather than formally audited.",
-    highlights: [
-      "In-house bakery supplying the café and two wholesale accounts",
-      "Seven staff, four with more than three years' tenure",
-      "Owner open to seller financing and a staged earn-out",
-      "Permits current and transferable with the local government unit",
-    ],
+    id: "er-1005", region: "PH", name: "Seaside Café and Bakery", tagline: "Beachfront café with in-house bakery serving a growing tourist route.",
+    city: "San Vicente", area: "Palawan", industry: "Food & Beverage", established: 2017,
+    asking_price: 2800000, gross_revenue: 5400000, cash_flow_sde: 1450000, ebitda: 1320000,
+    inventory_amount: 85000, inventory_included_in_price: false, financing_ready: false,
+    employees_count: 7, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 140, lease_expiration: "2027-12-31", monthly_rent: 45000, nnn: 0,
+    hours: "6:00 AM – 9:00 PM", monthly_payroll: 98000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited","inventory_excluded","lease_transfer_required","licence_transfer_required","owner_is_key_person"],
+    description: "A beachfront café with an in-house bakery, trading since 2017 on a steadily growing tourist route. The owner is retiring and wants a successor who will keep the existing team. Records are owner-maintained rather than formally audited.",
+    highlights: ["In-house bakery supplying the café and two wholesale accounts","Seven staff, four with more than three years' tenure","Owner open to seller financing and a staged earn-out","Permits current and transferable with the local government unit"],
     handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er1005/1200/700", gallery: ["https://picsum.photos/seed/er1005/1200/700", "https://picsum.photos/seed/er1005-a/1200/700", "https://picsum.photos/seed/er1005-b/1200/700"],
+    operating_model: "Café and in-house bakery serving dine-in, takeaway, and local wholesale accounts.",
+    customer_base: "Tourists, local residents, and two recurring wholesale buyers.",
+    assets_included: "Kitchen/bakery equipment, furniture, recipes, supplier contacts, permits file, and brand materials.",
+    training_support: "6–8 weeks handover including recipes, suppliers, permits process, and staff transition.",
+    transition_period: "Up to 90 days support; seller financing/earn-out negotiable.",
+    documents_available: ["Owner-maintained sales records", "Permit copies", "Lease summary", "Supplier list", "Staff list"],
+    ideal_buyer: "Local operator or hospitality team member committed to retaining staff and quality.",
+    growth_opportunities: ["Expand wholesale", "Resort partnerships", "Extended hours/seasonal menu", "Online preorders"],
+    risks_notes: "Tourism seasonality, lease/permit transfers, and owner-key relationships require structured handoff.",
   },
   {
-    id: "er-1006",
-    region: "PH",
-    name: "Dental Clinic Practice",
-    tagline: "Established dental practice with two chairs and recurring patients.",
-    city: "Cebu City",
-    area: "Cebu",
-    industry: "Healthcare",
-    established: 2012,
-    asking_price: 4200000,
-    gross_revenue: 6800000,
-    cash_flow_sde: 1900000,
-    ebitda: null,
-    inventory_amount: 320000,
-    inventory_included_in_price: true,
-    financing_ready: false,
-    employees_count: 5,
-    employee_type: "Full-time",
-    real_estate_status: "Leased",
-    building_sf: 95,
-    lease_expiration: "2028-08-31",
-    monthly_rent: 62000,
-    nnn: 0,
-    hours: "Mon–Sat, 9:00–18:00",
-    monthly_payroll: 145000,
-    reason_for_selling: "Owner retiring",
-    successor_types_wanted: ["local_operator"],
-    seller_financing_offered: false,
-    earn_out_offered: true,
-    disclosure_flags: [
-      "financials_unaudited",
-      "licence_transfer_required",
-      "owner_is_key_person",
-      "equipment_deferred_maintenance",
-    ],
-    description:
-      "A two-chair dental practice serving a loyal patient base in Cebu City. The practice is owner-led clinically. Equipment is functional but one chair is due for servicing. Sale requires transfer of the professional licence to a qualified dentist.",
-    highlights: [
-      "Recurring patient base with scheduled recall appointments",
-      "Two treatment chairs, one due for routine servicing",
-      "Administrative team of five in place",
-      "Licence transfer to a qualified dentist required",
-    ],
+    id: "er-1006", region: "PH", name: "Dental Clinic Practice", tagline: "Established dental practice with two chairs and recurring patients.",
+    city: "Cebu City", area: "Cebu", industry: "Healthcare", established: 2012,
+    asking_price: 4200000, gross_revenue: 6800000, cash_flow_sde: 1900000, ebitda: 1750000,
+    inventory_amount: 320000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 5, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 95, lease_expiration: "2028-08-31", monthly_rent: 62000, nnn: 0,
+    hours: "Mon–Sat, 9:00–18:00", monthly_payroll: 145000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator"], seller_financing_offered: false, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited","licence_transfer_required","owner_is_key_person","equipment_deferred_maintenance"],
+    description: "A two-chair dental practice serving a loyal patient base in Cebu City. The practice is owner-led clinically. Equipment is functional but one chair is due for servicing. Sale requires transfer of the professional licence to a qualified dentist.",
+    highlights: ["Recurring patient base with scheduled recall appointments","Two treatment chairs, one due for routine servicing","Administrative team of five in place","Licence transfer to a qualified dentist required"],
     handoff_progress: {},
+    image: "https://picsum.photos/seed/er1006/1200/700", gallery: ["https://picsum.photos/seed/er1006/1200/700", "https://picsum.photos/seed/er1006-a/1200/700", "https://picsum.photos/seed/er1006-b/1200/700"],
+    operating_model: "Owner-led dental clinic with hygiene/recall appointments and administrative support team.",
+    customer_base: "Recurring local patient base with scheduled recall visits.",
+    assets_included: "Clinic equipment, instruments inventory, patient management setup (as permitted), fixtures, and leasehold improvements.",
+    training_support: "Transition period for patient introductions and clinic operations handover.",
+    transition_period: "60–90 days clinical/operations transition subject to buyer licensing.",
+    documents_available: ["Revenue summaries", "Equipment inventory", "Lease", "Staff roles summary", "Compliance checklist"],
+    ideal_buyer: "Licensed dentist seeking an established practice with patient continuity.",
+    growth_opportunities: ["Add associate dentist", "Extend hours", "Expand services", "Referral partnerships"],
+    risks_notes: "Buyer must be appropriately licensed; one chair requires servicing; patient retention depends on transition quality.",
+  },
+  {
+    id: "er-1007", region: "US", name: "Austin Home Services Franchise Resale", tagline: "Resale of a protected-territory home services route with recurring clients.",
+    city: "Austin", area: "Texas", industry: "Trades & Services", established: 2018,
+    asking_price: 265000, gross_revenue: 540000, cash_flow_sde: 142000, ebitda: 128000,
+    inventory_amount: 12000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 5, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 900, lease_expiration: "2029-01-31", monthly_rent: 2800, nnn: 400,
+    hours: "Mon–Sat, 7:00–18:00", monthly_payroll: 18500, reason_for_selling: "Relocating",
+    successor_types_wanted: ["first_time", "local_operator"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "lease_transfer_required"],
+    description: "Established franchise resale with strong local reviews, recurring maintenance contracts, and trained technicians. Franchisor transfer support available subject to approval.",
+    highlights: ["Protected territory with recurring contracts","Trained crew and service vehicles included","Franchisor onboarding support","Stable year-round demand"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er1007/1200/700", gallery: ["https://picsum.photos/seed/er1007/1200/700", "https://picsum.photos/seed/er1007-a/1200/700", "https://picsum.photos/seed/er1007-b/1200/700"],
+    operating_model: "Franchised home services operation with scheduled jobs and recurring maintenance agreements.",
+    customer_base: "Residential and light commercial clients in protected territory.",
+    assets_included: "Vehicles, tools, equipment, customer contracts, franchise rights (transfer subject to approval), and training materials.",
+    training_support: "Franchisor onboarding plus 4 weeks seller transition.",
+    transition_period: "30–45 days operational handover.",
+    documents_available: ["Franchise disclosure/transfer info", "Revenue summaries", "Contract list", "Asset list", "Lease"],
+    ideal_buyer: "First-time buyer or operator seeking a systematised service business.",
+    growth_opportunities: ["Add crews/vehicles", "Increase commercial contracts", "Upsell maintenance plans", "Local marketing"],
+    risks_notes: "Franchise and lease transfers require approvals; performance depends on staffing and service quality.",
+  },
+  {
+    id: "er-1008", region: "UK", name: "Manchester Specialty Coffee & Deli", tagline: "City-centre café-deli with breakfast trade and catering accounts.",
+    city: "Manchester", area: "Northern Quarter", industry: "Food & Beverage", established: 2016,
+    asking_price: 135000, gross_revenue: 320000, cash_flow_sde: 74000, ebitda: 68000,
+    inventory_amount: 6000, inventory_included_in_price: false, financing_ready: false,
+    employees_count: 6, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 850, lease_expiration: "2028-09-30", monthly_rent: 3200, nnn: 0,
+    hours: "7:00 AM – 17:00 PM", monthly_payroll: 9800, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "inventory_excluded", "lease_transfer_required", "staff_retention_risk"],
+    description: "Busy café-deli with strong morning footfall, office catering, and a loyal regular base. Compact menu, trained team, and favourable supplier terms.",
+    highlights: ["Office catering accounts in place","Prime Northern Quarter location","Experienced barista team","Owner available for transition support"],
+    handoff_progress: { loi: "in_progress" },
+    image: "https://picsum.photos/seed/er1008/1200/700", gallery: ["https://picsum.photos/seed/er1008/1200/700", "https://picsum.photos/seed/er1008-a/1200/700", "https://picsum.photos/seed/er1008-b/1200/700"],
+    operating_model: "Café-deli focused on breakfast/lunch service, takeaway, and office catering.",
+    customer_base: "Local workers, residents, and recurring office catering clients.",
+    assets_included: "Kitchen equipment, furniture, POS, supplier relationships, recipes/menu, and brand/social accounts.",
+    training_support: "4–6 weeks operational handover and supplier introductions.",
+    transition_period: "45 days post-close support.",
+    documents_available: ["Sales summaries", "Lease", "Supplier list", "Catering account overview", "Staff schedule template"],
+    ideal_buyer: "Hospitality operator or manager-led team buyout candidate.",
+    growth_opportunities: ["Evening service", "Delivery expansion", "More catering contracts", "Retail products"],
+    risks_notes: "Staff retention and lease transfer are key handoff items; inventory settled separately.",
+  },
+  {
+    id: "er-1009", region: "PH", name: "El Nido Adventure Tours & Transfers", tagline: "Tour and transfer operator serving island-hopping and resort routes.",
+    city: "El Nido", area: "Palawan", industry: "Trades & Services", established: 2015,
+    asking_price: 6500000, gross_revenue: 11200000, cash_flow_sde: 3200000, ebitda: 2950000,
+    inventory_amount: 250000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 14, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 110, lease_expiration: "2028-03-31", monthly_rent: 85000, nnn: 0,
+    hours: "Daily, seasonal peaks", monthly_payroll: 240000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "owner_is_key_person", "lease_transfer_required"],
+    description: "Established tour and transfer business with boats, vehicles, and partner resort relationships. Permits and accreditations current; experienced guides and drivers included.",
+    highlights: ["Fleet and equipment included","Resort and agency partner network","Experienced local operations team","Strong seasonal cash generation"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er1009/1200/700", gallery: ["https://picsum.photos/seed/er1009/1200/700", "https://picsum.photos/seed/er1009-a/1200/700", "https://picsum.photos/seed/er1009-b/1200/700"],
+    operating_model: "Tour packages and private transfers coordinated with resorts, agencies, and walk-in demand.",
+    customer_base: "Domestic and international tourists, resort partners, and travel agencies.",
+    assets_included: "Boats/vehicles (as listed), booking records, permits/accreditations file, partner contacts, and equipment.",
+    training_support: "8 weeks handover on operations, permits, partners, and peak-season scheduling.",
+    transition_period: "Up to 90 days support through one peak cycle if agreed.",
+    documents_available: ["Permit/accreditation copies", "Asset list", "Partner contact list", "Revenue summaries", "Staff roster"],
+    ideal_buyer: "Local operator or experienced team able to manage compliance and seasonal operations.",
+    growth_opportunities: ["Online/direct bookings", "New routes/packages", "More resort contracts", "Premium private tours"],
+    risks_notes: "Seasonality, weather, and regulatory/permit transfers require careful due diligence and handoff.",
+  },
+
+  /* ---- Dubai, UAE ---- */
+  {
+    id: "er-2001", region: "AE", name: "Marina Specialty Coffee Roastery", tagline: "Roastery and café with wholesale accounts in Dubai Marina.",
+    city: "Dubai", area: "Dubai Marina", industry: "Food & Beverage", established: 2018,
+    asking_price: 1850000, gross_revenue: 3200000, cash_flow_sde: 780000, ebitda: 710000,
+    inventory_amount: 95000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 9, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 165, lease_expiration: "2028-11-30", monthly_rent: 32000, nnn: 0,
+    hours: "7:00 AM – 11:00 PM", monthly_payroll: 86000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "any"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "owner_is_key_person"],
+    description: "Specialty coffee roastery with retail café and 14 recurring wholesale accounts. Strong brand presence in a high-footfall waterfront district. Owner-led sourcing with documented SOPs.",
+    highlights: ["14 wholesale clients on recurring orders","In-house roasting equipment included","Documented supplier and roast profiles","High-visibility Marina location"],
+    handoff_progress: { loi: "done", nda: "done", verification: "pending" },
+    image: "https://picsum.photos/seed/er2001/1200/700", gallery: ["https://picsum.photos/seed/er2001/1200/700", "https://picsum.photos/seed/er2001-a/1200/700", "https://picsum.photos/seed/er2001-b/1200/700"],
+    operating_model: "Retail café plus in-house roasting and B2B wholesale supply.",
+    customer_base: "Walk-in Marina customers, residents, and recurring wholesale café/office clients.",
+    assets_included: "Roasting equipment, café fit-out, POS, recipes/profiles, supplier contracts, brand and social channels.",
+    training_support: "6 weeks roasting, sourcing, and wholesale account handover.",
+    transition_period: "60 days advisory support.",
+    documents_available: ["Wholesale contract summaries", "Sales/P&L summaries", "Equipment list", "Lease", "SOPs"],
+    ideal_buyer: "Coffee operator or F&B group seeking retail + wholesale platform.",
+    growth_opportunities: ["Expand wholesale accounts", "Online bean sales", "Catering/events", "New retail outlets"],
+    risks_notes: "Lease transfer and sourcing relationships require managed transition.",
+  },
+  {
+    id: "er-2002", region: "AE", name: "Downtown Fitness Studio", tagline: "Boutique HIIT and strength studio with strong membership base.",
+    city: "Dubai", area: "Business Bay", industry: "Personal Services", established: 2020,
+    asking_price: 950000, gross_revenue: 1650000, cash_flow_sde: 410000, ebitda: 375000,
+    inventory_amount: 22000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 6, employee_type: "Part-time", real_estate_status: "Leased",
+    building_sf: 210, lease_expiration: "2027-09-30", monthly_rent: 24500, nnn: 0,
+    hours: "6:00 AM – 10:00 PM", monthly_payroll: 52000, reason_for_selling: "Relocating",
+    successor_types_wanted: ["local_operator", "first_time"], seller_financing_offered: false, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "staff_retention_risk"],
+    description: "Boutique fitness studio with 280 active members and corporate class packages. Coaching team in place; membership software and playbooks included.",
+    highlights: ["280 active members, low churn","Corporate wellness contracts","Equipment and fit-out included","Coach-led programs documented"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er2002/1200/700", gallery: ["https://picsum.photos/seed/er2002/1200/700", "https://picsum.photos/seed/er2002-a/1200/700", "https://picsum.photos/seed/er2002-b/1200/700"],
+    operating_model: "Membership-based boutique studio offering scheduled classes and corporate packages.",
+    customer_base: "Local residents and nearby office professionals on recurring memberships.",
+    assets_included: "Gym equipment, fit-out, member management system, class programs, brand assets, and corporate contacts.",
+    training_support: "4 weeks operations and coach/community handover.",
+    transition_period: "30 days support; earn-out optional.",
+    documents_available: ["Membership metrics summary", "Lease", "Equipment list", "Class schedule/programs", "Corporate agreements summary"],
+    ideal_buyer: "Fitness operator or owner-manager with community focus.",
+    growth_opportunities: ["Personal training upsell", "More corporate clients", "Additional class formats", "Retail/nutrition add-ons"],
+    risks_notes: "Lease transfer and coach retention are important; membership continuity depends on service quality.",
+  },
+  {
+    id: "er-2003", region: "AE", name: "JLT Facilities Maintenance Company", tagline: "Recurring commercial maintenance contracts across JLT and Marina.",
+    city: "Dubai", area: "Jumeirah Lakes Towers", industry: "Trades & Services", established: 2015,
+    asking_price: 2400000, gross_revenue: 5100000, cash_flow_sde: 920000, ebitda: 840000,
+    inventory_amount: 60000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 18, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 120, lease_expiration: "2029-01-31", monthly_rent: 14000, nnn: 0,
+    hours: "24/7 on-call contracts", monthly_payroll: 210000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "staff_retention_risk"],
+    description: "Facilities maintenance business serving commercial towers with annual service contracts. Skilled team, vehicles, tools, and contract book included.",
+    highlights: ["22 active annual maintenance contracts","Fleet of 4 service vehicles included","Experienced supervisory team","Predictable recurring revenue"],
+    handoff_progress: { loi: "in_progress" },
+    image: "https://picsum.photos/seed/er2003/1200/700", gallery: ["https://picsum.photos/seed/er2003/1200/700", "https://picsum.photos/seed/er2003-a/1200/700", "https://picsum.photos/seed/er2003-b/1200/700"],
+    operating_model: "Contract-based facilities maintenance with scheduled and on-call services.",
+    customer_base: "Commercial property managers and tower associations on annual contracts.",
+    assets_included: "Vehicles, tools/equipment, contract book, client records, SOPs, and trained workforce.",
+    training_support: "8 weeks client introductions and operational handover.",
+    transition_period: "60–90 days support.",
+    documents_available: ["Contract summaries", "Fleet/asset list", "Licence info", "Staff structure", "Financial summaries"],
+    ideal_buyer: "Facilities operator or technical team seeking recurring B2B revenue.",
+    growth_opportunities: ["Expand contract coverage", "Add specialized services", "Cross-sell retrofit works", "Increase team capacity"],
+    risks_notes: "Licence transfers and key staff retention are critical; contract renewal timing to review in diligence.",
+  },
+
+  /* ---- Singapore ---- */
+  {
+    id: "er-2101", region: "SG", name: "Tiong Bahru Artisan Bakery", tagline: "Neighbourhood bakery-café with loyal morning and weekend trade.",
+    city: "Singapore", area: "Tiong Bahru", industry: "Food & Beverage", established: 2016,
+    asking_price: 420000, gross_revenue: 860000, cash_flow_sde: 185000, ebitda: 168000,
+    inventory_amount: 12000, inventory_included_in_price: false, financing_ready: false,
+    employees_count: 8, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 95, lease_expiration: "2027-08-31", monthly_rent: 9800, nnn: 0,
+    hours: "7:00 AM – 7:00 PM", monthly_payroll: 28000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["employee", "local_operator"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "inventory_excluded", "lease_transfer_required", "owner_is_key_person"],
+    description: "Beloved artisan bakery known for sourdough and pastries. Strong repeat customer base and catering orders. Recipes, supplier list, and trained bakers in place.",
+    highlights: ["Established brand in heritage neighbourhood","Trained baking team of 4","Catering and preorder revenue stream","Recipes and processes documented"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er2101/1200/700", gallery: ["https://picsum.photos/seed/er2101/1200/700", "https://picsum.photos/seed/er2101-a/1200/700", "https://picsum.photos/seed/er2101-b/1200/700"],
+    operating_model: "Retail bakery-café with daily production, preorder, and catering orders.",
+    customer_base: "Neighbourhood regulars, weekend destination visitors, and catering clients.",
+    assets_included: "Bakery equipment, fixtures, recipes, supplier contacts, brand assets, and customer preorder channels.",
+    training_support: "6 weeks production and operations handover.",
+    transition_period: "45–60 days support.",
+    documents_available: ["Sales summaries", "Lease", "Recipes/SOPs", "Supplier list", "Staff roster"],
+    ideal_buyer: "Baker/operator or team buyout with hospitality experience.",
+    growth_opportunities: ["Wholesale supply", "Online orders/delivery", "Workshops", "Extended menu"],
+    risks_notes: "Lease transfer and key baker continuity important; inventory separate.",
+  },
+  {
+    id: "er-2102", region: "SG", name: "B2B SaaS Support Platform", tagline: "Profitable niche helpdesk SaaS serving APAC SMEs.",
+    city: "Singapore", area: "One-North", industry: "eCommerce", established: 2019,
+    asking_price: 780000, gross_revenue: 520000, cash_flow_sde: 260000, ebitda: 245000,
+    inventory_amount: 0, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 2, employee_type: "Full-time", real_estate_status: "Home based",
+    building_sf: null, lease_expiration: null, monthly_rent: null, nnn: null,
+    hours: "Online, 24/7", monthly_payroll: 18000, reason_for_selling: "Pursuing another venture",
+    successor_types_wanted: ["any"], seller_financing_offered: false, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "owner_is_key_person"],
+    description: "Subscription SaaS with 140 paying business customers and low churn. Lean codebase, automated billing, and documented infrastructure.",
+    highlights: ["140 active B2B subscribers","~92% annual logo retention","Automated onboarding and billing","Documented codebase and infra"],
+    handoff_progress: { loi: "done", nda: "pending" },
+    image: "https://picsum.photos/seed/er2102/1200/700", gallery: ["https://picsum.photos/seed/er2102/1200/700", "https://picsum.photos/seed/er2102-a/1200/700", "https://picsum.photos/seed/er2102-b/1200/700"],
+    operating_model: "Self-serve and assisted B2B SaaS subscriptions with automated billing and support workflows.",
+    customer_base: "140 SME business accounts across APAC on monthly/annual plans.",
+    assets_included: "Source code, domains, brand, documentation, infrastructure setup, and customer contracts (transferable as applicable).",
+    training_support: "4–6 weeks technical and customer-success handover.",
+    transition_period: "30 days post-close support.",
+    documents_available: ["MRR/churn summaries", "Infra/docs", "Customer list summary", "Expense breakdown", "IP/asset list"],
+    ideal_buyer: "SaaS operator or technical founder seeking profitable niche product.",
+    growth_opportunities: ["Outbound sales", "Partner channels", "Feature expansion", "Price/plan optimization"],
+    risks_notes: "Founder-led support/sales today; documented processes and clean codebase reduce transition risk.",
+  },
+  {
+    id: "er-2103", region: "SG", name: "Jurong Industrial Cleaning Services", tagline: "Contract cleaning for light industrial and warehouse sites.",
+    city: "Singapore", area: "Jurong", industry: "Trades & Services", established: 2014,
+    asking_price: 560000, gross_revenue: 1180000, cash_flow_sde: 240000, ebitda: 215000,
+    inventory_amount: 35000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 22, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 80, lease_expiration: "2028-04-30", monthly_rent: 4200, nnn: 0,
+    hours: "Shift-based contracts", monthly_payroll: 62000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "staff_retention_risk"],
+    description: "Commercial cleaning operator with long-term contracts across industrial estates. Trained crews, equipment, and compliance records in place.",
+    highlights: ["Long-term B2B cleaning contracts","Full equipment and vehicle set included","Compliance and safety records maintained","Experienced site supervisors"],
+    handoff_progress: {},
+    image: "https://picsum.photos/seed/er2103/1200/700", gallery: ["https://picsum.photos/seed/er2103/1200/700", "https://picsum.photos/seed/er2103-a/1200/700", "https://picsum.photos/seed/er2103-b/1200/700"],
+    operating_model: "B2B contract cleaning with scheduled crews and site supervisors.",
+    customer_base: "Industrial and warehouse clients on recurring service contracts.",
+    assets_included: "Cleaning equipment, vehicles, contracts, compliance records, and trained team structure.",
+    training_support: "6–8 weeks client and operations handover.",
+    transition_period: "60 days support.",
+    documents_available: ["Contract summaries", "Asset list", "Compliance records", "Staff structure", "Financial summaries"],
+    ideal_buyer: "Facilities/cleaning operator or management team.",
+    growth_opportunities: ["Add sites/contracts", "Specialized cleaning services", "Operational efficiency", "Supervisor-led expansion"],
+    risks_notes: "Licence/compliance requirements and workforce retention to be reviewed in diligence.",
+  },
+
+  /* ---- Australia ---- */
+  {
+    id: "er-2201", region: "AU", name: "Melbourne Specialty Pet Grooming Studio", tagline: "High-rated grooming studio with recurring bookings and retail add-ons.",
+    city: "Melbourne", area: "Fitzroy", industry: "Personal Services", established: 2017,
+    asking_price: 210000, gross_revenue: 480000, cash_flow_sde: 145000, ebitda: 132000,
+    inventory_amount: 9000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 4, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 85, lease_expiration: "2028-06-30", monthly_rent: 5200, nnn: 900,
+    hours: "Tue–Sat, 8:00–18:00", monthly_payroll: 14500, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["employee", "first_time", "local_operator"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "owner_is_key_person"],
+    description: "Well-reviewed grooming studio with loyal client base and online booking system. Two senior groomers willing to stay post-sale.",
+    highlights: ["4.9-star reputation and repeat clientele","Online booking and client records","Two senior groomers with tenure","Retail upsell revenue stream"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er2201/1200/700", gallery: ["https://picsum.photos/seed/er2201/1200/700", "https://picsum.photos/seed/er2201-a/1200/700", "https://picsum.photos/seed/er2201-b/1200/700"],
+    operating_model: "Appointment-based pet grooming with retail product sales.",
+    customer_base: "Repeat local pet owners with strong online reviews and referrals.",
+    assets_included: "Grooming equipment, fit-out, booking system, client records (consent-based), inventory, and brand assets.",
+    training_support: "4 weeks client and staff handover.",
+    transition_period: "30–45 days support.",
+    documents_available: ["Revenue summaries", "Lease", "Equipment/inventory list", "Booking metrics", "Staff summary"],
+    ideal_buyer: "Qualified groomer or small team operator.",
+    growth_opportunities: ["Add groomers/days", "Mobile add-on", "Retail growth", "Membership packages"],
+    risks_notes: "Lease transfer and groomer retention key; owner introductions help continuity.",
+  },
+  {
+    id: "er-2202", region: "AU", name: "Sydney Waterfront Tour Operator", tagline: "Small-group harbour experiences with strong seasonal demand.",
+    city: "Sydney", area: "Darling Harbour", industry: "Trades & Services", established: 2014,
+    asking_price: 690000, gross_revenue: 1250000, cash_flow_sde: 310000, ebitda: 285000,
+    inventory_amount: 40000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 6, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 60, lease_expiration: "2027-12-31", monthly_rent: 6800, nnn: 0,
+    hours: "Daily, seasonal schedule", monthly_payroll: 32000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "any"], seller_financing_offered: false, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "owner_is_key_person"],
+    description: "Established tour operator offering curated harbour cruises and experiences. Vessel access agreements, booking channels, and experienced crew in place.",
+    highlights: ["Established booking channels and reviews","Experienced skipper and crew","Repeat corporate and tourism clients","Transferable operating agreements"],
+    handoff_progress: { loi: "in_progress" },
+    image: "https://picsum.photos/seed/er2202/1200/700", gallery: ["https://picsum.photos/seed/er2202/1200/700", "https://picsum.photos/seed/er2202-a/1200/700", "https://picsum.photos/seed/er2202-b/1200/700"],
+    operating_model: "Scheduled and private small-group harbour tours sold via direct and partner channels.",
+    customer_base: "Tourists, locals, and corporate/private group bookings.",
+    assets_included: "Operating agreements, booking channels, equipment, brand assets, and customer/partner records.",
+    training_support: "6–8 weeks operational and partner handover.",
+    transition_period: "One season transition support negotiable.",
+    documents_available: ["Booking/revenue summaries", "Agreements summary", "Licence info", "Asset list", "Crew structure"],
+    ideal_buyer: "Tourism operator with marine/compliance experience.",
+    growth_opportunities: ["Private/corporate packages", "Online direct bookings", "New experiences/routes", "Partnership expansion"],
+    risks_notes: "Licence/operating agreement transfers and seasonality require diligence.",
+  },
+  {
+    id: "er-2203", region: "AU", name: "Brisbane Allied Health Clinic", tagline: "Physio and remedial therapy clinic with stable practitioner team.",
+    city: "Brisbane", area: "New Farm", industry: "Healthcare", established: 2011,
+    asking_price: 540000, gross_revenue: 980000, cash_flow_sde: 240000, ebitda: 220000,
+    inventory_amount: 18000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 7, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 140, lease_expiration: "2029-03-31", monthly_rent: 7200, nnn: 1100,
+    hours: "Mon–Sat, 8:00–19:00", monthly_payroll: 38000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "licence_transfer_required", "owner_is_key_person"],
+    description: "Allied health clinic with consistent referrals and long-tenured practitioners. Systems and treatment rooms fully fitted; owner available for transition.",
+    highlights: ["Stable referral and repeat-patient base","Fully fitted treatment rooms","Practice management systems in place","Practitioner team with tenure"],
+    handoff_progress: {},
+    image: "https://picsum.photos/seed/er2203/1200/700", gallery: ["https://picsum.photos/seed/er2203/1200/700", "https://picsum.photos/seed/er2203-a/1200/700", "https://picsum.photos/seed/er2203-b/1200/700"],
+    operating_model: "Appointment-based allied health clinic with multiple practitioners and referral relationships.",
+    customer_base: "Local patients, repeat clients, and GP/referral sources.",
+    assets_included: "Treatment equipment, fit-out, practice systems, booking setup, and operational documentation.",
+    training_support: "6–8 weeks clinical and operational transition (subject to practitioner requirements).",
+    transition_period: "60 days support.",
+    documents_available: ["Revenue summaries", "Lease", "Equipment list", "Practitioner roster", "Referral overview"],
+    ideal_buyer: "Qualified practitioner or clinic group seeking established location.",
+    growth_opportunities: ["Add practitioners/services", "Extend hours", "Corporate programs", "Telehealth/follow-up care"],
+    risks_notes: "Practitioner licensing/agreements and patient continuity require careful handover.",
+  },
+
+  /* ---- Sweden ---- */
+  {
+    id: "er-2301", region: "SE", name: "Stockholm Eco Packaging Supplier", tagline: "B2B supplier of sustainable packaging to Nordic retailers.",
+    city: "Stockholm", area: "Södermalm", industry: "Professional Services", established: 2016,
+    asking_price: 6200000, gross_revenue: 14800000, cash_flow_sde: 2450000, ebitda: 2280000,
+    inventory_amount: 850000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 11, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 420, lease_expiration: "2029-12-31", monthly_rent: 68000, nnn: 0,
+    hours: "Mon–Fri, 8:00–17:00", monthly_payroll: 520000, reason_for_selling: "Pursuing another venture",
+    successor_types_wanted: ["local_operator", "any"], seller_financing_offered: false, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required"],
+    description: "B2B distributor of certified sustainable packaging with framework agreements across Nordic retail and eCommerce clients.",
+    highlights: ["Framework agreements with repeat B2B clients","Certified sustainable product lines","Warehouse and logistics processes documented","Experienced sales and ops team"],
+    handoff_progress: { loi: "done", nda: "done", verification: "in_progress" },
+    image: "https://picsum.photos/seed/er2301/1200/700", gallery: ["https://picsum.photos/seed/er2301/1200/700", "https://picsum.photos/seed/er2301-a/1200/700", "https://picsum.photos/seed/er2301-b/1200/700"],
+    operating_model: "B2B sourcing, stocking, and distribution of sustainable packaging products.",
+    customer_base: "Nordic retailers and eCommerce brands on repeat/framework orders.",
+    assets_included: "Inventory, supplier relationships, customer contracts, brand, warehouse setup, and operational systems.",
+    training_support: "6–8 weeks supplier/client and operations handover.",
+    transition_period: "60 days advisory support; earn-out possible.",
+    documents_available: ["Contract summaries", "Inventory report", "Supplier list", "Sales summaries", "Lease"],
+    ideal_buyer: "Distribution/logistics operator or strategic B2B buyer.",
+    growth_opportunities: ["New product lines", "Expand geographies", "ECommerce packaging niche", "Key account growth"],
+    risks_notes: "Working capital/inventory management and customer concentration to review in diligence.",
+  },
+  {
+    id: "er-2302", region: "SE", name: "Gothenburg Neighbourhood Café", tagline: "Cosy café with breakfast trade and weekend brunch following.",
+    city: "Gothenburg", area: "Haga", industry: "Food & Beverage", established: 2015,
+    asking_price: 1850000, gross_revenue: 3900000, cash_flow_sde: 720000, ebitda: 655000,
+    inventory_amount: 45000, inventory_included_in_price: false, financing_ready: false,
+    employees_count: 5, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 75, lease_expiration: "2027-10-31", monthly_rent: 24000, nnn: 0,
+    hours: "7:30 AM – 18:00 PM", monthly_payroll: 145000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["employee", "local_operator", "first_time"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "inventory_excluded", "lease_transfer_required", "owner_is_key_person"],
+    description: "Popular neighbourhood café in historic Haga with steady local and tourist footfall. Simple menu, trained staff, and loyal regulars.",
+    highlights: ["Prime Haga location with foot traffic","Loyal local customer base","Trained staff willing to stay","Simple, profitable menu operations"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er2302/1200/700", gallery: ["https://picsum.photos/seed/er2302/1200/700", "https://picsum.photos/seed/er2302-a/1200/700", "https://picsum.photos/seed/er2302-b/1200/700"],
+    operating_model: "Counter-service café focused on breakfast, coffee, and brunch.",
+    customer_base: "Local residents, workers, and weekend tourists.",
+    assets_included: "Equipment, furniture, recipes/menu, supplier contacts, and brand presence.",
+    training_support: "4–6 weeks operational handover.",
+    transition_period: "30–45 days support.",
+    documents_available: ["Sales summaries", "Lease", "Supplier list", "Menu/recipes", "Staff info"],
+    ideal_buyer: "Owner-operator or small hospitality team.",
+    growth_opportunities: ["Extended hours", "Catering", "Retail products", "Events/collaborations"],
+    risks_notes: "Lease transfer and staff continuity important for smooth transition.",
+  },
+  {
+    id: "er-2303", region: "SE", name: "Malmö IT Managed Services Firm", tagline: "Recurring MSP contracts serving SMEs in southern Sweden.",
+    city: "Malmö", area: "Västra Hamnen", industry: "Professional Services", established: 2013,
+    asking_price: 7400000, gross_revenue: 11200000, cash_flow_sde: 2950000, ebitda: 2720000,
+    inventory_amount: 120000, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 9, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 110, lease_expiration: "2028-08-31", monthly_rent: 32000, nnn: 0,
+    hours: "Mon–Fri + on-call SLA", monthly_payroll: 430000, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: false, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "staff_retention_risk"],
+    description: "Managed IT services provider with contracted SME clients on monthly retainers. Standardised tooling, documentation, and senior technical team.",
+    highlights: ["Recurring monthly service contracts","Documented systems and runbooks","Senior technical team in place","Diversified SME client base"],
+    handoff_progress: {},
+    image: "https://picsum.photos/seed/er2303/1200/700", gallery: ["https://picsum.photos/seed/er2303/1200/700", "https://picsum.photos/seed/er2303-a/1200/700", "https://picsum.photos/seed/er2303-b/1200/700"],
+    operating_model: "Managed services (MSP) with retainer contracts, monitoring, and on-call support.",
+    customer_base: "SME businesses on recurring service agreements across southern Sweden.",
+    assets_included: "Client contracts, tooling stack, documentation/runbooks, equipment inventory, and team structure.",
+    training_support: "8 weeks client and technical handover.",
+    transition_period: "60–90 days support; earn-out negotiable.",
+    documents_available: ["Contract/MRR summaries", "Runbooks/docs", "Asset list", "Org chart", "Financial summaries"],
+    ideal_buyer: "IT services company or technical operator seeking recurring revenue base.",
+    growth_opportunities: ["Upsell security/cloud", "Expand client base", "Standardized packages", "Strategic partnerships"],
+    risks_notes: "Key engineer retention and contract renewal cycles important in diligence.",
+  },
+
+  /* ---- Portugal ---- */
+  {
+    id: "er-2401", region: "PT", name: "Lisbon Boutique Guesthouse", tagline: "Charming 10-room guesthouse near Alfama with strong reviews.",
+    city: "Lisbon", area: "Alfama", industry: "Food & Beverage", established: 2014,
+    asking_price: 780000, gross_revenue: 420000, cash_flow_sde: 165000, ebitda: 150000,
+    inventory_amount: 25000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 5, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 320, lease_expiration: "2029-05-31", monthly_rent: 4200, nnn: 0,
+    hours: "24/7 guest operations", monthly_payroll: 9800, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "first_time", "any"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "licence_transfer_required"],
+    description: "Well-reviewed boutique guesthouse with consistent occupancy and direct-booking traffic. Furnishings, booking systems, and local supplier relationships included.",
+    highlights: ["10 rooms with strong online reviews","Direct-booking channel established","Furnished and operating turnkey","Experienced housekeeping team"],
+    handoff_progress: { loi: "pending" },
+    image: "https://picsum.photos/seed/er2401/1200/700", gallery: ["https://picsum.photos/seed/er2401/1200/700", "https://picsum.photos/seed/er2401-a/1200/700", "https://picsum.photos/seed/er2401-b/1200/700"],
+    operating_model: "Boutique guesthouse with direct and OTA bookings, daily housekeeping, and guest services.",
+    customer_base: "International and domestic travelers, repeat guests, and direct-booking customers.",
+    assets_included: "Furniture/fixtures, linens/equipment, booking systems, brand assets, supplier contacts, and operational SOPs.",
+    training_support: "6 weeks operations, bookings, and supplier handover.",
+    transition_period: "45–60 days support.",
+    documents_available: ["Occupancy/revenue summaries", "Lease", "Licence info", "Asset inventory", "Supplier list"],
+    ideal_buyer: "Hospitality operator or owner-manager seeking turnkey guesthouse.",
+    growth_opportunities: ["Increase direct bookings", "Dynamic pricing", "Experience packages", "Partnerships with local tours"],
+    risks_notes: "Lease/licence transfers and seasonality to review; staff continuity supports guest experience.",
+  },
+  {
+    id: "er-2402", region: "PT", name: "Porto Specialty Wine Retailer", tagline: "Curated wine shop and tasting room with local and export clients.",
+    city: "Porto", area: "Ribeira", industry: "Retail", established: 2012,
+    asking_price: 320000, gross_revenue: 610000, cash_flow_sde: 118000, ebitda: 108000,
+    inventory_amount: 140000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 3, employee_type: "Mixed", real_estate_status: "Leased",
+    building_sf: 90, lease_expiration: "2028-02-28", monthly_rent: 2100, nnn: 0,
+    hours: "Tue–Sun, 11:00–20:00", monthly_payroll: 5200, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["local_operator", "employee"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "owner_is_key_person"],
+    description: "Established wine retailer with tasting events, loyal clientele, and producer relationships. Inventory, fixtures, and mailing list included.",
+    highlights: ["Strong producer and distributor relationships","Regular tasting events and club members","Prime Ribeira foot traffic","Inventory and fixtures included"],
+    handoff_progress: { loi: "in_progress" },
+    image: "https://picsum.photos/seed/er2402/1200/700", gallery: ["https://picsum.photos/seed/er2402/1200/700", "https://picsum.photos/seed/er2402-a/1200/700", "https://picsum.photos/seed/er2402-b/1200/700"],
+    operating_model: "Retail wine sales with in-store tastings, events, and selected export/club orders.",
+    customer_base: "Local customers, tourists, tasting-event attendees, and wine club members.",
+    assets_included: "Inventory, fixtures/shelving, POS, customer/mailing list (consent-based), supplier contacts, and brand assets.",
+    training_support: "4–6 weeks supplier introductions and operations handover.",
+    transition_period: "30–45 days support.",
+    documents_available: ["Sales summaries", "Inventory valuation", "Lease", "Supplier contacts", "Event calendar"],
+    ideal_buyer: "Wine professional or retail operator with hospitality mindset.",
+    growth_opportunities: ["Online sales/shipping", "More tastings/events", "Corporate gifting", "Wine club growth"],
+    risks_notes: "Inventory value and turnover to verify; owner relationships aid supplier continuity.",
+  },
+  {
+    id: "er-2403", region: "PT", name: "Algarve Pool & Property Maintenance", tagline: "Recurring maintenance routes serving villas and holiday homes.",
+    city: "Faro", area: "Algarve", industry: "Trades & Services", established: 2016,
+    asking_price: 260000, gross_revenue: 480000, cash_flow_sde: 135000, ebitda: 122000,
+    inventory_amount: 28000, inventory_included_in_price: true, financing_ready: false,
+    employees_count: 6, employee_type: "Full-time", real_estate_status: "Leased",
+    building_sf: 70, lease_expiration: "2027-11-30", monthly_rent: 1200, nnn: 0,
+    hours: "Mon–Sat, route-based", monthly_payroll: 11500, reason_for_selling: "Relocating",
+    successor_types_wanted: ["local_operator", "first_time"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "lease_transfer_required", "staff_retention_risk"],
+    description: "Route-based maintenance business with recurring contracts for holiday properties and villas. Vehicles, equipment, and trained technicians included.",
+    highlights: ["Recurring contracts with property managers","2 service vehicles and equipment included","Trained team familiar with routes","Documented seasonal schedules"],
+    handoff_progress: {},
+    image: "https://picsum.photos/seed/er2403/1200/700", gallery: ["https://picsum.photos/seed/er2403/1200/700", "https://picsum.photos/seed/er2403-a/1200/700", "https://picsum.photos/seed/er2403-b/1200/700"],
+    operating_model: "Route-based recurring maintenance and seasonal service calls for property portfolios.",
+    customer_base: "Property managers, villa owners, and holiday-home portfolios on repeat contracts.",
+    assets_included: "Service vehicles, tools/equipment, customer contracts/routes, schedules, and team structure.",
+    training_support: "4–6 weeks route and client handover.",
+    transition_period: "45 days support; earn-out optional.",
+    documents_available: ["Contract summaries", "Route schedules", "Asset list", "Revenue summaries", "Staff info"],
+    ideal_buyer: "Local trades operator or owner-manager with service business experience.",
+    growth_opportunities: ["Add routes/contracts", "Additional services (gardening/repairs)", "Commercial clients", "Subscription packages"],
+    risks_notes: "Seasonality and key staff/route knowledge important for continuity.",
+  },
+
+  /* ---- Canada ---- */
+  {
+    id: "er-2501", region: "CA", name: "Queen Street Neighbourhood Café", tagline: "Independent café with a loyal local following and a leased corner unit.",
+    city: "Toronto", area: "Queen West", industry: "Food & Beverage", established: 2015,
+    asking_price: 185000, gross_revenue: 420000, cash_flow_sde: 118000, ebitda: 104000,
+    inventory_amount: 6000, inventory_included_in_price: false, financing_ready: true,
+    employees_count: 5, employee_type: "Part-time", real_estate_status: "Leased",
+    building_sf: 940, lease_expiration: "2029-06-30", monthly_rent: 5200, nnn: 1450,
+    hours: "7:30 AM – 6:00 PM", monthly_payroll: 9800, reason_for_selling: "Owner retiring",
+    successor_types_wanted: ["employee", "local_operator"], seller_financing_offered: true, earn_out_offered: false,
+    disclosure_flags: ["financials_unaudited", "inventory_excluded", "lease_transfer_required", "owner_is_key_person"],
+    description: "A well-loved neighbourhood café on a busy Queen Street corner. Steady weekday trade from nearby studios and offices, strong weekend brunch, and a trained part-time team already in place.",
+    highlights: ["Average monthly gross sales of about C$35,000","Five trained part-time staff","Lease through June 2029 with transfer option","Established wholesale coffee relationship","Strong repeat customer base"],
+    handoff_progress: { loi: "pending", nda: "pending", verification: "in_progress", offer: "pending" },
+    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=70", gallery: ["https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=70"],
+    operating_model: "Counter-service café with dine-in, takeaway and a small wholesale coffee line.",
+    customer_base: "Local residents, studio tenants and office workers with a high repeat rate.",
+    assets_included: "Espresso equipment, grinders, fixtures, POS, supplier list and brand assets.",
+    training_support: "4 weeks owner-led training on suppliers, roasting specs and staffing.",
+    transition_period: "30–60 days post-close support available.",
+    documents_available: ["P&L (owner-prepared)","Lease summary","Equipment list","Supplier contacts","Staff roster"],
+    ideal_buyer: "Hands-on local operator or an existing employee buyout.",
+    growth_opportunities: ["Extend weekend hours","Add online ordering","Wholesale coffee to nearby offices"],
+    risks_notes: "Lease transfer subject to landlord consent; owner is a key person for the first 30 days.",
+  },
+  {
+    id: "er-2502", region: "CA", name: "West End Bookkeeping Practice", tagline: "Recurring-retainer bookkeeping practice serving local SMEs remotely.",
+    city: "Vancouver", area: "West End", industry: "Professional Services", established: 2017,
+    asking_price: 96000, gross_revenue: 168000, cash_flow_sde: 72000, ebitda: 66000,
+    inventory_amount: 0, inventory_included_in_price: true, financing_ready: true,
+    employees_count: 2, employee_type: "Full-time", real_estate_status: "Home based",
+    building_sf: 0, lease_expiration: "", monthly_rent: 0, nnn: 0,
+    hours: "Mon–Fri 9:00 AM – 5:00 PM", monthly_payroll: 6400, reason_for_selling: "Owner relocating",
+    successor_types_wanted: ["employee", "first_time"], seller_financing_offered: true, earn_out_offered: true,
+    disclosure_flags: ["financials_unaudited", "owner_is_key_person"],
+    description: "A stable, paperless bookkeeping practice with 24 recurring SME clients and two trained staff. Work is cloud-based, making it easy to transfer from any location.",
+    highlights: ["24 recurring monthly retainer clients","Two trained full-time staff","Fully cloud-based workflow","Owner willing to finance 30%","Low overhead, home based"],
+    handoff_progress: { loi: "pending", nda: "pending", verification: "pending", offer: "pending" },
+    image: "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=70", gallery: ["https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200&q=70"],
+    operating_model: "Cloud bookkeeping and advisory on monthly retainers.",
+    customer_base: "Local small businesses across professional and trades services.",
+    assets_included: "Client list, software subscriptions, templates, workflows and trained team.",
+    training_support: "6 weeks handover covering client relationships and software stack.",
+    transition_period: "60 days shared-client introductions.",
+    documents_available: ["P&L (owner-prepared)","Client retention summary","Software list","Staff info"],
+    ideal_buyer: "Employee buyout or first-time buyer with bookkeeping experience.",
+    growth_opportunities: ["Add payroll services","Raise retainer tiers","Package advisory sessions"],
+    risks_notes: "Client retention depends on a warm handover and the owner's relationships.",
   },
 ];
 
-/* ---------------------------------------------------------------------------
- * Buyer readiness (sample)
- * ------------------------------------------------------------------------ */
 
 const SAMPLE_BUYERS = [
   {
@@ -3962,6 +4569,76 @@ const SAMPLE_BUYERS = [
     deposit_capacity_band: "Not declared",
     timeline: "6+ months",
     prior_ownership: true,
+    nda_signed: false,
+    references_provided: false,
+  },
+  {
+    id: "b-04",
+    display_name: "Buyer D",
+    persona: "local_operator",
+    region: "AE",
+    identity_verified: true,
+    funding_path_declared: true,
+    funding_path: "Personal capital plus bank facility",
+    deposit_capacity_band: "AED 200k – 500k",
+    timeline: "1–3 months",
+    prior_ownership: true,
+    nda_signed: true,
+    references_provided: true,
+  },
+  {
+    id: "b-05",
+    display_name: "Buyer E",
+    persona: "first_time",
+    region: "SG",
+    identity_verified: true,
+    funding_path_declared: true,
+    funding_path: "Savings and family support",
+    deposit_capacity_band: "S$80k – 150k",
+    timeline: "3–6 months",
+    prior_ownership: false,
+    nda_signed: false,
+    references_provided: false,
+  },
+  {
+    id: "b-06",
+    display_name: "Buyer F",
+    persona: "employee",
+    region: "AU",
+    identity_verified: true,
+    funding_path_declared: true,
+    funding_path: "Seller financing and savings",
+    deposit_capacity_band: "A$40k – 90k",
+    timeline: "3–6 months",
+    prior_ownership: false,
+    nda_signed: true,
+    references_provided: true,
+  },
+  {
+    id: "b-07",
+    display_name: "Buyer G",
+    persona: "local_operator",
+    region: "SE",
+    identity_verified: true,
+    funding_path_declared: true,
+    funding_path: "Bank pre-approval and retained earnings",
+    deposit_capacity_band: "kr 300k – 700k",
+    timeline: "1–3 months",
+    prior_ownership: true,
+    nda_signed: false,
+    references_provided: true,
+  },
+  {
+    id: "b-08",
+    display_name: "Buyer H",
+    persona: "first_time",
+    region: "PT",
+    identity_verified: true,
+    funding_path_declared: false,
+    funding_path: "Exploring financing options",
+    deposit_capacity_band: "€20k – 50k",
+    timeline: "6+ months",
+    prior_ownership: false,
     nda_signed: false,
     references_provided: false,
   },
@@ -4153,6 +4830,11 @@ const DEPOSIT_BANDS = {
   US: ['Under $10k', '$10k – $25k', '$25k – $50k', '$50k – $100k', '$100k+'],
   UK: ['Under £10k', '£10k – £25k', '£25k – £50k', '£50k – £100k', '£100k+'],
   PH: ['Under ₱500k', '₱500k – ₱1M', '₱1M – ₱2M', '₱2M – ₱5M', '₱5M+'],
+  AE: ['Under AED 50k', 'AED 50k – 100k', 'AED 100k – 250k', 'AED 250k – 500k', 'AED 500k+'],
+  SG: ['Under S$20k', 'S$20k – 50k', 'S$50k – 100k', 'S$100k – 250k', 'S$250k+'],
+  AU: ['Under A$20k', 'A$20k – 50k', 'A$50k – 100k', 'A$100k – 250k', 'A$250k+'],
+  SE: ['Under kr 100k', 'kr 100k – 250k', 'kr 250k – 500k', 'kr 500k – 1M', 'kr 1M+'],
+  PT: ['Under €20k', '€20k – 50k', '€50k – 100k', '€100k – 250k', '€250k+'],
 };
 
 function depositBands(country) {
@@ -4163,16 +4845,29 @@ const BUDGET_MAX = {
   US: [100_000, 250_000, 500_000, 1_000_000],
   UK: [100_000, 250_000, 500_000, 1_000_000],
   PH: [2_500_000, 5_000_000, 10_000_000, 25_000_000],
+  AE: [250_000, 500_000, 1_000_000, 2_500_000],
+  SG: [150_000, 300_000, 600_000, 1_200_000],
+  AU: [150_000, 300_000, 600_000, 1_200_000],
+  SE: [1_000_000, 2_500_000, 5_000_000, 10_000_000],
+  PT: [150_000, 300_000, 600_000, 1_200_000],
 };
+
+const BUDGET_SYM = { US: '$', UK: '£', PH: '₱', AE: 'AED ', SG: 'S$', AU: 'A$', SE: 'kr ', PT: '€' };
+
+function fmtBudget(n, sym) {
+  if (n >= 1_000_000) {
+    const m = n / 1_000_000;
+    return `Up to ${sym}${Number.isInteger(m) ? m : m.toFixed(1)}M`;
+  }
+  return `Up to ${sym}${Math.round(n / 1000)}k`;
+}
 
 /** Budget ceiling options for a region. "Any budget" returns null. */
 function budgetBands(country) {
-  const sym = { US: '$', UK: '£', PH: '₱' }[country] || '$';
+  const sym = BUDGET_SYM[country] || '$';
   const bands = ['Any budget'];
   for (const n of BUDGET_MAX[country] || BUDGET_MAX.US) {
-    bands.push(n >= 1_000_000
-      ? `Up to ${sym}${(n / 1_000_000)}M`
-      : `Up to ${sym}${Math.round(n / 1000)}k`);
+    bands.push(fmtBudget(n, sym));
   }
   return bands;
 }
@@ -4849,15 +5544,128 @@ let state = null;
 let session = null;
 let primed = false;
 
+function demoState() {
+  const now = new Date();
+  const ago = (d, h = 10) => new Date(now.getTime() - d * 86400000 - h * 3600000).toISOString();
+  return {
+    user: { role: 'owner', name: 'Alex Morgan', email: 'alex@example.com', at: ago(14) },
+    verification: {
+      owner: {
+        full_name: 'Alex Morgan', email: 'alex@example.com', phone: '+1 555 0100',
+        country: 'US', id_type: 'Passport', id_number: 'P-88421',
+        business_name: 'Riverside Specialty Roasters', registration_number: 'LLC-77821', tax_id: 'TX-9931',
+        authority_confirmed: true, attested: true, identity_verified: true,
+      },
+      buyer: {
+        full_name: 'Jordan Lee', email: 'jordan@example.com', country: 'US',
+        identity_verified: true, funding_path: 'SBA-style bank loan (pre-qualified)',
+        deposit_capacity_band: '$50k – $100k', timeline: '1–3 months',
+        funding_path_declared: true, prior_ownership: true, references_provided: true, nda_signed: true,
+        industry: 'Food & Beverage', max_price: 500000, persona: 'local_operator',
+      },
+    },
+    listings: [
+      {
+        id: 'er-demo-1', sample: false, status: 'live', region: 'US', industry: 'Food & Beverage',
+        name: 'Riverside Specialty Roasters', tagline: 'Neighbourhood roastery café with wholesale accounts and loyal regulars.',
+        city: 'Portland', area: 'Oregon', established: 2015,
+        asking_price: 325000, gross_revenue: 640000, cash_flow_sde: 148000, ebitda: 132000,
+        inventory_amount: 18000, inventory_included_in_price: true, financing_ready: true,
+        employees_count: 6, employee_type: 'Mixed', real_estate_status: 'Leased',
+        building_sf: 1100, lease_expiration: '2029-05-31', monthly_rent: 4200, nnn: 600,
+        hours: '7:00 AM – 6:00 PM', monthly_payroll: 16500, reason_for_selling: 'Owner relocating',
+        successor_types_wanted: ['local_operator', 'first_time'], seller_financing_offered: true, earn_out_offered: true,
+        disclosure_flags: ['financials_unaudited', 'lease_transfer_required'],
+        description: 'Established roastery café with strong morning trade, retail bean sales, and 10 recurring wholesale accounts. Trained team and documented SOPs in place.',
+        highlights: ['10 recurring wholesale accounts', 'In-house roasting and trained baristas', 'Documented recipes and supplier relationships', 'Owner available for 6-week transition'],
+        handoff_progress: { loi: 'done', nda: 'done', verification: 'in_progress' },
+        image: 'https://picsum.photos/seed/erdemo1/1200/700',
+        gallery: ['https://picsum.photos/seed/erdemo1/1200/700', 'https://picsum.photos/seed/erdemo1-a/1200/700', 'https://picsum.photos/seed/erdemo1-b/1200/700'],
+        operating_model: 'Retail café with in-house roasting and B2B wholesale supply.',
+        customer_base: 'Local regulars, commuters, and recurring wholesale café/office clients.',
+        assets_included: 'Roasting equipment, café fit-out, POS, recipes, supplier contracts, brand and social accounts.',
+        training_support: '6 weeks operational and wholesale handover.',
+        transition_period: '45 days post-close support.',
+        documents_available: ['P&L summaries', 'Lease', 'Equipment list', 'Supplier/wholesale contacts', 'SOPs'],
+        ideal_buyer: 'Hands-on operator or hospitality buyer seeking a turnkey café-roastery.',
+        growth_opportunities: ['Expand wholesale', 'Online bean subscriptions', 'Catering/events', 'Extended hours'],
+        risks_notes: 'Lease transfer subject to landlord consent; owner-led sourcing introductions included.',
+        owner: { name: 'Alex Morgan', email: 'alex@example.com' }, createdAt: ago(30),
+      },
+      {
+        id: 'er-demo-2', sample: false, status: 'draft', region: 'US', industry: 'Professional Services',
+        name: 'Harbor Bookkeeping Studio', tagline: 'Recurring-retainer bookkeeping practice serving local SMEs.',
+        city: 'Seattle', area: 'Washington', established: 2018,
+        asking_price: 180000, gross_revenue: 240000, cash_flow_sde: 110000, ebitda: 98000,
+        inventory_amount: 0, inventory_included_in_price: true, financing_ready: false,
+        employees_count: 2, employee_type: 'Part-time', real_estate_status: 'Home based',
+        building_sf: null, lease_expiration: null, monthly_rent: null, nnn: null,
+        hours: 'Mon–Fri, flexible', monthly_payroll: 4200, reason_for_selling: 'Owner retiring',
+        successor_types_wanted: ['employee', 'local_operator'], seller_financing_offered: true, earn_out_offered: false,
+        disclosure_flags: ['financials_unaudited', 'owner_is_key_person'],
+        description: 'Bookkeeping and payroll support practice with 38 retainer clients and low churn. Documented workflows and cloud tooling included.',
+        highlights: ['38 recurring monthly clients', 'Documented processes and templates', 'Cloud-based, location-flexible', 'Owner-led introductions planned'],
+        handoff_progress: {},
+        image: 'https://picsum.photos/seed/erdemo2/1200/700',
+        gallery: ['https://picsum.photos/seed/erdemo2/1200/700', 'https://picsum.photos/seed/erdemo2-a/1200/700', 'https://picsum.photos/seed/erdemo2-b/1200/700'],
+        operating_model: 'Monthly-retainer bookkeeping and payroll services delivered remotely.',
+        customer_base: 'Local SME clients on recurring service agreements.',
+        assets_included: 'Client contracts, workflows/templates, tooling setup, and brand assets.',
+        training_support: '6–8 weeks client introductions and process handover.',
+        transition_period: '60 days support.',
+        documents_available: ['Client list summary', 'Revenue summaries', 'Process docs', 'Service agreements'],
+        ideal_buyer: 'Bookkeeper/accountant or small practice seeking recurring revenue.',
+        growth_opportunities: ['Advisory/CFO services', 'Expand client base', 'Package pricing'],
+        risks_notes: 'Client relationships owner-led; structured introductions and handover planned.',
+        owner: { name: 'Alex Morgan', email: 'alex@example.com' }, createdAt: ago(5),
+      },
+    ],
+    saved: ['er-1001', 'er-2001', 'er-2102', 'er-2401'],
+    alertsSeenAt: ago(2),
+    deals: {
+      'er-1001': {
+        listingId: 'er-1001', buyerId: 'b-demo',
+        nda: { signed: true, at: ago(10), signerName: 'Jordan Lee' },
+        offer: { amount: 138000, deposit: 15000, funding: 'SBA-style bank loan (pre-qualified)', timeline: '1–3 months', status: 'sent', at: ago(3), signerName: 'Jordan Lee' },
+        milestones: {},
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Hi — very interested in the café. Is the lease assignment straightforward with the landlord?', at: ago(7) },
+          { from: 'owner', name: 'Owner', text: 'Thanks for reaching out. Landlord is open to assignment for a qualified operator; I can share the lease summary after NDA.', at: ago(6) },
+          { from: 'buyer', name: 'Jordan Lee', text: 'NDA signed. I have also shared proof of funds and pre-qualification.', at: ago(4) },
+        ],
+      },
+      'er-2102': {
+        listingId: 'er-2102', buyerId: 'b-demo',
+        nda: { signed: true, at: ago(12), signerName: 'Jordan Lee' },
+        offer: { amount: 740000, deposit: 80000, funding: 'Cash and investor partner', timeline: '3–6 months', status: 'active', at: ago(8), decidedAt: ago(5), signerName: 'Jordan Lee' },
+        milestones: { loi: { status: 'done', seller: true, buyer: true, completed_at: ago(6).slice(0,16).replace('T',' ') } },
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Could you share MRR retention details and infra documentation?', at: ago(9) },
+          { from: 'owner', name: 'Owner', text: 'Shared in the data room summary — churn is ~8% annually with strong logo retention.', at: ago(8) },
+        ],
+      },
+      'er-2001': {
+        listingId: 'er-2001', buyerId: 'b-demo',
+        nda: { signed: false },
+        offer: {},
+        milestones: {},
+        thread: [
+          { from: 'buyer', name: 'Jordan Lee', text: 'Interested in learning more about the wholesale accounts and roast profiles.', at: ago(2, 2) },
+        ],
+      },
+    },
+  };
+}
+
 /* ---------- local persistence (always on) ---------- */
 
 function load() {
   if (state !== null) return state;
   try {
     const raw = localStorage.getItem(KEY);
-    state = raw ? JSON.parse(raw) : {};
+    state = raw ? JSON.parse(raw) : demoState();
   } catch {
-    state = {};
+    state = demoState();
   }
   return state;
 }
@@ -5365,8 +6173,11 @@ const COVERS = {
   'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
   Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
 };
-const cover = (industry) => {
-  const cMap = COVERS[industry] || COVERS.Other;
+const cover = (l) => {
+  if (l.image) {
+    return `<div class="cover cover--photo"><img src="${esc(l.image)}" alt="" loading="lazy"><span class="cover__label">${esc(l.industry)}</span></div>`;
+  }
+  const cMap = COVERS[l.industry] || COVERS.Other;
   return `<div class="cover ${cMap.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true">${cMap.glyph}</svg></div>`;
@@ -5465,7 +6276,7 @@ function render() {
 
     return `
     <a class="card" href="listing.html?id=${l.id}">
-      ${cover(l.industry)}
+      ${cover(l)}
       <div class="card__meta">${esc(r.label)} · ${esc(l.city)} · ${esc(l.industry)}</div>
       <div class="card__name">${esc(l.name)}</div>
       <div class="card__tagline">${esc(l.tagline)}</div>
@@ -6035,7 +6846,7 @@ const root = document.getElementById('deal-root');
 
 /* Which side of this deal you are operating as. */
 const VIEW_ROLE = (() => {
-  try { return localStorage.getItem('exit-ready-role') || 'buyer'; } catch (e) { return 'buyer'; }
+  try { return localStorage.getItem('exit-ready:role') || 'buyer'; } catch (e) { return 'buyer'; }
 })();
 const ME = VIEW_ROLE === 'owner' ? 'seller' : 'buyer';
 const ROLE_LABEL = { seller: 'Seller', buyer: 'Buyer', joint: 'Both sides' };
@@ -6219,6 +7030,7 @@ function bindRow(row) {
       return;
     }
     state = result.state;
+    save();
     showHint('');
     row.dataset.state = next;
     statusLabel.textContent = STATE_LABEL[next];
@@ -6291,7 +7103,7 @@ document.getElementById('example-track').innerHTML = track(SAMPLE);
 
   },
   "index": function () {
-const { REGIONS } = window.ER;
+const { REGIONS, HANDOFF_TEMPLATE } = window.ER;
 const store = window.ER;
 const { shorten, esc, fullMoney } = window.ER;
 
@@ -6309,8 +7121,11 @@ const COVERS = {
   'Professional Services': { cls: 'cover--pro', glyph: '<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>' },
   Other: { cls: 'cover--other', glyph: '<path d="M5 6h14M5 12h14M5 18h9"/>' },
 };
-const cover = (industry) => {
-  const c = COVERS[industry] || COVERS.Other;
+const cover = (l) => {
+  if (l.image) {
+    return `<div class="cover cover--photo"><img src="${esc(l.image)}" alt="" loading="lazy"><span class="cover__label">${esc(l.industry)}</span></div>`;
+  }
+  const c = COVERS[l.industry] || COVERS.Other;
   return `<div class="cover ${c.cls}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true">${c.glyph}</svg></div>`;
@@ -6319,30 +7134,48 @@ const cover = (industry) => {
 /* ---------- hero stats ---------- */
 const heroStats = document.getElementById('hero-stats');
 if (heroStats) {
-  const all = store.allListings().filter(isLive);
-  const verifiedBuyers = store.getVerification('buyer') ? 1 : 0;
-  const stats = [
-    { n: all.length, l: 'Live listings' },
-    { n: new Set(all.map((l) => l.city + l.region)).size, l: 'Locations' },
-    { n: new Set(all.map((l) => l.industry)).size, l: 'Industries' },
-    { n: verifiedBuyers, l: 'Verified buyers' },
+  const facts = [
+    { n: REGIONS.length, l: 'live regions' },
+    { n: new Set(REGIONS.map((r) => r.symbol)).size, l: 'currencies' },
+    { n: HANDOFF_TEMPLATE.length, l: 'sign-off milestones' },
+    { n: 0, l: 'surprises at close' },
   ];
-  heroStats.innerHTML = stats
-    .map((s) => `<div class="hero__stat"><b>${s.n}</b><span>${s.l}</span></div>`).join('');
+  heroStats.innerHTML = facts
+    .map((s) => `<div class="hv2-fact"><b>${s.n}</b><small>${esc(s.l)}</small></div>`).join('');
 }
 
 /* ---------- hero search ---------- */
 const heroForm = document.getElementById('hero-search');
 if (heroForm) {
+  const extra = document.getElementById('hero-extra');
+  const roles = document.querySelectorAll('.hv2-roles button');
+  roles.forEach((btn) => btn.addEventListener('click', () => {
+    roles.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const selling = btn.dataset.role === 'sell';
+    document.getElementById('hero-q').placeholder = selling
+      ? 'Business type or keyword'
+      : 'Salon, café, ecommerce…';
+    document.getElementById('hero-go').textContent = selling ? 'Get started →' : 'Search →';
+    extra.setAttribute('aria-label', selling ? 'Successor type' : 'Price range');
+    extra.innerHTML = selling
+      ? '<option value="">Any type</option><option value="employee">Employee buyout</option><option value="operator">Local operator</option><option value="first_time">First-time buyer</option>'
+      : '<option value="">Any price</option><option value="100000">Under $100k</option><option value="500000">$100k – $500k</option><option value="999999999">$500k+</option>';
+  }));
+
   heroForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const q = document.getElementById('hero-q').value.trim();
     const region = document.getElementById('hero-region').value;
+    const extraValue = extra.value;
+    const selling = document.getElementById('hv2-role-sell').getAttribute('aria-pressed') === 'true';
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (region) params.set('region', region);
+    if (selling && extraValue) params.set('successor', extraValue);
+    if (!selling && extraValue) params.set('max', extraValue);
+    if (selling) params.set('owner', '1');
     const suffix = params.toString() ? '?' + params.toString() : '';
-    location.href = 'browse.html' + suffix;
+    location.href = (selling ? 'sell.html' + suffix : 'browse.html' + suffix);
   });
 }
 
@@ -6356,7 +7189,7 @@ if (el) {
       const r = REGIONS.find((x) => x.code === l.region);
       return `
   <a class="card" href="listing.html?id=${encodeURIComponent(l.id)}">
-    ${cover(l.industry)}
+    ${cover(l)}
     <div class="card__meta">${esc(r.label)} · ${esc(l.city)}</div>
     <div class="card__name">${esc(l.name)}</div>
     <div class="card__tagline">${esc(l.tagline)}</div>
@@ -6509,6 +7342,20 @@ const buyersHtml = SAMPLE_BUYERS.map(b => {
   </tr>`;
 }).join('');
 
+const gallery = (l.gallery && l.gallery.length ? l.gallery : (l.image ? [l.image] : [])).slice(0,3);
+const galleryHtml = gallery.length ? `
+  <div class="panel" style="padding: var(--s-3);">
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap: var(--s-3);">
+      <img src="${esc(gallery[0])}" alt="${esc(l.name)}" style="width:100%; height:360px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">
+      <div style="display:grid; gap: var(--s-3);">
+        ${(gallery[1] ? `<img src="${esc(gallery[1])}" alt="" loading="lazy" style="width:100%; height:174px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">` : `<div style="height:174px; border-radius:var(--radius); background:var(--surface-sunken)"></div>`)}
+        ${(gallery[2] ? `<img src="${esc(gallery[2])}" alt="" loading="lazy" style="width:100%; height:174px; object-fit:cover; border-radius: var(--radius); background:var(--surface-sunken)">` : `<div style="height:174px; border-radius:var(--radius); background:var(--surface-sunken)"></div>`)}
+      </div>
+    </div>
+  </div>` : '';
+
+const listOrDash = (arr) => (arr && arr.length) ? `<ul style="margin:0; padding-left:1.15em">${arr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '—';
+
 root.innerHTML = `
   <p style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-4)">
     <a href="browse.html">Browse</a> <span class="muted">/</span>
@@ -6517,13 +7364,14 @@ root.innerHTML = `
   </p>
 
   <h1 style="font-size: var(--step-4); letter-spacing:-0.025em; margin-bottom: var(--s-3)">${esc(l.name)}</h1>
-  <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-5)">
-    ${esc(l.city)}, ${esc(l.area)} · ${esc(l.industry)} · Established ${l.established}
+  <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin-bottom: var(--s-4)">
+    ${esc(l.city)}, ${esc(l.area)} · ${esc(l.industry)} · Established ${l.established} · ${esc(r.label)}
   </p>
 
-  ${isOwn ? `<div class="tags" style="margin-bottom: var(--s-5)"><span class="tag tag--good">Your listing</span></div>` : ''}
+  ${isOwn ? `<div class="tags" style="margin-bottom: var(--s-4)"><span class="tag tag--good">Your listing</span></div>` : ''}
+  ${galleryHtml}
 
-  <div class="detail">
+  <div class="detail" style="margin-top: var(--s-5)">
     <div>
       <!-- ============ FIGURES ============ -->
       <div class="panel">
@@ -6541,6 +7389,19 @@ root.innerHTML = `
           </tbody>
         </table>
         ${dealTags ? `<div class="tags" style="margin-top: var(--s-4)">${dealTags}</div>` : ''}
+      </div>
+
+      <!-- ============ BUSINESS DETAILS ============ -->
+      <div class="panel">
+        <h2>Business details</h2>
+        <table class="deftable">
+          <tbody>
+            <tr><th scope="row">Operating model</th><td style="font-weight:400">${esc(l.operating_model || '—')}</td></tr>
+            <tr><th scope="row">Customer base</th><td style="font-weight:400">${esc(l.customer_base || '—')}</td></tr>
+            <tr><th scope="row">Assets included</th><td style="font-weight:400">${esc(l.assets_included || '—')}</td></tr>
+            <tr><th scope="row">Ideal buyer</th><td style="font-weight:400">${esc(l.ideal_buyer || '—')}</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- ============ DISCLOSURE ============ -->
@@ -6577,6 +7438,28 @@ root.innerHTML = `
             <tr><th scope="row">Hours</th><td>${esc(l.hours)}</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- ============ TRANSITION & SUPPORT ============ -->
+      <div class="panel">
+        <h2>Transition & handover</h2>
+        <table class="deftable">
+          <tbody>
+            <tr><th scope="row">Training/support</th><td style="font-weight:400">${esc(l.training_support || '—')}</td></tr>
+            <tr><th scope="row">Transition period</th><td style="font-weight:400">${esc(l.transition_period || '—')}</td></tr>
+            <tr><th scope="row">Documents available</th><td style="font-weight:400">${listOrDash(l.documents_available)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ============ GROWTH & RISKS ============ -->
+      <div class="panel">
+        <h2>Growth opportunities</h2>
+        ${listOrDash(l.growth_opportunities)}
+      </div>
+      <div class="panel">
+        <h2>Risks & notes</h2>
+        <p class="muted" style="font-family: var(--font-ui); font-size: var(--step--1); margin:0">${esc(l.risks_notes || 'No additional notes provided.')}</p>
       </div>
     </div>
 
@@ -7199,7 +8082,7 @@ function render(listing) {
       const deal = store.getDeal(listing.id) || { listingId: listing.id };
       deal.offer = { ...(deal.offer || {}), status: 'withdrawn', at: new Date().toISOString() };
       store.setDeal(listing.id, deal);
-      render();
+      render(listing);
     });
   }
   if (form) {

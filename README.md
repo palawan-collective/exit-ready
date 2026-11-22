@@ -3,7 +3,7 @@
 A marketplace for retiring owners to sell their business to a verified successor
 (employee, local operator, or first-time buyer), with a milestone-tracked handoff.
 
-**Launch regions:** US + UK + Philippines
+**Markets:** US · Canada · UK · EU · Gulf · SE Asia · Australia (9 live sample regions)
 **Business types (wedge):** asset-light main-street & online services
 **Buyer personas:** employee buyout / local operator / first-time buyer
 
@@ -97,11 +97,11 @@ These statements are carried on every page footer.
   (RightBiz returned 403; businessforsale.ph redirected to a parked domain).
   UK and PH fields are design decisions, flagged in
   `../research/listing-schema-observed.md`.
-- Photos are absent by choice. No stock imagery was used and no logo was invented.
+- The hero uses a licensed Unsplash photograph; listing covers use curated sample images. Unsplash+ watermarked images are not used.
 
 ## Verified
 
-- All 5 pages render, zero console errors
+- All 13 pages render, zero console errors
 - Listing detail resolves `?id=` and loads the correct region's currency (₱ / £ / $)
 - Browse filters work: region, industry, successor, sort, reset
 - Sell form validation blocks incomplete submissions with field-level errors,

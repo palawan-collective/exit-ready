@@ -57,3 +57,12 @@
 
   paint();
 })();
+
+
+/* Footer: back to top */
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest('.footer__top');
+  if (!btn) return;
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+});

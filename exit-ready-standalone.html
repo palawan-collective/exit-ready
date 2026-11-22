@@ -1271,6 +1271,12 @@ legend {
   th { font-size:12px!important; }
 }
 
+
+/* final overrides: rail steps use their own numbered nodes */
+.rail .step::before { display:none!important; }
+.rail .step { background:transparent; }
+.reveal { transition-delay:var(--d,0ms); }
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>
@@ -2293,10 +2299,10 @@ legend {
         <p>Both sides are verified, and every stage leaves a record. Four promises, in order — not four features in a grid.</p>
       </div>
       <div class="rail" id="process-rail">
-        <article class="step"><span class="step__node">01</span><h3>Your buyer is verified</h3><p>Identity, funding path and references are scored before you release a single figure.</p></article>
-        <article class="step"><span class="step__node">02</span><h3>Your numbers stay gated</h3><p>One standard NDA unlocks the detail, with every signature and release timestamped.</p></article>
-        <article class="step"><span class="step__node">03</span><h3>Your handoff is agreed</h3><p>Twelve milestones, signed by both sides — training, consent, licence, final release.</p></article>
-        <article class="step"><span class="step__node">04</span><h3>Your risks are declared</h3><p>Required disclosure flags carry a timestamp, so nothing surfaces after the offer.</p></article>
+        <article class="step reveal" style="transition-delay:60ms"><span class="step__node">01</span><h3>Your buyer is verified</h3><p>Identity, funding path and references are scored before you release a single figure.</p></article>
+        <article class="step reveal" style="transition-delay:140ms"><span class="step__node">02</span><h3>Your numbers stay gated</h3><p>One standard NDA unlocks the detail, with every signature and release timestamped.</p></article>
+        <article class="step reveal" style="transition-delay:220ms"><span class="step__node">03</span><h3>Your handoff is agreed</h3><p>Twelve milestones, signed by both sides — training, consent, licence, final release.</p></article>
+        <article class="step reveal" style="transition-delay:300ms"><span class="step__node">04</span><h3>Your risks are declared</h3><p>Required disclosure flags carry a timestamp, so nothing surfaces after the offer.</p></article>
       </div>
     </div>
   </section>
@@ -2310,9 +2316,9 @@ legend {
         <p>Ten minutes now saves months later. We build the exit pack; you approve it.</p>
       </div>
       <div class="rail rail--plain" id="sell-rail">
-        <article class="step"><span class="step__node">A</span><h3>Built automatically</h3><p>A plain-English summary, an indicative range and your disclosure flags, drafted for you.</p></article>
-        <article class="step"><span class="step__node">B</span><h3>Matched, not listed</h3><p>Buyers who fit your region, industry and successor type come to you — ranked by readiness.</p></article>
-        <article class="step"><span class="step__node">C</span><h3>Paid on close</h3><p>A success fee only when the handoff completes and both sides have signed every milestone.</p></article>
+        <article class="step reveal" style="transition-delay:60ms"><span class="step__node">A</span><h3>Built automatically</h3><p>A plain-English summary, an indicative range and your disclosure flags, drafted for you.</p></article>
+        <article class="step reveal" style="transition-delay:140ms"><span class="step__node">B</span><h3>Matched, not listed</h3><p>Buyers who fit your region, industry and successor type come to you — ranked by readiness.</p></article>
+        <article class="step reveal" style="transition-delay:220ms"><span class="step__node">C</span><h3>Paid on close</h3><p>A success fee only when the handoff completes and both sides have signed every milestone.</p></article>
       </div>
       <p style="margin-top: var(--s-6)">
         <a class="btn btn--primary" href="sell.html">Start a listing</a>

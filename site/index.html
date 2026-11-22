@@ -34,39 +34,75 @@
 <main id="main">
 
   <!-- ================= HERO ================= -->
-  <section class="hero hero--band">
+  <section class="hero hero--band hero--v2">
+    <div class="hv2-photo">
+      <img src="https://images.unsplash.com/photo-1753351054656-48517dde5059?w=1600&q=85&fit=crop&auto=format" alt="A smiling café owner holding her open sign" loading="eager">
+      <div class="hv2-photo__tag">The owner. The successor. The plan.</div>
+      <div class="hv2-card hv2-card--buyer">
+        <div class="hv2-card__tag"><span class="hv2-dot"></span> Verified buyer · matched today</div>
+        <h2 class="hv2-card__name">Gabriel S.</h2>
+        <p class="hv2-card__meta">Matched with a family café in Portland</p>
+        <div class="hv2-card__note"><b>✓ Funds confirmed</b><span>7 acquisitions closed</span></div>
+      </div>
+      <div class="hv2-card hv2-card--handoff">
+        <div class="hv2-card__tag">Handoff plan</div>
+        <h2 class="hv2-card__step">8 / 12 signed off</h2>
+        <div class="hv2-track"><i></i></div>
+        <p>Finance &amp; legal review · both sides</p>
+      </div>
+    </div>
+
     <div class="container">
-      <p class="hero__kicker">Global · US · UK · Dubai · Singapore · Australia · Sweden · Portugal · Philippines</p>
-      <h1>You built it. You decide who gets it.</h1>
-      <p class="hero__lede">
-        Sell to a verified successor — your team, a local operator, or a first-time buyer —
-        with every promise written down and tracked.
-      </p>
+      <div class="hv2-copy">
+        <p class="hv2-eyebrow">The succession marketplace</p>
+        <h1>You built it.<em>Choose who owns it next.</em></h1>
+        <p class="hv2-lede">Sell to a <strong>verified successor</strong> — your team, a local operator, or a first-time buyer — with every promise written down and tracked.</p>
 
-      <form class="hero__search" id="hero-search" role="search" aria-label="Find a business">
-        <input type="search" id="hero-q" placeholder="What are you looking for? salon, café, ecommerce…">
-        <select id="hero-region" aria-label="Region">
-          <option value="">Anywhere</option>
-          <option value="US">United States</option>
-          <option value="UK">United Kingdom</option>
-          <option value="AE">Dubai, UAE</option>
-          <option value="SG">Singapore</option>
-          <option value="AU">Australia</option>
-          <option value="SE">Sweden</option>
-          <option value="PT">Portugal</option>
-          <option value="PH">Philippines</option>
-        </select>
-        <button class="btn btn--primary" type="submit">Search</button>
-      </form>
+        <div class="hv2-finder">
+          <div class="hv2-roles" role="group" aria-label="I am">
+            <button type="button" id="hv2-role-buy" aria-pressed="false" data-role="buy">I'm buying</button>
+            <button type="button" id="hv2-role-sell" aria-pressed="true" data-role="sell">I'm selling</button>
+          </div>
+          <form class="hv2-search" id="hero-search" role="search" aria-label="Find a business">
+            <input type="search" id="hero-q" aria-label="Business type or keyword" placeholder="Business type or keyword">
+            <select id="hero-region" aria-label="Region">
+              <option value="">Anywhere</option>
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="UK">United Kingdom</option>
+              <option value="AE">Dubai, UAE</option>
+              <option value="SG">Singapore</option>
+              <option value="AU">Australia</option>
+              <option value="SE">Sweden</option>
+              <option value="PT">Portugal</option>
+              <option value="PH">Philippines</option>
+            </select>
+            <select id="hero-extra" aria-label="Successor type">
+              <option value="">Any type</option>
+              <option value="employee">Employee buyout</option>
+              <option value="operator">Local operator</option>
+              <option value="first_time">First-time buyer</option>
+            </select>
+            <button class="btn btn--primary" id="hero-go" type="submit">Get started →</button>
+          </form>
+        </div>
 
-      <div class="hero__stats" id="hero-stats"></div>
+        <div class="hv2-actions">
+          <a class="btn btn--ghost" href="sell.html">List your business</a>
+          <a class="hv2-link" href="how-it-works.html">See how the handoff works →</a>
+        </div>
 
-      <div class="hero__actions" style="margin-top: var(--s-6)">
-        <a class="btn btn--ghost" href="sell.html">List your business</a>
-        <a class="btn btn--ghost" href="verify.html">Get verified as a buyer</a>
+        <div class="hv2-facts" id="hero-stats" aria-label="What the site offers"></div>
       </div>
     </div>
   </section>
+
+  <div class="hv2-markets">
+    <div class="container">
+      <span class="hv2-markets__label">Where we work</span>
+      <span>United States</span><span>Canada</span><span>United Kingdom</span><span>Europe</span><span>Gulf</span><span>Singapore</span><span>Philippines</span><span>Australia</span>
+    </div>
+  </div>
 
   <!-- ================= LIVE LISTINGS ================= -->
   <section class="section">
@@ -205,7 +241,7 @@
 </footer>
 
 <script type="module">
-import { REGIONS } from './data/listings.js';
+import { REGIONS, HANDOFF_TEMPLATE } from './data/listings.js';
 import * as store from './data/store.js';
 import { shorten, esc, fullMoney } from './data/format.js';
 
@@ -236,30 +272,48 @@ const cover = (l) => {
 /* ---------- hero stats ---------- */
 const heroStats = document.getElementById('hero-stats');
 if (heroStats) {
-  const all = store.allListings().filter(isLive);
-  const verifiedBuyers = store.getVerification('buyer') ? 1 : 0;
-  const stats = [
-    { n: all.length, l: 'Live listings' },
-    { n: new Set(all.map((l) => l.city + l.region)).size, l: 'Locations' },
-    { n: new Set(all.map((l) => l.industry)).size, l: 'Industries' },
-    { n: verifiedBuyers, l: 'Verified buyers' },
+  const facts = [
+    { n: REGIONS.length, l: 'live regions' },
+    { n: new Set(REGIONS.map((r) => r.symbol)).size, l: 'currencies' },
+    { n: HANDOFF_TEMPLATE.length, l: 'sign-off milestones' },
+    { n: 0, l: 'surprises at close' },
   ];
-  heroStats.innerHTML = stats
-    .map((s) => `<div class="hero__stat"><b>${s.n}</b><span>${s.l}</span></div>`).join('');
+  heroStats.innerHTML = facts
+    .map((s) => `<div class="hv2-fact"><b>${s.n}</b><small>${esc(s.l)}</small></div>`).join('');
 }
 
 /* ---------- hero search ---------- */
 const heroForm = document.getElementById('hero-search');
 if (heroForm) {
+  const extra = document.getElementById('hero-extra');
+  const roles = document.querySelectorAll('.hv2-roles button');
+  roles.forEach((btn) => btn.addEventListener('click', () => {
+    roles.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const selling = btn.dataset.role === 'sell';
+    document.getElementById('hero-q').placeholder = selling
+      ? 'Business type or keyword'
+      : 'Salon, café, ecommerce…';
+    document.getElementById('hero-go').textContent = selling ? 'Get started →' : 'Search →';
+    extra.setAttribute('aria-label', selling ? 'Successor type' : 'Price range');
+    extra.innerHTML = selling
+      ? '<option value="">Any type</option><option value="employee">Employee buyout</option><option value="operator">Local operator</option><option value="first_time">First-time buyer</option>'
+      : '<option value="">Any price</option><option value="100000">Under $100k</option><option value="500000">$100k – $500k</option><option value="999999999">$500k+</option>';
+  }));
+
   heroForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const q = document.getElementById('hero-q').value.trim();
     const region = document.getElementById('hero-region').value;
+    const extraValue = extra.value;
+    const selling = document.getElementById('hv2-role-sell').getAttribute('aria-pressed') === 'true';
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (region) params.set('region', region);
+    if (selling && extraValue) params.set('successor', extraValue);
+    if (!selling && extraValue) params.set('max', extraValue);
+    if (selling) params.set('owner', '1');
     const suffix = params.toString() ? '?' + params.toString() : '';
-    location.href = 'browse.html' + suffix;
+    location.href = (selling ? 'sell.html' + suffix : 'browse.html' + suffix);
   });
 }
 

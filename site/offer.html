@@ -261,7 +261,7 @@ function render(listing) {
       const deal = store.getDeal(listing.id) || { listingId: listing.id };
       deal.offer = { ...(deal.offer || {}), status: 'withdrawn', at: new Date().toISOString() };
       store.setDeal(listing.id, deal);
-      render();
+      render(listing);
     });
   }
   if (form) {

@@ -107,7 +107,7 @@ const root = document.getElementById('deal-root');
 
 /* Which side of this deal you are operating as. */
 const VIEW_ROLE = (() => {
-  try { return localStorage.getItem('exit-ready-role') || 'buyer'; } catch (e) { return 'buyer'; }
+  try { return localStorage.getItem('exit-ready:role') || 'buyer'; } catch (e) { return 'buyer'; }
 })();
 const ME = VIEW_ROLE === 'owner' ? 'seller' : 'buyer';
 const ROLE_LABEL = { seller: 'Seller', buyer: 'Buyer', joint: 'Both sides' };
@@ -291,6 +291,7 @@ function bindRow(row) {
       return;
     }
     state = result.state;
+    save();
     showHint('');
     row.dataset.state = next;
     statusLabel.textContent = STATE_LABEL[next];

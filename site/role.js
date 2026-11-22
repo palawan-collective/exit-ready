@@ -1,3 +1,11 @@
+/* Footer: back to top — registered first so later errors cannot block it. */
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('.footer__top');
+  if (!btn) return;
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+});
+
 /* Exit-Ready — mock role switch.
  *
  * There is no sign-in. The site has two operating modes, buyer and seller, and
@@ -57,12 +65,3 @@
 
   paint();
 })();
-
-
-/* Footer: back to top */
-document.addEventListener('click', function (e) {
-  var btn = e.target.closest('.footer__top');
-  if (!btn) return;
-  e.preventDefault();
-  window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-});

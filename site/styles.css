@@ -1175,7 +1175,7 @@ legend {
    Mobile ergonomics — most visitors are on a phone
    =========================================================================== */
 .mobile-nav { display:none; }
-@media(max-width:640px){
+@media(max-width:900px){
   body { padding-bottom:72px; }
   .masthead__inner { height:62px; gap:12px; }
   .masthead__nav { margin-left:auto; display:flex; align-items:center; gap:8px; }

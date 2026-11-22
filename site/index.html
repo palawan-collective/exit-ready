@@ -122,14 +122,15 @@
   <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
+        <p class="eyebrow">The difference</p>
         <h2>Classifieds are a lead form. This is a process.</h2>
-        <p>Both sides are verified, and every stage leaves a record.</p>
+        <p>Both sides are verified, and every stage leaves a record. Four promises, in order — not four features in a grid.</p>
       </div>
-      <div class="steps">
-        <div class="step"><h3>Your buyer is verified</h3><p>A readiness score shows identity, funding path, deposit capacity and timeline before you release anything.</p></div>
-        <div class="step"><h3>Your numbers are gated</h3><p>Financial detail sits behind a standard NDA, executed in one step and logged with a timestamp.</p></div>
-        <div class="step"><h3>Your handoff is written down</h3><p>Twelve milestones both sides sign off — training days, landlord consent, licence transfer, final release.</p></div>
-        <div class="step"><h3>Your risks are on the record</h3><p>Disclosure flags are required and timestamped, so nothing surfaces as a surprise after the offer.</p></div>
+      <div class="rail" id="process-rail">
+        <article class="step"><span class="step__node">01</span><h3>Your buyer is verified</h3><p>Identity, funding path and references are scored before you release a single figure.</p></article>
+        <article class="step"><span class="step__node">02</span><h3>Your numbers stay gated</h3><p>One standard NDA unlocks the detail, with every signature and release timestamped.</p></article>
+        <article class="step"><span class="step__node">03</span><h3>Your handoff is agreed</h3><p>Twelve milestones, signed by both sides — training, consent, licence, final release.</p></article>
+        <article class="step"><span class="step__node">04</span><h3>Your risks are declared</h3><p>Required disclosure flags carry a timestamp, so nothing surfaces after the offer.</p></article>
       </div>
     </div>
   </section>
@@ -138,22 +139,14 @@
   <section class="section">
     <div class="container">
       <div class="sec-head">
+        <p class="eyebrow">The marketplace</p>
         <h2>Sell your business online</h2>
         <p>Ten minutes now saves months later. We build the exit pack; you approve it.</p>
       </div>
-      <div class="grid">
-        <div class="card" style="cursor:default">
-          <div class="card__name" style="font-size:var(--step-1)">Built automatically</div>
-          <div class="card__tagline">Connect the basics and the listing writes itself: a plain-English summary, an indicative range, and your disclosure flags.</div>
-        </div>
-        <div class="card" style="cursor:default">
-          <div class="card__name" style="font-size:var(--step-1)">Matched, not listed</div>
-          <div class="card__tagline">Buyers who fit your region, industry, budget and successor type are brought to you — ranked, with their readiness score.</div>
-        </div>
-        <div class="card" style="cursor:default">
-          <div class="card__name" style="font-size:var(--step-1)">Priced on close</div>
-          <div class="card__tagline">A success fee only when the handoff completes and both sides have signed every milestone.</div>
-        </div>
+      <div class="rail rail--plain" id="sell-rail">
+        <article class="step"><span class="step__node">A</span><h3>Built automatically</h3><p>A plain-English summary, an indicative range and your disclosure flags, drafted for you.</p></article>
+        <article class="step"><span class="step__node">B</span><h3>Matched, not listed</h3><p>Buyers who fit your region, industry and successor type come to you — ranked by readiness.</p></article>
+        <article class="step"><span class="step__node">C</span><h3>Paid on close</h3><p>A success fee only when the handoff completes and both sides have signed every milestone.</p></article>
       </div>
       <p style="margin-top: var(--s-6)">
         <a class="btn btn--primary" href="sell.html">Start a listing</a>
@@ -166,10 +159,26 @@
   <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
+        <p class="eyebrow">Live inventory</p>
         <h2>Where the inventory is</h2>
-        <p>Live listings by industry and by location, updated as owners list.</p>
+        <p>Live listings by industry and by market, updated as owners list.</p>
       </div>
-      <div class="dash__stats" id="counts"></div>
+      <div class="board reveal" id="inventory-board">
+        <div class="board__top">
+          <div><div class="board__big" id="board-total">—</div><span class="board__label">Live listings</span></div>
+          <div class="board__meta">
+            <div><b id="board-regions">—</b><small>markets</small></div>
+            <div><b id="board-milestones">12</b><small>milestones tracked</small></div>
+          </div>
+        </div>
+        <div class="board__title">Live inventory, at a glance</div>
+        <p class="board__sub">Share of live listings · longest bar = largest group</p>
+        <div class="board__grid">
+          <div><h3>By industry</h3><div id="board-industry"></div></div>
+          <div><h3>By market</h3><div id="board-market"></div></div>
+        </div>
+        <div class="board__foot">Counts reflect the sample listings in this browser. Real inventory replaces them before public use.</div>
+      </div>
     </div>
   </section>
 
@@ -340,7 +349,31 @@ if (el) {
     }).join('');
 }
 
-/* ---------- inventory counts ---------- */
+/* ---------- inventory board ---------- */
+const board = document.getElementById('inventory-board');
+if (board) {
+  const all = store.allListings().filter(isLive);
+  document.getElementById('board-total').textContent = all.length;
+  document.getElementById('board-regions').textContent = new Set(all.map((l) => l.region)).size;
+  document.getElementById('board-milestones').textContent = HANDOFF_TEMPLATE.length;
+  const tally = (key) => all.reduce((acc, l) => { acc[l[key]] = (acc[l[key]] || 0) + 1; return acc; }, {});
+  const regionLabel = (code) => (REGIONS.find((r) => r.code === code) || {}).label || code;
+  const rows = (obj) => Object.entries(obj)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([k, v]) => `<div class="bar"><span class="bar__label">${esc(k)}</span><span class="bar__track"><i class="bar__fill" style="--w:${Math.round(v / all.length * 100)}%"></i></span><span class="bar__num">${v}</span></div>`)
+    .join('');
+  document.getElementById('board-industry').innerHTML = rows(tally('industry'));
+  document.getElementById('board-market').innerHTML = rows(
+    Object.fromEntries(Object.entries(tally('region')).map(([k, v]) => [regionLabel(k), v]))
+  );
+  const obs = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
+  }, { threshold: 0.15 });
+  obs.observe(board);
+}
+
+/* ---------- inventory counts (legacy id, no longer rendered) ---------- */
 const counts = document.getElementById('counts');
 if (counts) {
   const live = store.allListings().filter(isLive);

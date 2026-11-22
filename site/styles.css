@@ -1263,3 +1263,9 @@ legend {
   input[type=checkbox], input[type=radio] { width:26px; height:26px; accent-color:var(--accent); }
   th { font-size:12px!important; }
 }
+
+
+/* final overrides: rail steps use their own numbered nodes */
+.rail .step::before { display:none!important; }
+.rail .step { background:transparent; }
+.reveal { transition-delay:var(--d,0ms); }

@@ -135,8 +135,8 @@ ok('ownerFromForm keeps authority', ownerRecord.authority_confirmed === true);
 ok('ownerFromForm keeps attestation', ownerRecord.attested === true);
 
 // --- listings still resolve ---
-ok('sample listings cover all destinations', LISTINGS.length === 24, String(LISTINGS.length));
-ok('all regions represented', new Set(LISTINGS.map(l => l.region)).size === 8, String(new Set(LISTINGS.map(l => l.region)).size));
+ok('sample listings cover all destinations', LISTINGS.length === 26, String(LISTINGS.length));
+ok('all regions represented', new Set(LISTINGS.map(l => l.region)).size === 9, String(new Set(LISTINGS.map(l => l.region)).size));
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

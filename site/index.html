@@ -231,7 +231,7 @@
     </div>
   </section>
 
-  <!-- ================= INVENTORY COUNTS ================= -->
+  <!-- ================= LIVE INVENTORY MAP ================= -->
   <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
@@ -239,22 +239,7 @@
         <h2>Where the inventory is</h2>
         <p>Live listings by industry and by market, updated as owners list.</p>
       </div>
-      <div class="board reveal" id="inventory-board">
-        <div class="board__top">
-          <div><div class="board__big" id="board-total">—</div><span class="board__label">Live listings</span></div>
-          <div class="board__meta">
-            <div><b id="board-regions">—</b><small>markets</small></div>
-            <div><b id="board-milestones">12</b><small>milestones tracked</small></div>
-          </div>
-        </div>
-        <div class="board__title">Live inventory, at a glance</div>
-        <p class="board__sub">Share of live listings · longest bar = largest group</p>
-        <div class="board__grid">
-          <div><h3>By industry</h3><div id="board-industry"></div></div>
-          <div><h3>By market</h3><div id="board-market"></div></div>
-        </div>
-        <div class="board__foot">Counts reflect the sample listings in this browser. Real inventory replaces them before public use.</div>
-      </div>
+      <div class="map" id="inventory-map"></div>
     </div>
   </section>
 
@@ -326,10 +311,12 @@
   </div>
 </footer>
 
+<script src="data/worldmap.js"></script>
 <script type="module">
 import { REGIONS, HANDOFF_TEMPLATE } from './data/listings.js';
 import * as store from './data/store.js';
 import { shorten, esc, fullMoney } from './data/format.js';
+import { renderMap } from './data/map.js';
 
 const owned = new Set(store.userListings().map((l) => l.id));
 const isLive = (l) => owned.has(l.id) || (l.status || 'live') === 'live';
@@ -427,28 +414,8 @@ if (el) {
 }
 
 /* ---------- inventory board ---------- */
-const board = document.getElementById('inventory-board');
-if (board) {
-  const all = store.allListings().filter(isLive);
-  document.getElementById('board-total').textContent = all.length;
-  document.getElementById('board-regions').textContent = new Set(all.map((l) => l.region)).size;
-  document.getElementById('board-milestones').textContent = HANDOFF_TEMPLATE.length;
-  const tally = (key) => all.reduce((acc, l) => { acc[l[key]] = (acc[l[key]] || 0) + 1; return acc; }, {});
-  const regionLabel = (code) => (REGIONS.find((r) => r.code === code) || {}).label || code;
-  const rows = (obj) => Object.entries(obj)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([k, v]) => `<div class="bar"><span class="bar__label">${esc(k)}</span><span class="bar__track"><i class="bar__fill" style="--w:${Math.round(v / all.length * 100)}%"></i></span><span class="bar__num">${v}</span></div>`)
-    .join('');
-  document.getElementById('board-industry').innerHTML = rows(tally('industry'));
-  document.getElementById('board-market').innerHTML = rows(
-    Object.fromEntries(Object.entries(tally('region')).map(([k, v]) => [regionLabel(k), v]))
-  );
-  const obs = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
-  }, { threshold: 0.15 });
-  obs.observe(board);
-}
+const inventoryMap = document.getElementById('inventory-map');
+if (inventoryMap) renderMap(inventoryMap);
 
 /* ---------- inventory counts (legacy id, no longer rendered) ---------- */
 const counts = document.getElementById('counts');

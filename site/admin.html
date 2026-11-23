@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — Exit-Ready</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#admin-app">Skip to console</a>
+<main id="main">
+  <div id="admin-app"></div>
+</main>
+<script src="data/worldmap.js"></script>
+<script type="module">
+  import { initAdmin } from './data/admin.js';
+  initAdmin();
+</script>
+<script src="role.js"></script>
+</body>
+</html>

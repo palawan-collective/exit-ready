@@ -16,7 +16,8 @@ const roleJs = readFileSync(join(site, 'role.js'), 'utf8');
 
 /* ---------- bundle the data modules onto window.ER ---------- */
 const dataFiles = ['config.js', 'format.js', 'listings.js', 'tracker.js',
-  'verification.js', 'package.js', 'db.js', 'store.js'];
+  'verification.js', 'package.js', 'db.js', 'store.js', 'worldmap.js',
+  'map.js', 'admin.js'];
 
 let bundle = 'window.ER = window.ER || {};\n';
 for (const f of dataFiles) {

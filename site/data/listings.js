@@ -57,7 +57,7 @@ export const HANDOFF_TEMPLATE = [
  * Sample listings
  * ------------------------------------------------------------------------ */
 
-export const LISTINGS = [
+const RAW_LISTINGS = [
   {
     id: "er-1001", region: "US", name: "Koreatown Dessert Café", tagline: "Turnkey dessert and beverage counter in a high-traffic shopping centre.",
     city: "Los Angeles", area: "Koreatown", industry: "Food & Beverage", established: 2013,
@@ -696,6 +696,27 @@ export const LISTINGS = [
   },
 ];
 
+
+/* ---------------------------------------------------------------------------
+ * Map markets — one pin per existing region. Coordinates are city centroids.
+ * The map reads these through store.js; admin can add more.
+ * ------------------------------------------------------------------------ */
+export const MARKETS = [
+  { id: "us", name: "United States", code: "US", lon: -98.5, lat: 39.8, labelDx: 0, labelDy: -16, active: true },
+  { id: "ca", name: "Canada", code: "CA", lon: -106.3, lat: 56.1, labelDx: 0, labelDy: -16, active: true },
+  { id: "uk", name: "United Kingdom", code: "UK", lon: -3.4, lat: 55.4, labelDx: 16, labelDy: -12, active: true },
+  { id: "ph", name: "Philippines", code: "PH", lon: 122.0, lat: 12.9, labelDx: 14, labelDy: 14, active: true },
+  { id: "ae", name: "Dubai, UAE", code: "AE", lon: 55.3, lat: 25.2, labelDx: -14, labelDy: -12, active: true },
+  { id: "sg", name: "Singapore", code: "SG", lon: 103.8, lat: 1.35, labelDx: -12, labelDy: 18, active: true },
+  { id: "au", name: "Australia", code: "AU", lon: 134.0, lat: -25.3, labelDx: 0, labelDy: -16, active: true },
+  { id: "se", name: "Sweden", code: "SE", lon: 15.0, lat: 62.0, labelDx: -12, labelDy: -12, active: true },
+  { id: "pt", name: "Portugal", code: "PT", lon: -8.2, lat: 39.6, labelDx: -14, labelDy: 12, active: true },
+];
+
+/* Migrate sample listings into the map status model without rewriting every row. */
+export const LISTINGS = RAW_LISTINGS.map((l) => ({
+  status: "live", soldAt: null, hideFromMap: false, ...l,
+}));
 
 export const SAMPLE_BUYERS = [
   {

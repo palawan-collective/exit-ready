@@ -6,17 +6,48 @@
  * behaves exactly as it did before.
  */
 
-import { LISTINGS } from './listings.js';
+import { LISTINGS, MARKETS } from './listings.js';
 
 const SAMPLE_LISTINGS = LISTINGS;
 import * as db from './db.js';
 import { REMOTE_ENABLED } from './config.js';
 
 const KEY = 'exit-ready:state:v1';
+export const CHANGE_EVENT = 'exit-ready:change';
 
 let state = null;
 let session = null;
 let primed = false;
+
+function emitChange() {
+  if (typeof document === 'undefined' || !document.dispatchEvent) return;
+  const evt = typeof CustomEvent === 'function'
+    ? new CustomEvent(CHANGE_EVENT, { detail: { key: KEY } })
+    : new Event(CHANGE_EVENT);
+  document.dispatchEvent(evt);
+}
+
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY) return;
+    state = null;
+    emitChange();
+  });
+}
+
+const DEFAULT_MAP_SETTINGS = { showSold: true, soldDays: 90 };
+
+function seedState(s) {
+  const out = s || {};
+  out.listings = out.listings || [];
+  out.deletedListingIds = out.deletedListingIds || [];
+  out.markets = out.markets && out.markets.length
+    ? out.markets
+    : MARKETS.map((m) => ({ ...m }));
+  out.mapSettings = { ...DEFAULT_MAP_SETTINGS, ...(out.mapSettings || {}) };
+  for (const l of out.listings) if (!l.status) l.status = 'live';
+  return out;
+}
 
 function demoState() {
   const now = new Date();
@@ -137,19 +168,20 @@ function load() {
   if (state !== null) return state;
   try {
     const raw = localStorage.getItem(KEY);
-    state = raw ? JSON.parse(raw) : demoState();
+    state = seedState(raw ? JSON.parse(raw) : demoState());
   } catch {
-    state = demoState();
+    state = seedState(demoState());
   }
   return state;
 }
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(state));
+  emitChange();
 }
 
 export function reset() {
-  state = {};
+  state = seedState({});
   save();
   return state;
 }
@@ -330,7 +362,13 @@ function toRemoteListing(l, ownerId) {
 /* ---------- listings ---------- */
 
 export function userListings() { return load().listings || []; }
-export function allListings() { return [...userListings(), ...SAMPLE_LISTINGS]; }
+export function allListings() {
+  const deleted = new Set(load().deletedListingIds || []);
+  const seen = new Set();
+  return [...userListings(), ...SAMPLE_LISTINGS]
+    .filter((l) => !deleted.has(l.id))
+    .filter((l) => !seen.has(l.id) && seen.add(l.id));
+}
 export function findListing(id) { return allListings().find((l) => l.id === id) || null; }
 export function isUserListing(id) { return userListings().some((l) => l.id === id); }
 
@@ -357,6 +395,9 @@ export async function updateListing(id, patch) {
 export async function deleteListing(id) {
   const s = load();
   s.listings = (s.listings || []).filter((l) => l.id !== id);
+  if (SAMPLE_LISTINGS.some((l) => l.id === id) && !s.deletedListingIds.includes(id)) {
+    s.deletedListingIds.push(id);
+  }
   save();
   if (isSignedIn() && isOwnerRole()) {
     try { await db.deleteListing(id); } catch (e) { console.warn('Exit-Ready: delete not saved remotely.', e); }
@@ -413,6 +454,76 @@ export function soldComparables(industry) {
     low: prices[0],
     high: prices[prices.length - 1],
   };
+}
+
+/* ---------- additive map/admin seam ---------- */
+
+/** All listings with the map status fields present. */
+export function listAllListings() {
+  return allListings().map((l) => ({
+    status: 'live', soldAt: null, hideFromMap: false, ...l,
+    soldAt: l.soldAt || l.sold_at || null,
+    hideFromMap: Boolean(l.hideFromMap || l.hide_from_map),
+  }));
+}
+
+/** Add or replace a listing by id, including overrides of sample rows. */
+export function upsertListing(listing) {
+  const s = load();
+  const next = {
+    status: 'live', soldAt: null, hideFromMap: false, ...listing,
+    id: String(listing.id),
+  };
+  const at = s.listings.findIndex((l) => l.id === next.id);
+  if (at === -1) s.listings.push(next); else s.listings[at] = next;
+  s.deletedListingIds = (s.deletedListingIds || []).filter((id) => id !== next.id);
+  save();
+  return next;
+}
+
+/** Set one of the four map statuses. Marking sold records an ISO timestamp. */
+export function setStatus(id, status, soldAt) {
+  const listing = findListing(id);
+  if (!listing) return null;
+  const valid = ['live', 'under_offer', 'sold', 'hidden'];
+  const nextStatus = valid.includes(status) ? status : 'live';
+  const patch = { status: nextStatus };
+  if (nextStatus === 'sold') patch.soldAt = soldAt || new Date().toISOString();
+  else patch.soldAt = null;
+  return upsertListing({ ...listing, ...patch });
+}
+
+export function listMarkets() { return (load().markets || []).map((m) => ({ ...m })); }
+
+export function upsertMarket(market) {
+  const s = load();
+  const next = { active: true, labelDx: 0, labelDy: 0, ...market, id: String(market.id) };
+  const at = s.markets.findIndex((m) => m.id === next.id);
+  if (at === -1) s.markets.push(next); else s.markets[at] = next;
+  save();
+  return { ...next };
+}
+
+/** Refuse to delete a market while any listing still points at it. */
+export function deleteMarket(id) {
+  const market = listMarkets().find((m) => m.id === id);
+  if (!market) return { ok: false, reason: 'missing', count: 0 };
+  const uses = listAllListings().filter((l) =>
+    l.region === market.code || l.market === market.id || l.market === market.code);
+  if (uses.length) return { ok: false, reason: 'in_use', count: uses.length };
+  const s = load();
+  s.markets = (s.markets || []).filter((m) => m.id !== id);
+  save();
+  return { ok: true, reason: 'deleted', count: 0 };
+}
+
+export function getMapSettings() { return { ...DEFAULT_MAP_SETTINGS, ...(load().mapSettings || {}) }; }
+
+export function setMapSettings(patch) {
+  const s = load();
+  s.mapSettings = { ...DEFAULT_MAP_SETTINGS, ...(s.mapSettings || {}), ...(patch || {}) };
+  save();
+  return getMapSettings();
 }
 
 /* ---------- verification ---------- */

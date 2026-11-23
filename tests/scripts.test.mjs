@@ -14,37 +14,44 @@ const files = readdirSync(site).filter((f) => f.endsWith('.html')).sort();
 let pass = 0, fail = 0;
 
 try {
+  const check = (label, code, base = site) => {
+    const rewritten = code
+      .replace(/from '\.\//g, `from 'file:///${base.replace(/\\/g, '/')}/`)
+      .replace(/await import\('\.\//g, `await import('file:///${base.replace(/\\/g, '/')}/`);
+    const out = join(tmp, `${label.replace(/[^a-z0-9]+/gi, '_')}.mjs`);
+    writeFileSync(out, rewritten, 'utf8');
+    try {
+      execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
+      const imports = [...rewritten.matchAll(/from '([^']+)'/g)]
+        .map((m) => m[1])
+        .filter((s) => s.startsWith('file:///') || s.startsWith('./'));
+      const missing = imports.filter((spec) => {
+        const abs = spec.startsWith('file:///')
+          ? spec.replace('file:///', '').replace(/\//g, '\\')
+          : join(site, spec);
+        return !existsSync(abs);
+      });
+      if (missing.length) throw new Error('unresolved imports: ' + missing.join(', '));
+      pass++;
+      console.log(`  ok  ${label} (${imports.length} imports)`);
+    } catch (e) {
+      fail++;
+      const msg = String(e.stderr || e.message).split('\n').slice(0, 6).join('\n');
+      console.log(`FAIL  ${label}\n      ${msg}`);
+    }
+  };
+
   for (const file of files) {
     const html = readFileSync(join(site, file), 'utf8');
     const blocks = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)];
     if (blocks.length === 0) { console.log(`SKIP  ${file} — no module script`); continue; }
-    for (const [i, m] of blocks.entries()) {
-      const code = m[1]
-        .replace(/from '\.\//g, `from 'file:///${site.replace(/\\/g, '/')}/`)
-        .replace(/await import\('\.\//g, `await import('file:///${site.replace(/\\/g, '/')}/`);
-      const out = join(tmp, `${file.replace(/\.html$/, '')}.${i}.mjs`);
-      writeFileSync(out, code, 'utf8');
-      try {
-        execFileSync(process.execPath, ['--check', out], { stdio: 'pipe' });
-        // Every relative import must resolve to a file that exists.
-        const imports = [...code.matchAll(/from '([^']+)'/g)]
-          .map((m) => m[1])
-          .filter((s) => s.startsWith('file:///') || s.startsWith('./'));
-        const missing = imports.filter((spec) => {
-          const abs = spec.startsWith('file:///')
-            ? spec.replace('file:///', '').replace(/\//g, '\\')
-            : join(site, spec);
-          return !existsSync(abs);
-        });
-        if (missing.length) throw new Error('unresolved imports: ' + missing.join(', '));
-        pass++;
-        console.log(`  ok  ${file} script ${i} (${imports.length} imports)`);
-      } catch (e) {
-        fail++;
-        const msg = String(e.stderr || e.message).split('\n').slice(0, 6).join('\n');
-        console.log(`FAIL  ${file} script ${i}\n      ${msg}`);
-      }
-    }
+    for (const [i, m] of blocks.entries()) check(`${file} script ${i}`, m[1]);
+  }
+
+  /* External scripts added for the world map / admin seam. */
+  for (const file of ['data/admin.js', 'data/map.js', 'data/worldmap.js']) {
+    const base = file.startsWith('data/') ? join(site, 'data') : site;
+    check(file, readFileSync(join(site, file), 'utf8'), base);
   }
 } finally {
   rmSync(tmp, { recursive: true, force: true });

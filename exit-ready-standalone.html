@@ -1494,6 +1494,16 @@ p,li,dd{text-wrap:pretty}
   .footer__bottom{margin-top:12px!important;padding-top:10px!important}
 }
 
+
+/* Footer alignment — plain social icons, Regions on the right on all devices */
+.footer__social a{border:0!important;border-radius:0!important;background:transparent!important;width:auto!important;height:auto!important;padding:4px 2px!important}
+.footer__social a:hover{background:transparent!important;color:var(--accent);transform:translateY(-1px)}
+@media(max-width:900px){
+  .footer__grid > div:nth-child(2){grid-column:1!important;grid-row:2!important}
+  .footer__grid > div:nth-child(3){grid-column:1!important;grid-row:3!important}
+  .footer__grid > div:nth-child(4){grid-column:2!important;grid-row:2 / span 2!important}
+}
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>

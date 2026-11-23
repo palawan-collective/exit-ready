@@ -36,11 +36,12 @@ node tests/package.test.mjs
 node tests/store.test.mjs
 node tests/map.test.mjs
 node tests/scripts.test.mjs
+node tests/responsive.test.mjs
 ```
 
 22 assertions on the handoff tracker, 59 on verification and scoring, 38 on packaging, valuation
 and matching, 36 on the shared store, 33 on the map rules and store seam, and a parse-and-import
-check on every page script and the new map/admin modules.
+check on every page script and the new map/admin modules, plus a static guard that removes horizontal scrolling and stacks every definition table.
 No dependencies, no test runner.
 
 ## Pages
@@ -114,4 +115,4 @@ These statements are carried on every page footer.
 - Sell form validation blocks incomplete submissions with field-level errors,
   passes when complete, and computes an indicative range from SDE multiples
 - Primary buttons 7.19:1 contrast, muted text 6.08:1, ghost buttons 17.24:1
-- Zero horizontal overflow; responsive breakpoints at 760 / 940 / 1000 / 1080
+- Zero horizontal overflow at 360 / 390 / 820 / 1440; definition tables stack at every width

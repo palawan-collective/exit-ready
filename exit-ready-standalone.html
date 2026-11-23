@@ -499,16 +499,25 @@ textarea { resize: vertical; min-height: 7rem; width: 100%; }
    Definition table (listing detail)
    =========================================================================== */
 
+.deftable,
+.deftable tbody,
+.deftable tr,
+.deftable th,
+.deftable td { display: block; }
 .deftable { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: var(--step--1); }
+.deftable tr { padding: var(--s-2) 0; border-bottom: 1px solid var(--rule); }
+.deftable tr:last-child { border-bottom: 0; }
 .deftable th, .deftable td {
+  width: 100%;
+  min-width: 0;
   text-align: left;
-  padding: var(--s-3) var(--s-4) var(--s-3) 0;
-  border-bottom: 1px solid var(--rule);
+  padding: 0;
+  border-bottom: 0;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
-.deftable th { color: var(--ink-muted); font-weight: 500; width: 45%; }
-.deftable td { font-weight: 600; font-variant-numeric: tabular-nums; }
-.deftable tr:last-child th, .deftable tr:last-child td { border-bottom: 0; }
+.deftable th { color: var(--ink-muted); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.02em; }
+.deftable td { margin-top: 2px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* ===========================================================================
    Detail layout
@@ -1141,7 +1150,7 @@ legend {
 .hv2-track i { display:block; width:67%; height:100%; background:var(--accent); border-radius:99px; }
 .hv2-card--handoff p { margin:0; font-size:0.6875rem; color:var(--ink-muted); }
 .hv2-markets { background:var(--hv2-deep); color:rgba(251,250,247,.75); }
-.hv2-markets .container { display:flex; align-items:center; gap:0; min-height:62px; overflow-x:auto; }
+.hv2-markets .container { display:flex; align-items:center; flex-wrap:wrap; gap:var(--s-2) var(--s-5); min-height:62px; padding-block:var(--s-2); }
 .hv2-markets__label { font-family:var(--font-mono); font-size:0.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--hv2-mint); white-space:nowrap; padding-right:24px; margin-right:24px; border-right:1px solid rgba(255,255,255,.2); }
 .hv2-markets span:not(.hv2-markets__label) { font-family:var(--font-ui); font-size:0.8125rem; white-space:nowrap; padding-right:22px; margin-right:22px; border-right:1px solid rgba(255,255,255,.16); }
 .hv2-markets span:last-child { border:0; }
@@ -1570,7 +1579,7 @@ p,li,dd{text-wrap:pretty}
   .map__code { display: none; }
   .map__num { display: block; }
   .map__card { position: static; width: 100%; margin-top: var(--s-3); }
-  .map__chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--s-2); scrollbar-width: thin; }
+  .map__chips { flex-wrap: wrap; }
   .map__chip { flex: 0 0 auto; }
 }
 @media(prefers-reduced-motion:reduce){ .map__ring { animation: none; } .map__core { transition: none; } }
@@ -2552,6 +2561,11 @@ p,li,dd{text-wrap:pretty}
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
+      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
+        <span class="role-switch__label">Viewing as</span>
+        <button type="button" data-role="buyer">Buyer</button>
+        <button type="button" data-role="owner">Seller</button>
+      </div>
       <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
     </nav>

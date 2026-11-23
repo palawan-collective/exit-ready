@@ -34,11 +34,13 @@ node tests/tracker.test.mjs
 node tests/verification.test.mjs
 node tests/package.test.mjs
 node tests/store.test.mjs
+node tests/map.test.mjs
 node tests/scripts.test.mjs
 ```
 
 22 assertions on the handoff tracker, 59 on verification and scoring, 38 on packaging, valuation
-and matching, 36 on the shared store, and a parse-and-import check on all eleven page scripts.
+and matching, 36 on the shared store, 33 on the map rules and store seam, and a parse-and-import
+check on every page script and the new map/admin modules.
 No dependencies, no test runner.
 
 ## Pages
@@ -58,6 +60,7 @@ No dependencies, no test runner.
 | `how-it-works.html` | The six stages, what verification checks, the NDA gate, pricing, regions |
 | `handoff.html` | The twelve milestones and how they adapt per successor type |
 | `deal.html` | Interactive handoff tracker for one listing. Status, owner, due date, evidence note and two-sided sign-off, stored in `localStorage` |
+| `admin.html` | Hidden local console (noindex, not linked from public nav) for listings, map markets and map settings. Placeholder passcode only. |
 
 ## Files
 
@@ -70,6 +73,9 @@ No dependencies, no test runner.
 | `data/verification.js` | Verification rules and readiness scoring — pure functions, no DOM. Weights, validation, form mapping |
 | `data/store.js` | The shared client-side store. One `localStorage` state object: user, listings, verification, deals, threads, alerts, saved. What a user enters on one page appears on the others |
 | `data/package.js` | The automation layer: form → listing, exit-pack generation (summary + indicative range), and buyer/listing matching |
+| `data/worldmap.js` | Unchanged generated dot-matrix world mask and projection helper |
+| `data/map.js` | Derived map rules and the `renderMap()` component. Counts come only from `store.js` |
+| `data/admin.js` | Hidden console controller. Reuses `package.listingFromForm`; never touches `localStorage` directly |
 
 ## The differentiators (what makes this not another classifieds site)
 
@@ -91,6 +97,7 @@ These statements are carried on every page footer.
 ## Known limitations
 
 - No backend. Nothing submits or persists. Form data stays in the browser.
+- Admin edits live in this browser's `localStorage` until the Supabase migration. The passcode is a placeholder, not security. A real backend/auth is a TODO for that separate migration.
 - The price filter requires a region, because listings use three currencies and
   raw numbers are not comparable. The result line says so rather than lying.
 - UK and PH listing conventions were **not** observed from a live source

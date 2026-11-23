@@ -44,6 +44,10 @@
 
   --good:             #1F5F4B;
   --good-wash:        #E6EFEB;
+  --map-land:         #B9B4A7;
+  --map-marker:       #1F5F4B;
+  --map-sold:         #A8DCC6;
+
   --warn:             #8A5A12;
   --warn-wash:        #F7EEDC;
   --low:              #8C3A2E;
@@ -1504,12 +1508,131 @@ p,li,dd{text-wrap:pretty}
   .footer__grid > div:nth-child(4){grid-column:2!important;grid-row:2 / span 2!important}
 }
 
+
+/* ===========================================================================
+   World map — dot matrix inventory (tokens only)
+   =========================================================================== */
+.map { font-family: var(--font-ui); }
+.map__panel { background: var(--surface-inverse); color: var(--ink-inverse); border-radius: var(--radius-lg); padding: var(--s-6); position: relative; overflow: hidden; }
+.map__panel::after { content: ""; position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border: 1px solid var(--rule-inverse); border-radius: 50%; pointer-events: none; }
+.map__stats { display: flex; gap: var(--s-7); align-items: flex-end; flex-wrap: wrap; padding-bottom: var(--s-5); border-bottom: 1px solid var(--rule-inverse); position: relative; z-index: 1; }
+.map__stat b { display: block; font-family: var(--font-body); font-size: var(--step-4); font-weight: 500; line-height: 1; color: var(--ink-inverse); }
+.map__stat--big b { font-size: var(--step-5); letter-spacing: -0.03em; }
+.map__stat span { display: block; margin-top: var(--s-2); font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--map-sold); }
+.map__box { position: relative; margin: var(--s-4) calc(var(--s-2) * -1) 0; }
+.map__svg { display: block; width: 100%; height: auto; overflow: visible; }
+.map__land { fill: none; stroke: var(--map-land); stroke-linecap: round; }
+.map__marker { cursor: pointer; }
+.map__marker:focus { outline: none; }
+.map__marker:focus-visible .map__core { stroke: var(--ink-inverse); stroke-width: 3; }
+.map__ring { fill: none; stroke: var(--map-marker); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: mapPulse 2.8s ease-out infinite; }
+.map__core { fill: var(--map-marker); stroke: var(--surface-inverse); stroke-width: 2; transition: r .45s cubic-bezier(.2,.7,.2,1), fill .2s; }
+.map__hit { fill: var(--map-marker); fill-opacity: 0; stroke: none; }
+.map__code, .map__num, .map__sold { font-family: var(--font-mono); fill: var(--ink-inverse); paint-order: stroke; stroke: var(--surface-inverse); stroke-width: 3px; pointer-events: none; }
+.map__code { font-size: 11px; letter-spacing: 0.08em; }
+.map__num { display: none; font-size: 13px; font-weight: 600; }
+.map__sold { fill: var(--map-sold); font-size: 10px; letter-spacing: 0.08em; }
+.map__marker--zero { opacity: .28; }
+.map__marker--zero .map__ring { animation: none; opacity: 0; }
+.map__marker--selected .map__core, .map__marker:focus-visible .map__core { fill: var(--map-sold); }
+@keyframes mapPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
+.map__card { position: absolute; left: 1.5%; bottom: 3%; width: min(270px, 46%); background: var(--surface-inverse); border: 1px solid var(--rule-inverse); border-radius: var(--radius); padding: var(--s-4); font-size: var(--step--1); }
+.map__card h4 { margin: 0; font-family: var(--font-body); font-size: var(--step-1); font-weight: 500; color: var(--ink-inverse); }
+.map__card p { margin: var(--s-1) 0 var(--s-3); font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--map-sold); max-width: none; }
+.map__card .map__hint { margin-top: var(--s-3); color: var(--rule-strong); }
+.map__row { display: flex; align-items: center; gap: var(--s-2); padding: 3px 0; }
+.map__row b { margin-left: auto; font-weight: 500; }
+.map__row--sold { color: var(--map-sold); }
+.map__swatch { width: 8px; height: 8px; border-radius: 2px; background: var(--map-marker); flex: none; }
+.map__swatch--food-beverage { background: var(--good); }
+.map__swatch--trades-services { background: var(--warn); }
+.map__swatch--professional-services { background: var(--accent); }
+.map__swatch--personal-services { background: var(--low); }
+.map__swatch--ecommerce { background: var(--map-sold); }
+.map__swatch--hospitality { background: var(--rule-strong); }
+.map__swatch--healthcare { background: var(--ink-faint); }
+.map__browse { display: inline-block; margin-top: var(--s-3); color: var(--map-sold); font-weight: 600; text-decoration: none; }
+.map__browse:hover { text-decoration: underline; }
+.map__labels { position: relative; z-index: 1; }
+.map__label { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--map-sold); margin: var(--s-5) 0 var(--s-3); }
+.map__chips { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.map__chip { min-height: 44px; display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-2) var(--s-3); border: 1px solid var(--rule-inverse); border-radius: 99px; background: transparent; color: var(--ink-inverse); font-family: var(--font-ui); font-size: var(--step--1); cursor: pointer; transition: background .2s, border-color .2s; }
+.map__chip em { font-family: var(--font-mono); font-style: normal; opacity: .7; }
+.map__chip--on { background: var(--ink-inverse); color: var(--surface-inverse); border-color: var(--ink-inverse); }
+.map__chip:focus-visible { outline: 2px solid var(--map-sold); outline-offset: 2px; }
+@media(hover:hover) { .map__chip:hover { background: var(--rule-inverse); } .map__marker:hover .map__core { fill: var(--ink-inverse); } }
+.map__note { position: relative; z-index: 1; margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-inverse); font-size: var(--step--1); color: var(--rule-strong); }
+@media(max-width:720px){
+  .map__panel { padding: var(--s-4) var(--s-3); }
+  .map__stats { gap: var(--s-4); }
+  .map__stat b { font-size: var(--step-3); }
+  .map__stat--big b { font-size: var(--step-4); }
+  .map__code { display: none; }
+  .map__num { display: block; }
+  .map__card { position: static; width: 100%; margin-top: var(--s-3); }
+  .map__chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--s-2); scrollbar-width: thin; }
+  .map__chip { flex: 0 0 auto; }
+}
+@media(prefers-reduced-motion:reduce){ .map__ring { animation: none; } .map__core { transition: none; } }
+
+/* ===========================================================================
+   Admin console — local only, hidden from public navigation
+   =========================================================================== */
+.admin { padding-block: var(--s-7); }
+.admin__top { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; margin-bottom: var(--s-4); }
+.admin__top h1 { margin: 0; }
+.admin__gate { max-width: 520px; margin: var(--s-8) auto; }
+.admin__tabs { display: flex; gap: var(--s-2); flex-wrap: wrap; margin-bottom: var(--s-4); }
+.admin__tabs button { min-height: 44px; padding: var(--s-2) var(--s-4); border: 1px solid var(--rule-strong); background: var(--surface-raised); color: var(--ink); cursor: pointer; }
+.admin__tabs button.is-on { background: var(--accent); border-color: var(--accent); color: var(--ink-inverse); }
+.admin__panel { background: var(--surface-raised); }
+.admin__form { padding-bottom: var(--s-5); border-bottom: 1px solid var(--rule); margin-bottom: var(--s-5); }
+.admin__form h3 { font-family: var(--font-body); font-size: var(--step-2); margin: 0 0 var(--s-4); }
+.admin__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+.admin__actions { display: flex; gap: var(--s-3); margin-top: var(--s-4); flex-wrap: wrap; }
+.admin__rows { display: grid; gap: var(--s-3); }
+.admin__row { padding: var(--s-4); border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); }
+.admin__rowhead { display: flex; justify-content: space-between; gap: var(--s-2); align-items: baseline; }
+.admin__pill { font-family: var(--font-mono); font-size: 0.625rem; text-transform: uppercase; color: var(--accent); }
+.admin__quick { display: flex; gap: var(--s-2); flex-wrap: wrap; margin-top: var(--s-3); }
+.admin__quick button { min-height: 44px; padding: var(--s-2) var(--s-3); border: 1px solid var(--rule-strong); background: var(--surface-raised); color: var(--ink); cursor: pointer; }
+.admin__quick button:hover { border-color: var(--accent); color: var(--accent); }
+.admin__preview { margin-top: var(--s-4); background: var(--surface-inverse); border-radius: var(--radius); padding: var(--s-2); min-height: 180px; }
+.admin__preview .map__panel { background: transparent; padding: 0; }
+.admin__preview .map__panel::after { display: none; }
+@media(max-width:640px){
+  .admin__grid { grid-template-columns: 1fr; }
+  .admin__row { display: grid; gap: var(--s-2); }
+}
+
 .router { max-width: var(--container); margin: 0 auto; padding: var(--s-5); }
 </style>
 </head>
 <body>
 <div id="app"></div>
 
+<template id="t-admin">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — Exit-Ready</title>
+<meta name="robots" content="noindex, nofollow">
+
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip-link" href="#admin-app">Skip to console</a>
+<main id="main">
+  <div id="admin-app"></div>
+</main>
+<script src="data/worldmap.js"></script>
+
+
+</body>
+</html>
+</template>
 <template id="t-browse">
 <!DOCTYPE html>
 <html lang="en">
@@ -2429,11 +2552,6 @@ p,li,dd{text-wrap:pretty}
       <a href="how-it-works.html">How it works</a>
       <a href="handoff.html">Handoff plan</a>
       <a class="btn btn--primary" href="sell.html">Start a listing</a>
-      <div class="role-switch" data-role-switch role="group" aria-label="Viewing as">
-        <span class="role-switch__label">Viewing as</span>
-        <button type="button" data-role="buyer">Buyer</button>
-        <button type="button" data-role="owner">Seller</button>
-      </div>
       <a href="pricing.html">Pricing</a>
       <a href="dashboard.html">Dashboard</a>
     </nav>
@@ -2640,7 +2758,7 @@ p,li,dd{text-wrap:pretty}
     </div>
   </section>
 
-  <!-- ================= INVENTORY COUNTS ================= -->
+  <!-- ================= LIVE INVENTORY MAP ================= -->
   <section class="section" style="background: var(--surface-sunken)">
     <div class="container">
       <div class="sec-head">
@@ -2648,22 +2766,7 @@ p,li,dd{text-wrap:pretty}
         <h2>Where the inventory is</h2>
         <p>Live listings by industry and by market, updated as owners list.</p>
       </div>
-      <div class="board reveal" id="inventory-board">
-        <div class="board__top">
-          <div><div class="board__big" id="board-total">—</div><span class="board__label">Live listings</span></div>
-          <div class="board__meta">
-            <div><b id="board-regions">—</b><small>markets</small></div>
-            <div><b id="board-milestones">12</b><small>milestones tracked</small></div>
-          </div>
-        </div>
-        <div class="board__title">Live inventory, at a glance</div>
-        <p class="board__sub">Share of live listings · longest bar = largest group</p>
-        <div class="board__grid">
-          <div><h3>By industry</h3><div id="board-industry"></div></div>
-          <div><h3>By market</h3><div id="board-market"></div></div>
-        </div>
-        <div class="board__foot">Counts reflect the sample listings in this browser. Real inventory replaces them before public use.</div>
-      </div>
+      <div class="map" id="inventory-map"></div>
     </div>
   </section>
 
@@ -2735,6 +2838,7 @@ p,li,dd{text-wrap:pretty}
   </div>
 </footer>
 
+<script src="data/worldmap.js"></script>
 
   
 <script>
@@ -4384,7 +4488,7 @@ const HANDOFF_TEMPLATE = [
  * Sample listings
  * ------------------------------------------------------------------------ */
 
-const LISTINGS = [
+const RAW_LISTINGS = [
   {
     id: "er-1001", region: "US", name: "Koreatown Dessert Café", tagline: "Turnkey dessert and beverage counter in a high-traffic shopping centre.",
     city: "Los Angeles", area: "Koreatown", industry: "Food & Beverage", established: 2013,
@@ -5024,6 +5128,27 @@ const LISTINGS = [
 ];
 
 
+/* ---------------------------------------------------------------------------
+ * Map markets — one pin per existing region. Coordinates are city centroids.
+ * The map reads these through store.js; admin can add more.
+ * ------------------------------------------------------------------------ */
+const MARKETS = [
+  { id: "us", name: "United States", code: "US", lon: -98.5, lat: 39.8, labelDx: 0, labelDy: -16, active: true },
+  { id: "ca", name: "Canada", code: "CA", lon: -106.3, lat: 56.1, labelDx: 0, labelDy: -16, active: true },
+  { id: "uk", name: "United Kingdom", code: "UK", lon: -3.4, lat: 55.4, labelDx: 16, labelDy: -12, active: true },
+  { id: "ph", name: "Philippines", code: "PH", lon: 122.0, lat: 12.9, labelDx: 14, labelDy: 14, active: true },
+  { id: "ae", name: "Dubai, UAE", code: "AE", lon: 55.3, lat: 25.2, labelDx: -14, labelDy: -12, active: true },
+  { id: "sg", name: "Singapore", code: "SG", lon: 103.8, lat: 1.35, labelDx: -12, labelDy: 18, active: true },
+  { id: "au", name: "Australia", code: "AU", lon: 134.0, lat: -25.3, labelDx: 0, labelDy: -16, active: true },
+  { id: "se", name: "Sweden", code: "SE", lon: 15.0, lat: 62.0, labelDx: -12, labelDy: -12, active: true },
+  { id: "pt", name: "Portugal", code: "PT", lon: -8.2, lat: 39.6, labelDx: -14, labelDy: 12, active: true },
+];
+
+/* Migrate sample listings into the map status model without rewriting every row. */
+const LISTINGS = RAW_LISTINGS.map((l) => ({
+  status: "live", soldAt: null, hideFromMap: false, ...l,
+}));
+
 const SAMPLE_BUYERS = [
   {
     id: "b-01",
@@ -5145,6 +5270,7 @@ const SAMPLE_BUYERS = [
   window.ER["SUCCESSOR_TYPES"] = typeof SUCCESSOR_TYPES !== 'undefined' ? SUCCESSOR_TYPES : undefined;
   window.ER["DISCLOSURE_FLAGS"] = typeof DISCLOSURE_FLAGS !== 'undefined' ? DISCLOSURE_FLAGS : undefined;
   window.ER["HANDOFF_TEMPLATE"] = typeof HANDOFF_TEMPLATE !== 'undefined' ? HANDOFF_TEMPLATE : undefined;
+  window.ER["MARKETS"] = typeof MARKETS !== 'undefined' ? MARKETS : undefined;
   window.ER["LISTINGS"] = typeof LISTINGS !== 'undefined' ? LISTINGS : undefined;
   window.ER["SAMPLE_BUYERS"] = typeof SAMPLE_BUYERS !== 'undefined' ? SAMPLE_BUYERS : undefined;
 })();
@@ -6027,17 +6153,48 @@ async function updateSiteSettings(patch) {
  * behaves exactly as it did before.
  */
 
-const { LISTINGS } = window.ER;
+const { LISTINGS, MARKETS } = window.ER;
 
 const SAMPLE_LISTINGS = LISTINGS;
 const db = window.ER;
 const { REMOTE_ENABLED } = window.ER;
 
 const KEY = 'exit-ready:state:v1';
+const CHANGE_EVENT = 'exit-ready:change';
 
 let state = null;
 let session = null;
 let primed = false;
+
+function emitChange() {
+  if (typeof document === 'undefined' || !document.dispatchEvent) return;
+  const evt = typeof CustomEvent === 'function'
+    ? new CustomEvent(CHANGE_EVENT, { detail: { key: KEY } })
+    : new Event(CHANGE_EVENT);
+  document.dispatchEvent(evt);
+}
+
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY) return;
+    state = null;
+    emitChange();
+  });
+}
+
+const DEFAULT_MAP_SETTINGS = { showSold: true, soldDays: 90 };
+
+function seedState(s) {
+  const out = s || {};
+  out.listings = out.listings || [];
+  out.deletedListingIds = out.deletedListingIds || [];
+  out.markets = out.markets && out.markets.length
+    ? out.markets
+    : MARKETS.map((m) => ({ ...m }));
+  out.mapSettings = { ...DEFAULT_MAP_SETTINGS, ...(out.mapSettings || {}) };
+  for (const l of out.listings) if (!l.status) l.status = 'live';
+  return out;
+}
 
 function demoState() {
   const now = new Date();
@@ -6158,19 +6315,20 @@ function load() {
   if (state !== null) return state;
   try {
     const raw = localStorage.getItem(KEY);
-    state = raw ? JSON.parse(raw) : demoState();
+    state = seedState(raw ? JSON.parse(raw) : demoState());
   } catch {
-    state = demoState();
+    state = seedState(demoState());
   }
   return state;
 }
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(state));
+  emitChange();
 }
 
 function reset() {
-  state = {};
+  state = seedState({});
   save();
   return state;
 }
@@ -6351,7 +6509,13 @@ function toRemoteListing(l, ownerId) {
 /* ---------- listings ---------- */
 
 function userListings() { return load().listings || []; }
-function allListings() { return [...userListings(), ...SAMPLE_LISTINGS]; }
+function allListings() {
+  const deleted = new Set(load().deletedListingIds || []);
+  const seen = new Set();
+  return [...userListings(), ...SAMPLE_LISTINGS]
+    .filter((l) => !deleted.has(l.id))
+    .filter((l) => !seen.has(l.id) && seen.add(l.id));
+}
 function findListing(id) { return allListings().find((l) => l.id === id) || null; }
 function isUserListing(id) { return userListings().some((l) => l.id === id); }
 
@@ -6378,6 +6542,9 @@ async function updateListing(id, patch) {
 async function deleteListing(id) {
   const s = load();
   s.listings = (s.listings || []).filter((l) => l.id !== id);
+  if (SAMPLE_LISTINGS.some((l) => l.id === id) && !s.deletedListingIds.includes(id)) {
+    s.deletedListingIds.push(id);
+  }
   save();
   if (isSignedIn() && isOwnerRole()) {
     try { await db.deleteListing(id); } catch (e) { console.warn('Exit-Ready: delete not saved remotely.', e); }
@@ -6434,6 +6601,76 @@ function soldComparables(industry) {
     low: prices[0],
     high: prices[prices.length - 1],
   };
+}
+
+/* ---------- additive map/admin seam ---------- */
+
+/** All listings with the map status fields present. */
+function listAllListings() {
+  return allListings().map((l) => ({
+    status: 'live', soldAt: null, hideFromMap: false, ...l,
+    soldAt: l.soldAt || l.sold_at || null,
+    hideFromMap: Boolean(l.hideFromMap || l.hide_from_map),
+  }));
+}
+
+/** Add or replace a listing by id, including overrides of sample rows. */
+function upsertListing(listing) {
+  const s = load();
+  const next = {
+    status: 'live', soldAt: null, hideFromMap: false, ...listing,
+    id: String(listing.id),
+  };
+  const at = s.listings.findIndex((l) => l.id === next.id);
+  if (at === -1) s.listings.push(next); else s.listings[at] = next;
+  s.deletedListingIds = (s.deletedListingIds || []).filter((id) => id !== next.id);
+  save();
+  return next;
+}
+
+/** Set one of the four map statuses. Marking sold records an ISO timestamp. */
+function setStatus(id, status, soldAt) {
+  const listing = findListing(id);
+  if (!listing) return null;
+  const valid = ['live', 'under_offer', 'sold', 'hidden'];
+  const nextStatus = valid.includes(status) ? status : 'live';
+  const patch = { status: nextStatus };
+  if (nextStatus === 'sold') patch.soldAt = soldAt || new Date().toISOString();
+  else patch.soldAt = null;
+  return upsertListing({ ...listing, ...patch });
+}
+
+function listMarkets() { return (load().markets || []).map((m) => ({ ...m })); }
+
+function upsertMarket(market) {
+  const s = load();
+  const next = { active: true, labelDx: 0, labelDy: 0, ...market, id: String(market.id) };
+  const at = s.markets.findIndex((m) => m.id === next.id);
+  if (at === -1) s.markets.push(next); else s.markets[at] = next;
+  save();
+  return { ...next };
+}
+
+/** Refuse to delete a market while any listing still points at it. */
+function deleteMarket(id) {
+  const market = listMarkets().find((m) => m.id === id);
+  if (!market) return { ok: false, reason: 'missing', count: 0 };
+  const uses = listAllListings().filter((l) =>
+    l.region === market.code || l.market === market.id || l.market === market.code);
+  if (uses.length) return { ok: false, reason: 'in_use', count: uses.length };
+  const s = load();
+  s.markets = (s.markets || []).filter((m) => m.id !== id);
+  save();
+  return { ok: true, reason: 'deleted', count: 0 };
+}
+
+function getMapSettings() { return { ...DEFAULT_MAP_SETTINGS, ...(load().mapSettings || {}) }; }
+
+function setMapSettings(patch) {
+  const s = load();
+  s.mapSettings = { ...DEFAULT_MAP_SETTINGS, ...(s.mapSettings || {}), ...(patch || {}) };
+  save();
+  return getMapSettings();
 }
 
 /* ---------- verification ---------- */
@@ -6550,6 +6787,7 @@ async function toggleSaved(id) {
 
 function isSaved(id) { return savedIds().includes(id); }
 
+  window.ER["CHANGE_EVENT"] = typeof CHANGE_EVENT !== 'undefined' ? CHANGE_EVENT : undefined;
   window.ER["reset"] = typeof reset !== 'undefined' ? reset : undefined;
   window.ER["getUser"] = typeof getUser !== 'undefined' ? getUser : undefined;
   window.ER["setUser"] = typeof setUser !== 'undefined' ? setUser : undefined;
@@ -6572,6 +6810,14 @@ function isSaved(id) { return savedIds().includes(id); }
   window.ER["markSold"] = typeof markSold !== 'undefined' ? markSold : undefined;
   window.ER["soldListings"] = typeof soldListings !== 'undefined' ? soldListings : undefined;
   window.ER["soldComparables"] = typeof soldComparables !== 'undefined' ? soldComparables : undefined;
+  window.ER["listAllListings"] = typeof listAllListings !== 'undefined' ? listAllListings : undefined;
+  window.ER["upsertListing"] = typeof upsertListing !== 'undefined' ? upsertListing : undefined;
+  window.ER["setStatus"] = typeof setStatus !== 'undefined' ? setStatus : undefined;
+  window.ER["listMarkets"] = typeof listMarkets !== 'undefined' ? listMarkets : undefined;
+  window.ER["upsertMarket"] = typeof upsertMarket !== 'undefined' ? upsertMarket : undefined;
+  window.ER["deleteMarket"] = typeof deleteMarket !== 'undefined' ? deleteMarket : undefined;
+  window.ER["getMapSettings"] = typeof getMapSettings !== 'undefined' ? getMapSettings : undefined;
+  window.ER["setMapSettings"] = typeof setMapSettings !== 'undefined' ? setMapSettings : undefined;
   window.ER["getVerification"] = typeof getVerification !== 'undefined' ? getVerification : undefined;
   window.ER["setVerification"] = typeof setVerification !== 'undefined' ? setVerification : undefined;
   window.ER["getDeal"] = typeof getDeal !== 'undefined' ? getDeal : undefined;
@@ -6587,6 +6833,652 @@ function isSaved(id) { return savedIds().includes(id); }
   window.ER["savedIds"] = typeof savedIds !== 'undefined' ? savedIds : undefined;
   window.ER["toggleSaved"] = typeof toggleSaved !== 'undefined' ? toggleSaved : undefined;
   window.ER["isSaved"] = typeof isSaved !== 'undefined' ? isSaved : undefined;
+})();
+
+/* ---- worldmap.js ---- */
+(function () {
+/* data/worldmap.js — dot-matrix world map data. Generated from Natural Earth 110m land (public domain).
+   Do not hand-edit the mask. Exposes window.WorldMap = { cols, rows, step, width, height, mask, project(lon,lat), dots() }.
+   project() returns [x,y] in the 0..width / 0..height viewBox space used by the map SVG. */
+(function(){
+var K=182.7896,TX=500.0000,TY=259.9983,TOP=7.3202;
+var COLS=170,ROWS=74,STEP=5.882353;
+var MASK="AAAAAAAAAD/B/AAAAAAAAAAAAAAAcAAAAAAAAP8//4APAAAGAAAAAAAACAAAAAAAYA4//+ACAAAAEAAAAAAAggDQAAAABC8B//AAAAIA/4A0AAAAAfhAAAAAPGuAP/gAAAEEf//GAAAAA///AAPAAeT+D/wAAcAB/////wAHwA///4f//yWjg/wAAf5H///////h//////P////g0fwkAP8/////////r////4B////0ODwGAHv/////////AP///4D////w4A4AAH3/////////wH//zAC/P//wHAAAAB8P///////5wAekCAAEA//+B+AAAEDH///////AYAAwDAAEAP//w/gAABCn///////wHAAIBAAAAB///f8AABoH///////8gwAAAgAAAAf//3/AAAXf////////4EAAAAAAAAP///9QAABP////////+AAAAAAAAAA////OAAAf/////////oAAAAAAAAAf///wAAAD//33/////5AAAAAAAAAP///0AAAA/fl5/////+QAAAAAAAAH///4AAAB8J4GP/////GAAAAAAAAB///8AAAAeB+/x/////gAAAAAAAAAf//8AAAAHgCf+////+IIAAAAAAAAH//+AAAABwEn/n////5CAAAAAAAAB///gAAAAL8EH/////8TgAAAAAAAAP//wAAAAD/AB//////hwAAAAAAAAB//4AAAAB/8wf/////8AAAAAAAAAAP/sAAAAAf///7/////AAAAAAAAAAH+BAAAAAP///+/////wAAAAAAAAABfgAAAAAH///vx////8AAAAAAAAAAHwAAAAAD///7+g///+gAAAAAAAAAA8DAAAAA////f8H///IAAAAAAAAAAPGEAAAAf///3/Afj+AAAAAAAAAAADxAYAAAH///8/wHwfQAAAAAAAAAAAPwAAAAB////n4B4H4EAAAAAAAAAAAfAAAAAf///94AMAfBAAAAAAAAAAABwAAAAH////4ADgHwIAAAAAAAAAAAMEAAAB////4AAwBcAAAAAAAAAAAABG8AAAP////4AEASAAAAAAAAAAAAAL/gAAB////+ABAEAGAAAAAAAAAAAAf8AAAP////AAAAgAAAAAAAAAAAAAH/4AABA///wAAAsGAAAAAAAAAAAAD/+AAAAD//4AAAFDgAAAAAAAAAAAB//gAAAB//8AAAAz7QAAAAAAAAAAAf/+AAAAf/+AAAAMdhAAAAAAAAAAAH//4AAAD//AAAABnYfCAAAAAAAAAB///gAAA//wAAAAIGB8AAAAAAAAAAf//+AAAH/4AAAABAAPgAAAAAAAAAD///gAAB/+AAAAACgBIAAAAAAAAAA///wAAAf/wAAAAAEABAAAAAAAAAAH//4AAAH/8AAAAAABAAAAAAAAAAAB//+AAAB//EAAAAAA5AAAAAAAAAAAP//gAAAf/xgAAAAB+YAAIAAAAAAAA//4AAAP/5wAAAAA/2AAAAAAAAAAAP/+AAAB/4MAAAAAf/gAAAAAAAAAAB//AAAAf+GAAAAAf/8BAAAAAAAAAAf/wAAAD/hgAAAAf//AAAAAAAAAAAH/gAAAA/4YAAAAH//4AAAAAAAAAAB/4AAAAP8AAAAAB//+AAAAAAAAAAAf+AAAAD/AAAAAAf//gAAAAAAAAAAH/AAAAAfgAAAAAH//wAAAAAAAAAAB/wAAAAHwAAAAAB+f8AAAAAAAAAAAf4AAAABoAAAAAA8H+AAAgAAAAAAAH8AAAAAAAAAAAAAA/AAAEAAAAAAAB/AAAAAAAAAAAAAAHgAAAgAAAAAAAfAAAAAAAAAAAAAAAAAQAAAAAAAAAHgAAAAAAAAAAAAAAIAAACAAAAAAAA4AAAAAAAAAAAAAACAIABgAAAAAAAeAAAAAAAAAAAAAAAAMAAAAAAAAAAHgAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+var ALPHA="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+function ne1(l,f){var f2=f*f,f4=f2*f2;
+ return [l*(0.8707-0.131979*f2+f4*(-0.013791+f4*(0.003971*f2-0.001529*f4))),
+         f*(1.007226+f2*(0.015085+f4*(-0.044475+0.028874*f2-0.005916*f4)))];}
+function project(lon,lat){var r=ne1(lon*Math.PI/180,lat*Math.PI/180);return [TX+K*r[0],TY-K*r[1]-TOP];}
+function dots(){var b="",i,d=[];for(i=0;i<MASK.length;i++)b+=("000000"+ALPHA.indexOf(MASK.charAt(i)).toString(2)).slice(-6);
+ for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(b.charAt(r*COLS+c)==="1")d.push([c*STEP+STEP/2,r*STEP+STEP/2]);return d;}
+window.WorldMap={cols:COLS,rows:ROWS,step:STEP,width:1000,height:ROWS*STEP,mask:MASK,project:project,dots:dots};
+})();
+
+})();
+
+/* ---- map.js ---- */
+(function () {
+/* Exit-Ready — data-driven dot-matrix world map.
+ * Pure helpers are exported for tests. renderMap is the only DOM entry point.
+ * All data comes from store.js; nothing here touches localStorage or the network.
+ */
+
+const store = window.ER;
+const { HANDOFF_TEMPLATE } = window.ER;
+const { esc } = window.ER;
+
+const DAY = 86400000;
+
+function stamp(l, key) {
+  const raw = l?.[key] || l?.[key === 'soldAt' ? 'sold_at' : key];
+  if (!raw) return null;
+  const t = Date.parse(raw);
+  return Number.isFinite(t) ? t : null;
+}
+
+function hidden(l) {
+  return Boolean(l.hideFromMap || l.hide_from_map || l.status === 'hidden');
+}
+
+function marketMatches(l, market) {
+  if (!market) return false;
+  const key = String(l.market || l.region || '').toLowerCase();
+  return key === String(market.id || '').toLowerCase()
+    || key === String(market.code || '').toLowerCase();
+}
+
+/** Rows that size the live markers: live + under_offer, never hidden or sold. */
+function visibleListings(listings, settings = {}, now = Date.now()) {
+  return (listings || []).filter((l) => {
+    if (hidden(l)) return false;
+    const status = l.status || 'live';
+    return status === 'live' || status === 'under_offer';
+  });
+}
+
+/** A sold listing shows a small badge only while it is within the sold window. */
+function isRecentlySold(l, settings = {}, now = Date.now()) {
+  if (!l || hidden(l) || l.status !== 'sold') return false;
+  if (settings.showSold === false) return false;
+  const at = stamp(l, 'soldAt');
+  if (at === null) return false;
+  const days = Math.max(0, Number(settings.soldDays ?? 90));
+  return at <= now && now - at <= days * DAY;
+}
+
+function soldBadgeCount(listings, market, settings = {}, now = Date.now()) {
+  return (listings || []).filter((l) => marketMatches(l, market) && isRecentlySold(l, settings, now)).length;
+}
+
+function countForMarket(listings, market, settings = {}, now = Date.now(), industry = null) {
+  return visibleListings(listings, settings, now).filter((l) =>
+    marketMatches(l, market) && (!industry || l.industry === industry)).length;
+}
+
+/** Every displayed number is derived from the store and the handoff template. */
+function mapCounts(listings, markets, settings = {}, now = Date.now()) {
+  const rows = visibleListings(listings, settings, now);
+  const used = new Set();
+  for (const l of rows) {
+    const m = (markets || []).find((candidate) => marketMatches(l, candidate));
+    if (m && m.active !== false) used.add(m.id);
+  }
+  return {
+    live: rows.length,
+    markets: used.size,
+    milestones: HANDOFF_TEMPLATE.length,
+  };
+}
+
+/** Blocks a market delete while listings still reference it. */
+function canDeleteMarket(id, listings) {
+  const needle = String(id || '').toLowerCase();
+  const matches = (listings || []).filter((l) => {
+    const key = String(l.market || l.region || '').toLowerCase();
+    return key === needle || key.toUpperCase() === needle.toUpperCase();
+  });
+  return { ok: matches.length === 0, count: matches.length, reason: matches.length ? 'in_use' : 'ok' };
+}
+
+function industryKey(name) {
+  return String(name || 'Other').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
+
+function markerRadius(count) {
+  return count ? 5 + Math.sqrt(count) * 4.2 : 3.5;
+}
+
+function svgEl(name, attrs = {}) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+}
+
+/**
+ * Render the map into `el`.
+ * opts: { listings, markets, settings, now, mini, compact }
+ * Returns a controller with refresh() and destroy().
+ */
+function renderMap(el, opts = {}) {
+  if (!el) return { refresh() {}, destroy() {} };
+  const NS = 'http://www.w3.org/2000/svg';
+  const state = { market: null, industry: null };
+  let disposed = false;
+  let ro = null;
+
+  const data = () => ({
+    listings: opts.listings || store.listAllListings(),
+    markets: (opts.markets || store.listMarkets()).filter((m) => m.active !== false || opts.allMarkets),
+    settings: opts.settings || store.getMapSettings(),
+    now: opts.now || Date.now(),
+  });
+
+  function landPath() {
+    const W = globalThis.WorldMap;
+    if (!W) return '';
+    return W.dots().map(([x, y]) => `M${x.toFixed(1)} ${y.toFixed(1)}h0`).join('');
+  }
+
+  function markerPoint(m) {
+    const W = globalThis.WorldMap;
+    if (!W) return [0, 0];
+    return W.project(Number(m.lon) || 0, Number(m.lat) || 0);
+  }
+
+  function industries(rows) {
+    const tally = {};
+    for (const l of rows) tally[l.industry || 'Other'] = (tally[l.industry || 'Other'] || 0) + 1;
+    return Object.entries(tally).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  }
+
+  function cardMarkup(markets, rows, d) {
+    const m = markets.find((x) => x.id === state.market);
+    if (m) {
+      const list = industries(rows.filter((l) => marketMatches(l, m)));
+      const sold = soldBadgeCount(d.listings, m, d.settings, d.now);
+      const total = countForMarket(d.listings, m, d.settings, d.now, state.industry);
+      return `<h4>${esc(m.name)}</h4>
+        <p>${total} live listing${total === 1 ? '' : 's'}${state.industry ? ' · ' + esc(state.industry) : ''}</p>
+        ${list.map(([name, count]) => `<div class="map__row"><i class="map__swatch map__swatch--${industryKey(name)}"></i><span>${esc(name)}</span><b>${count}</b></div>`).join('')}
+        ${sold ? `<div class="map__row map__row--sold"><span>Recently sold</span><b>${sold}</b></div>` : ''}
+        <a class="map__browse" href="browse.html?region=${encodeURIComponent(m.code)}">Browse these →</a>`;
+    }
+    const top = markets
+      .map((x) => [x, countForMarket(d.listings, x, d.settings, d.now, state.industry)])
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    return `<h4>${state.industry ? esc(state.industry) : 'All markets'}</h4>
+      <p>${d.listings.filter((l) => visibleListings([l], d.settings, d.now).length && (!state.industry || l.industry === state.industry)).length} live listings</p>
+      ${top.map(([x, n]) => `<div class="map__row"><i class="map__swatch map__swatch--default"></i><span>${esc(x.name)}</span><b>${n}</b></div>`).join('')}
+      <p class="map__hint">Select a market pin or chip for the industry breakdown.</p>`;
+  }
+
+  function render() {
+    if (disposed) return;
+    const d = data();
+    const W = globalThis.WorldMap;
+    const counts = mapCounts(d.listings, d.markets, d.settings, d.now);
+    const mini = Boolean(opts.mini);
+
+    el.innerHTML = `<div class="map__panel">
+      ${mini ? '' : `<div class="map__stats">
+        <div class="map__stat map__stat--big"><b>${counts.live}</b><span>Live listings</span></div>
+        <div class="map__stat"><b>${counts.markets}</b><span>Markets</span></div>
+        <div class="map__stat"><b>${counts.milestones}</b><span>Milestones tracked</span></div>
+      </div>`}
+      <div class="map__box">
+        <svg class="map__svg" viewBox="0 0 ${W ? W.width : 1000} ${W ? W.height : 435}" role="img" aria-label="World map of live listings by market">
+          <path class="map__land" d="${landPath()}" stroke-width="${W ? (W.step * 0.52).toFixed(2) : 3}"></path>
+          <g class="map__markers"></g>
+        </svg>
+        ${mini ? '' : '<div class="map__card" aria-live="polite"></div>'}
+      </div>
+      ${mini ? '' : `<div class="map__labels">
+        <div class="map__label">Industry</div><div class="map__chips" data-kind="industry"></div>
+        <div class="map__label">Market</div><div class="map__chips" data-kind="market"></div>
+      </div>
+      <div class="map__note">Counts reflect the listings in this browser. Real inventory replaces the sample data before public use.</div>`}
+    </div>`;
+
+    const svg = el.querySelector('.map__svg');
+    const markers = el.querySelector('.map__markers');
+
+    for (const m of d.markets) {
+      const count = countForMarket(d.listings, m, d.settings, d.now, state.industry);
+      const sold = soldBadgeCount(d.listings, m, d.settings, d.now);
+      const [x, y] = markerPoint(m);
+      const g = svgEl('g', {
+        class: `map__marker${count ? '' : ' map__marker--zero'}${state.market === m.id ? ' map__marker--selected' : ''}`,
+        transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})`,
+        role: 'button', tabindex: '0',
+        'aria-label': `${m.name}: ${count} live listing${count === 1 ? '' : 's'}${sold ? ', ' + sold + ' recently sold' : ''}`,
+      });
+      const r = markerRadius(count);
+      g.appendChild(svgEl('circle', { class: 'map__ring', r: (r + 2).toFixed(1) }));
+      g.appendChild(svgEl('circle', { class: 'map__core', r: r.toFixed(1) }));
+      g.appendChild(svgEl('circle', { class: 'map__hit', r: '8' }));
+      const code = svgEl('text', {
+        class: 'map__code',
+        x: String(m.labelDx || 0), y: String(m.labelDy || -14),
+        'text-anchor': (m.labelDx || 0) > 0 ? 'start' : (m.labelDx || 0) < 0 ? 'end' : 'middle',
+      });
+      code.textContent = m.code || m.name.slice(0, 2).toUpperCase();
+      g.appendChild(code);
+      const num = svgEl('text', { class: 'map__num', x: '0', y: '4', 'text-anchor': 'middle' });
+      num.textContent = String(count);
+      g.appendChild(num);
+      if (sold) {
+        const badge = svgEl('text', { class: 'map__sold', x: '0', y: String(-r - 10), 'text-anchor': 'middle' });
+        badge.textContent = `SOLD ${sold}`;
+        g.appendChild(badge);
+      }
+      const pick = () => { state.market = state.market === m.id ? null : m.id; render(); };
+      g.addEventListener('click', pick);
+      g.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault(); pick();
+      });
+      markers.appendChild(g);
+    }
+
+    if (!mini) {
+      const card = el.querySelector('.map__card');
+      card.innerHTML = cardMarkup(d.markets, d.listings, d);
+      const allIndustries = industries(visibleListings(d.listings, d.settings, d.now));
+      const byMarket = d.markets
+        .map((m) => [m, countForMarket(d.listings, m, d.settings, d.now)])
+        .sort((a, b) => b[1] - a[1]);
+      const chip = (kind, key, label, count, swatch) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = `map__chip${state[kind] === key ? ' map__chip--on' : ''}`;
+        b.innerHTML = `${swatch ? `<i class="map__swatch map__swatch--${swatch}"></i>` : ''}<span>${esc(label)}</span><em>${count}</em>`;
+        b.addEventListener('click', () => {
+          state[kind] = state[kind] === key ? null : key;
+          render();
+        });
+        return b;
+      };
+      const ind = el.querySelector('[data-kind="industry"]');
+      for (const [name, n] of allIndustries) ind.appendChild(chip('industry', name, name, n, industryKey(name)));
+      const mkt = el.querySelector('[data-kind="market"]');
+      for (const [m, n] of byMarket) mkt.appendChild(chip('market', m.id, m.name, n));
+    }
+
+    syncHits(svg);
+  }
+
+  function syncHits(svg) {
+    if (!svg) return;
+    const width = svg.clientWidth || 1000;
+    const scale = width / 1000;
+    const r = scale > 0 ? Math.max(8, 22 / scale) : 44;
+    for (const hit of el.querySelectorAll('.map__hit')) hit.setAttribute('r', r.toFixed(2));
+  }
+
+  function onChange() { render(); }
+
+  if (!opts.mini) document.addEventListener(store.CHANGE_EVENT, onChange);
+  if (typeof ResizeObserver !== 'undefined') {
+    ro = new ResizeObserver(() => {
+      const svg = el.querySelector('.map__svg');
+      if (svg) syncHits(svg);
+    });
+    ro.observe(el);
+  }
+  render();
+
+  return {
+    refresh: render,
+    destroy() {
+      disposed = true;
+      document.removeEventListener(store.CHANGE_EVENT, onChange);
+      if (ro) ro.disconnect();
+    },
+  };
+}
+
+  window.ER["visibleListings"] = typeof visibleListings !== 'undefined' ? visibleListings : undefined;
+  window.ER["isRecentlySold"] = typeof isRecentlySold !== 'undefined' ? isRecentlySold : undefined;
+  window.ER["soldBadgeCount"] = typeof soldBadgeCount !== 'undefined' ? soldBadgeCount : undefined;
+  window.ER["countForMarket"] = typeof countForMarket !== 'undefined' ? countForMarket : undefined;
+  window.ER["mapCounts"] = typeof mapCounts !== 'undefined' ? mapCounts : undefined;
+  window.ER["canDeleteMarket"] = typeof canDeleteMarket !== 'undefined' ? canDeleteMarket : undefined;
+  window.ER["renderMap"] = typeof renderMap !== 'undefined' ? renderMap : undefined;
+})();
+
+/* ---- admin.js ---- */
+(function () {
+/* Exit-Ready — local admin console.
+ * Scope: no backend, no network, no dependencies. All app data goes through
+ * data/store.js. The passcode below is a PLACEHOLDER, NOT SECURITY: it only
+ * hides the console from a casual visitor in this prototype.
+ */
+
+const store = window.ER;
+const map = window.ER;
+const pkg = window.ER;
+const { MARKETS, REGIONS } = window.ER;
+const { esc } = window.ER;
+
+const CITY_PRESETS = [
+  { name: 'New York', lon: -74.0, lat: 40.7 }, { name: 'Los Angeles', lon: -118.2, lat: 34.1 },
+  { name: 'Chicago', lon: -87.6, lat: 41.9 }, { name: 'Houston', lon: -95.4, lat: 29.8 },
+  { name: 'Portland', lon: -122.7, lat: 45.5 }, { name: 'Seattle', lon: -122.3, lat: 47.6 },
+  { name: 'Toronto', lon: -79.4, lat: 43.7 }, { name: 'Vancouver', lon: -123.1, lat: 49.3 },
+  { name: 'London', lon: -0.13, lat: 51.5 }, { name: 'Manchester', lon: -2.24, lat: 53.5 },
+  { name: 'Bristol', lon: -2.59, lat: 51.45 }, { name: 'Leeds', lon: -1.55, lat: 53.8 },
+  { name: 'Dublin', lon: -6.26, lat: 53.35 }, { name: 'Paris', lon: 2.35, lat: 48.86 },
+  { name: 'Amsterdam', lon: 4.9, lat: 52.37 }, { name: 'Berlin', lon: 13.4, lat: 52.52 },
+  { name: 'Madrid', lon: -3.7, lat: 40.42 }, { name: 'Lisbon', lon: -9.14, lat: 38.72 },
+  { name: 'Stockholm', lon: 18.07, lat: 59.33 }, { name: 'Oslo', lon: 10.75, lat: 59.91 },
+  { name: 'Copenhagen', lon: 12.57, lat: 55.68 }, { name: 'Helsinki', lon: 24.94, lat: 60.17 },
+  { name: 'Warsaw', lon: 21.01, lat: 52.23 }, { name: 'Prague', lon: 14.44, lat: 50.08 },
+  { name: 'Dubai', lon: 55.3, lat: 25.2 }, { name: 'Abu Dhabi', lon: 54.38, lat: 24.45 },
+  { name: 'Riyadh', lon: 46.72, lat: 24.71 }, { name: 'Doha', lon: 51.53, lat: 25.29 },
+  { name: 'Singapore', lon: 103.8, lat: 1.35 }, { name: 'Kuala Lumpur', lon: 101.69, lat: 3.14 },
+  { name: 'Bangkok', lon: 100.5, lat: 13.76 }, { name: 'Ho Chi Minh City', lon: 106.7, lat: 10.82 },
+  { name: 'Manila', lon: 120.98, lat: 14.6 }, { name: 'Cebu City', lon: 123.89, lat: 10.32 },
+  { name: 'Hong Kong', lon: 114.17, lat: 22.32 }, { name: 'Taipei', lon: 121.56, lat: 25.03 },
+  { name: 'Tokyo', lon: 139.69, lat: 35.69 }, { name: 'Osaka', lon: 135.5, lat: 34.69 },
+  { name: 'Seoul', lon: 126.98, lat: 37.57 }, { name: 'Sydney', lon: 151.21, lat: -33.87 },
+  { name: 'Melbourne', lon: 144.96, lat: -37.81 }, { name: 'Brisbane', lon: 153.03, lat: -27.47 },
+  { name: 'Auckland', lon: 174.76, lat: -36.85 }, { name: 'Johannesburg', lon: 28.05, lat: -26.2 },
+  { name: 'Nairobi', lon: 36.82, lat: -1.29 }, { name: 'São Paulo', lon: -46.63, lat: -23.55 },
+];
+
+const PASSCODE_KEY = 'exit-ready:admin';
+const PLACEHOLDER_PASSCODE = 'exit-ready-admin';
+
+const num = (v, fallback = 0) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+};
+
+/** Pure form → market mapping, used by the admin form and its mini preview. */
+function formToMarket(v = {}) {
+  return {
+    id: String(v.id || '').trim(),
+    name: String(v.name || '').trim(),
+    code: String(v.code || '').trim().toUpperCase(),
+    lon: num(v.lon),
+    lat: num(v.lat),
+    labelDx: num(v.labelDx),
+    labelDy: num(v.labelDy),
+    active: v.active === true || v.active === 'on' || v.active === 'true' || v.active === '1',
+  };
+}
+
+function listingValues(l) {
+  if (!l) return {};
+  return {
+    business_name: l.name || '', tagline: l.tagline || '', region: l.region || 'US',
+    city: l.city || '', area: l.area || '', industry: l.industry || 'Other',
+    established: l.established || '', asking_price: l.asking_price || '',
+    cash_flow: l.cash_flow_sde || '', description: l.description || '',
+    successor: (l.successor_types_wanted || [])[0] || 'any',
+    owner_name: l.owner?.name || '', owner_email: l.owner?.email || '',
+    status: l.status || 'live', show_on_map: !l.hideFromMap,
+  };
+}
+
+function field(name, label, value = '', type = 'text') {
+  return `<label class="field"><span>${esc(label)}</span><input name="${name}" type="${type}" value="${esc(String(value))}"></label>`;
+}
+
+function listingForm(l) {
+  const v = listingValues(l);
+  const regionOptions = REGIONS.map((r) => `<option value="${r.code}"${r.code === v.region ? ' selected' : ''}>${esc(r.label)}</option>`).join('');
+  const industries = ['Food & Beverage', 'Trades & Services', 'Professional Services', 'Personal Services', 'eCommerce', 'Hospitality', 'Healthcare', 'Other']
+    .map((n) => `<option${n === v.industry ? ' selected' : ''}>${esc(n)}</option>`).join('');
+  const statusOptions = ['live', 'under_offer', 'sold', 'hidden']
+    .map((s) => `<option value="${s}"${s === v.status ? ' selected' : ''}>${s.replace('_', ' ')}</option>`).join('');
+  return `<form class="admin__form" data-listing-form>
+    <h3>${l ? 'Edit listing' : 'Add listing'}</h3>
+    <div class="admin__grid">
+      ${field('business_name', 'Business name', v.business_name)}
+      ${field('city', 'City', v.city)}
+      <label class="field"><span>Region</span><select name="region">${regionOptions}</select></label>
+      <label class="field"><span>Industry</span><select name="industry">${industries}</select></label>
+      ${field('asking_price', 'Asking price', v.asking_price, 'number')}
+      ${field('cash_flow', 'Cash flow (SDE)', v.cash_flow, 'number')}
+      <label class="field"><span>Status</span><select name="status">${statusOptions}</select></label>
+      <label class="field field--check"><span>Show on map</span><input name="show_on_map" type="checkbox"${v.show_on_map ? ' checked' : ''}></label>
+    </div>
+    <label class="field"><span>Description</span><textarea name="description" rows="3">${esc(v.description)}</textarea></label>
+    <div class="admin__actions"><button class="btn btn--primary" type="submit">${l ? 'Save listing' : 'Add listing'}</button>
+      ${l ? '<button class="btn btn--ghost" type="button" data-cancel-listing>Cancel</button>' : ''}</div>
+  </form>`;
+}
+
+function marketForm(m) {
+  const v = m || { name: '', code: '', lon: 0, lat: 0, labelDx: 0, labelDy: 0, active: true };
+  const presets = CITY_PRESETS.map((c, i) => `<option value="${i}">${esc(c.name)}</option>`).join('');
+  return `<form class="admin__form" data-market-form>
+    <h3>${m ? 'Edit market' : 'Add market'}</h3>
+    <label class="field"><span>City preset</span><select data-preset><option value="">Choose a city…</option>${presets}</select></label>
+    <div class="admin__grid">
+      ${field('name', 'Name', v.name)}
+      ${field('code', 'Code', v.code)}
+      ${field('lon', 'Longitude', v.lon, 'number')}
+      ${field('lat', 'Latitude', v.lat, 'number')}
+      ${field('labelDx', 'Label X offset', v.labelDx, 'number')}
+      ${field('labelDy', 'Label Y offset', v.labelDy, 'number')}
+      <label class="field field--check"><span>Active</span><input name="active" type="checkbox"${v.active !== false ? ' checked' : ''}></label>
+    </div>
+    <div class="admin__preview" data-map-preview aria-label="Market pin preview"></div>
+    <div class="admin__actions"><button class="btn btn--primary" type="submit">${m ? 'Save market' : 'Add market'}</button>
+      ${m ? '<button class="btn btn--ghost" type="button" data-cancel-market>Cancel</button>' : ''}</div>
+  </form>`;
+}
+
+function initAdmin() {
+  const root = document.getElementById('admin-app');
+  if (!root) return;
+  const unlocked = () => {
+    try { return sessionStorage.getItem(PASSCODE_KEY) === '1'; } catch { return false; }
+  };
+  const unlock = () => {
+    try { sessionStorage.setItem(PASSCODE_KEY, '1'); } catch { /* private mode: session only */ }
+    location.reload();
+  };
+
+  if (!unlocked()) {
+    root.innerHTML = `<section class="panel admin__gate">
+      <p class="eyebrow">Local admin</p><h1>Exit-Ready console</h1>
+      <p class="muted">Placeholder passcode for this prototype: <code>${PLACEHOLDER_PASSCODE}</code>. This is NOT SECURITY — real auth arrives with the Supabase migration.</p>
+      <form data-passcode><label class="field"><span>Passcode</span><input name="code" type="password" autocomplete="off"></label>
+      <button class="btn btn--primary" type="submit">Open console</button></form>
+    </section>`;
+    root.querySelector('[data-passcode]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = new FormData(e.currentTarget).get('code');
+      if (String(code) === PLACEHOLDER_PASSCODE) unlock();
+      else e.currentTarget.querySelector('input').setCustomValidity('Incorrect placeholder passcode');
+    });
+    return;
+  }
+
+  const ui = { tab: 'listings', editingListing: null, editingMarket: null };
+  let previewController = null;
+
+  const tabs = () => `<div class="admin__tabs" role="tablist">
+    ${['listings', 'markets', 'settings'].map((t) => `<button type="button" role="tab" aria-selected="${ui.tab === t}" data-tab="${t}" class="${ui.tab === t ? 'is-on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
+  </div>`;
+
+  const listingsPanel = () => {
+    const rows = store.listAllListings();
+    return `${listingForm(ui.editingListing)}
+      <div class="admin__rows">
+        ${rows.map((l) => `<article class="admin__row">
+          <div class="admin__rowhead"><b>${esc(l.name)}</b><span class="admin__pill">${esc(l.status || 'live')}</span></div>
+          <p class="muted">${esc(l.region)} · ${esc(l.industry || 'Other')} · ${esc(l.city || '')}</p>
+          <div class="admin__quick">
+            <button type="button" data-status="live" data-id="${l.id}">Live</button>
+            <button type="button" data-status="under_offer" data-id="${l.id}">Under offer</button>
+            <button type="button" data-status="sold" data-id="${l.id}">Mark sold</button>
+            <button type="button" data-status="hidden" data-id="${l.id}">Hide</button>
+          </div>
+          <label class="field field--check"><span>Show on map</span><input type="checkbox" data-visibility="${l.id}"${l.hideFromMap ? '' : ' checked'}></label>
+          <div class="admin__quick"><button type="button" data-edit-listing="${l.id}">Edit</button><button type="button" data-delete-listing="${l.id}">Delete</button></div>
+        </article>`).join('')}
+      </div>`;
+  };
+
+  const marketsPanel = () => {
+    const rows = store.listMarkets();
+    return `${marketForm(ui.editingMarket)}
+      <div class="admin__rows">
+        ${rows.map((m) => `<article class="admin__row">
+          <div class="admin__rowhead"><b>${esc(m.name)}</b><span class="admin__pill">${esc(m.code)}${m.active === false ? ' · inactive' : ''}</span></div>
+          <p class="muted">${Number(m.lon).toFixed(2)}, ${Number(m.lat).toFixed(2)}</p>
+          <div class="admin__quick"><button type="button" data-edit-market="${m.id}">Edit</button><button type="button" data-delete-market="${m.id}">Delete</button></div>
+        </article>`).join('')}
+      </div>`;
+  };
+
+  const settingsPanel = () => {
+    const s = store.getMapSettings();
+    return `<form class="admin__form" data-settings-form>
+      <h3>Map settings</h3>
+      <label class="field field--check"><span>Show recently sold badges</span><input name="showSold" type="checkbox"${s.showSold ? ' checked' : ''}></label>
+      ${field('soldDays', 'Sold window (days)', s.soldDays, 'number')}
+      <div class="admin__actions"><button class="btn btn--primary" type="submit">Save settings</button></div>
+    </form>`;
+  };
+
+  function render() {
+    if (!unlocked()) return;
+    root.innerHTML = `<div class="container admin">
+      <div class="admin__top"><div><p class="eyebrow">Local admin</p><h1>Exit-Ready console</h1></div>
+        <a class="btn btn--ghost" href="index.html">Back to site</a></div>
+      <p class="notice notice--warn">Placeholder passcode only — NOT SECURITY. Edits live in this browser until the Supabase migration.</p>
+      ${tabs()}
+      <div class="panel admin__panel">${ui.tab === 'listings' ? listingsPanel() : ui.tab === 'markets' ? marketsPanel() : settingsPanel()}</div>
+    </div>`;
+    bind();
+  }
+
+  function preview() {
+    const form = root.querySelector('[data-market-form]');
+    if (!form) return;
+    const draft = formToMarket(Object.fromEntries(new FormData(form)));
+    if (!draft.name) draft.name = 'New market';
+    if (!draft.code) draft.code = 'NEW';
+    const holder = root.querySelector('[data-map-preview]');
+    if (!holder) return;
+    if (previewController) previewController.destroy();
+    previewController = map.renderMap(holder, {
+      mini: true, allMarkets: true, listings: [], markets: [draft],
+      settings: store.getMapSettings(),
+    });
+  }
+
+  function bind() {
+    root.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+      ui.tab = b.dataset.tab; ui.editingListing = null; ui.editingMarket = null; render();
+    }));
+
+    const lf = root.querySelector('[data-listing-form]');
+    if (lf) {
+      lf.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const v = Object.fromEntries(new FormData(lf));
+        const base = pkg.listingFromForm({ ...v, country: v.region });
+        const existing = ui.editingListing ? store.findListing(ui.editingListing) : null;
+        const next = {
+          ...(existing || {}), ...base,
+          id: existing ? existing.id : base.id,
+          status: v.status || 'live',
+          hideFromMap: !v.show_on_map,
+          soldAt: v.status === 'sold' ? (existing?.soldAt || new Date().toISOString()) : null,
+        };
+        store.upsertListing(next);
+        ui.editingListing = null; render();
+      });
+      const cancel = root.querySelector('[data-cancel-listing]');
+      if (cancel) cancel.addEventListener('click', () => { ui.editingListing = null; render(); });
+    }
+
+    const mf = root.querySelector('[data-market-form]');
+    if (mf) {
+      const preset = mf.querySelector('[data-preset]');
+      preset?.addEventListener('change', () => {
+        const c = CITY_PRESETS[Number(preset.value)];
+        if (!c) return;
+        mf.elements.lon.value = String(c.lon);
+        mf.elements.lat.value = String(c.lat);
+        if (!mf.elements.name.value) mf.elements.name.value = c.name;
+        preview();
+      });
+      mf.addEventListener('input', () => preview());
+      mf.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const next = formToMarket(Object.fromEntries(new FormData(mf)));
+        if (!next.name || !next.code) { mf.reportValidity(); return; }
+        if (!next.id) next.id = next.code.toLowerCase();
+        store.upsertMarket(next);
+        ui.editingMarket = null; render();
+      });
+      const cancel = root.querySelector('[data-cancel-market]');
+      if (cancel) cancel.addEventListener('click', () => { ui.editingMarket = null; render(); });
+      preview();
+    }
+
+    const sf = root.querySelector('[data-settings-form]');
+    if (sf) sf.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = Object.fromEntries(new FormData(sf));
+      store.setMapSettings({ showSold: Boolean(v.showSold), soldDays: Math.max(1, num(v.soldDays, 90)) });
+      render();
+    });
+
+    root.querySelectorAll('[data-status]').forEach((b) => b.addEventListener('click', () => {
+      store.setStatus(b.dataset.id, b.dataset.status);
+      render();
+    }));
+    root.querySelectorAll('[data-visibility]').forEach((box) => box.addEventListener('change', () => {
+      const l = store.findListing(box.dataset.visibility);
+      if (l) store.upsertListing({ ...l, hideFromMap: !box.checked });
+    }));
+    root.querySelectorAll('[data-edit-listing]').forEach((b) => b.addEventListener('click', () => {
+      ui.editingListing = b.dataset.editListing; render();
+      root.querySelector('[data-listing-form]')?.scrollIntoView({ block: 'start' });
+    }));
+    root.querySelectorAll('[data-delete-listing]').forEach((b) => b.addEventListener('click', () => {
+      const l = store.findListing(b.dataset.deleteListing);
+      if (l && confirm(`Delete “${l.name}”?`)) store.deleteListing(l.id);
+    }));
+    root.querySelectorAll('[data-edit-market]').forEach((b) => b.addEventListener('click', () => {
+      ui.editingMarket = b.dataset.editMarket; render();
+      root.querySelector('[data-market-form]')?.scrollIntoView({ block: 'start' });
+    }));
+    root.querySelectorAll('[data-delete-market]').forEach((b) => b.addEventListener('click', () => {
+      const result = store.deleteMarket(b.dataset.deleteMarket);
+      if (result.ok) return;
+      if (result.reason !== 'in_use') { alert('That market could not be deleted.'); return; }
+      const others = store.listMarkets().filter((m) => m.id !== b.dataset.deleteMarket);
+      const target = others[0];
+      const source = store.listMarkets().find((m) => m.id === b.dataset.deleteMarket);
+      if (!target || !source) { alert('Add another market before deleting the last one.'); return; }
+      if (!confirm(`${result.count} listings use this market. Reassign them to ${target.name} and delete?`)) return;
+      for (const l of store.listAllListings()) {
+        if (l.region === source.code || l.market === source.id) {
+          store.upsertListing({ ...l, region: target.code, market: target.id });
+        }
+      }
+      store.deleteMarket(source.id);
+    }));
+  }
+
+  render();
+  document.addEventListener(store.CHANGE_EVENT, () => render());
+}
+
+  window.ER["CITY_PRESETS"] = typeof CITY_PRESETS !== 'undefined' ? CITY_PRESETS : undefined;
+  window.ER["formToMarket"] = typeof formToMarket !== 'undefined' ? formToMarket : undefined;
+  window.ER["initAdmin"] = typeof initAdmin !== 'undefined' ? initAdmin : undefined;
 })();
 
 </script>
@@ -6664,6 +7556,7 @@ document.addEventListener('click', function (e) {
 
 <script>
 var PAGE_TITLES = {
+  "admin": "Admin — Exit-Ready",
   "browse": "Browse businesses for sale — Exit-Ready",
   "dashboard": "Dashboard — Exit-Ready",
   "deal": "Handoff tracker — Exit-Ready",
@@ -6679,6 +7572,10 @@ var PAGE_TITLES = {
   "verify": "Verify — Exit-Ready",
 };
 var PAGE_INIT = {
+  "admin": function () {
+import { initAdmin } from './data/admin.js';
+  initAdmin();
+  },
   "browse": function () {
 const { LISTINGS, REGIONS, SUCCESSOR_TYPES, DISCLOSURE_FLAGS } = window.ER;
 const store = window.ER;
@@ -7630,6 +8527,7 @@ document.getElementById('example-track').innerHTML = track(SAMPLE);
 const { REGIONS, HANDOFF_TEMPLATE } = window.ER;
 const store = window.ER;
 const { shorten, esc, fullMoney } = window.ER;
+const { renderMap } = window.ER;
 
 const owned = new Set(store.userListings().map((l) => l.id));
 const isLive = (l) => owned.has(l.id) || (l.status || 'live') === 'live';
@@ -7727,28 +8625,8 @@ if (el) {
 }
 
 /* ---------- inventory board ---------- */
-const board = document.getElementById('inventory-board');
-if (board) {
-  const all = store.allListings().filter(isLive);
-  document.getElementById('board-total').textContent = all.length;
-  document.getElementById('board-regions').textContent = new Set(all.map((l) => l.region)).size;
-  document.getElementById('board-milestones').textContent = HANDOFF_TEMPLATE.length;
-  const tally = (key) => all.reduce((acc, l) => { acc[l[key]] = (acc[l[key]] || 0) + 1; return acc; }, {});
-  const regionLabel = (code) => (REGIONS.find((r) => r.code === code) || {}).label || code;
-  const rows = (obj) => Object.entries(obj)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([k, v]) => `<div class="bar"><span class="bar__label">${esc(k)}</span><span class="bar__track"><i class="bar__fill" style="--w:${Math.round(v / all.length * 100)}%"></i></span><span class="bar__num">${v}</span></div>`)
-    .join('');
-  document.getElementById('board-industry').innerHTML = rows(tally('industry'));
-  document.getElementById('board-market').innerHTML = rows(
-    Object.fromEntries(Object.entries(tally('region')).map(([k, v]) => [regionLabel(k), v]))
-  );
-  const obs = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); }
-  }, { threshold: 0.15 });
-  obs.observe(board);
-}
+const inventoryMap = document.getElementById('inventory-map');
+if (inventoryMap) renderMap(inventoryMap);
 
 /* ---------- inventory counts (legacy id, no longer rendered) ---------- */
 const counts = document.getElementById('counts');
